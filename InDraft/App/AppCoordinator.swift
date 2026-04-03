@@ -14,6 +14,7 @@ final class AppCoordinator: ObservableObject {
     private var keychainService: LiveKeychainService
     private var modelContainer: ModelContainer?
     private var previewController: PreviewPanelController?
+    private var accessibilityPollTimer: Timer?
 
     init(appState: AppState, toastManager: ToastManager) {
         self.appState = appState
@@ -63,12 +64,34 @@ final class AppCoordinator: ObservableObject {
         // Check accessibility permission
         if !AccessibilityService.isAccessibilityGranted {
             appState.setPermissionRequired()
+            startAccessibilityPolling(context: context)
         }
 
         // Show onboarding if not complete
         if !UserDefaults.standard.bool(forKey: Constants.UserDefaultsKeys.onboardingComplete) {
             showOnboarding()
         }
+    }
+
+    // MARK: - Accessibility Polling
+
+    private func startAccessibilityPolling(context: ModelContext) {
+        accessibilityPollTimer?.invalidate()
+        accessibilityPollTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
+            Task { @MainActor in
+                guard let self = self else { return }
+                if AccessibilityService.isAccessibilityGranted {
+                    self.accessibilityPollTimer?.invalidate()
+                    self.accessibilityPollTimer = nil
+                    self.appState.setIdle()
+                    self.registerAllHotkeys(context: context)
+                }
+            }
+        }
+    }
+
+    deinit {
+        accessibilityPollTimer?.invalidate()
     }
 
     // MARK: - Hotkey Handling

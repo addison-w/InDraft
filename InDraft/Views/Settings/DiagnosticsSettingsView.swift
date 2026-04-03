@@ -8,6 +8,7 @@ struct DiagnosticsSettingsView: View {
     @State private var accessibilityGranted = false
     @State private var isTesting = false
     @State private var providerLatency: TimeInterval?
+    @State private var accessibilityPollTimer: Timer?
 
     var body: some View {
         ScrollView {
@@ -148,6 +149,15 @@ struct DiagnosticsSettingsView: View {
         .background(Theme.Colors.background)
         .onAppear {
             checkAccessibility()
+            accessibilityPollTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { _ in
+                DispatchQueue.main.async {
+                    checkAccessibility()
+                }
+            }
+        }
+        .onDisappear {
+            accessibilityPollTimer?.invalidate()
+            accessibilityPollTimer = nil
         }
     }
 

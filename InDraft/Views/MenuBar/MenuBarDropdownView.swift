@@ -108,7 +108,7 @@ struct MenuBarDropdownView: View {
     // MARK: - Action List
 
     private var actionListSection: some View {
-        ForEach(actions) { action in
+        ForEach(actions.filter { $0.enabled }) { action in
             MenuBarRowView(
                 icon: iconForAction(action),
                 title: action.name,

@@ -69,7 +69,7 @@ Diagnostics tab SHALL show: Accessibility permission status (granted/not granted
 - **THEN** the diagnostics tab shows "NOT GRANTED" with a button to open System Settings
 
 ### Requirement: Diagnostics shows actionable accessibility status
-The diagnostics settings view SHALL provide a direct action to open System Settings when accessibility permission is not granted.
+The diagnostics settings view SHALL provide a direct action to open System Settings when accessibility permission is not granted. The accessibility status SHALL update live while the diagnostics view is visible.
 
 #### Scenario: Open Settings button shown when not granted
 - **WHEN** the diagnostics view displays the accessibility card
@@ -81,3 +81,8 @@ The diagnostics settings view SHALL provide a direct action to open System Setti
 - **WHEN** the diagnostics view displays the accessibility card
 - **AND** accessibility permission is granted
 - **THEN** the "Open System Settings" button SHALL NOT be displayed
+
+#### Scenario: Diagnostics updates live when permission changes
+- **WHEN** the diagnostics view is visible
+- **AND** the user grants or revokes accessibility permission in System Settings
+- **THEN** the accessibility status badge SHALL update within 2 seconds without manual interaction

@@ -1,20 +1,130 @@
 schema: spec-driven
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+# InDraft — macOS Menu Bar AI Text Transformation App
+# OpenSpec config: injected into every AI artifact generation prompt
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+context: |
+  ## Project
+  InDraft is a macOS menu bar AI text transformation app. Users configure
+  AI providers (OpenAI-compatible, Claude/Anthropic), assign transformation
+  actions to global hotkeys, select text in any app, press the hotkey, and
+  receive transformed text in-place.
+
+  ## Tech Stack
+  - Platform: macOS 14+ (Sonoma minimum)
+  - Language: Swift 5.9+
+  - UI Framework: SwiftUI with AppKit integration (NSWindow, NSStatusBar, NSMenu)
+  - Data Layer: SwiftData (@Model, ModelContainer, ModelContext)
+  - Build System: Xcode 16.0 / xcodegen (project.yml)
+  - Bundle ID: com.indraft.app
+
+  ## Architecture
+  - App lifecycle: LSUIElement (Info.plist UIElement=true), activation policy always .accessory
+  - Coordination: AppCoordinator pattern — owns all window controllers and service references
+  - State: AppState (ObservableObject) passed via SwiftUI .environment
+  - Services: Protocol-based with concrete implementations (protocol + class per service)
+  - Window management: Separate controller classes (SettingsWindowController, HistoryWindowController)
+  - Window focus: orderFrontRegardless() + NSApp.activate() for reliable activation
+  - Login items: SMAppService (macOS 13+)
+
+  ## Services Layer (all protocol-based, mockable)
+  - AccessibilityService — AXUIElement for focused element detection
+  - TextCaptureService — AX API primary, clipboard fallback
+  - TextReplaceService — AX API primary, clipboard fallback
+  - TransformService — orchestrator (capture → API call → replace)
+  - ProviderService — OpenAI-compatible chat completion API calls
+  - HotkeyService — global keyboard shortcut registration/triggering
+  - HistoryService — SwiftData persistence for transformation records
+  - KeychainService — secure API key storage via Keychain Services
+  - ToastManager — floating toast notifications
+
+  ## Models (SwiftData @Model)
+  - Action: transformation action with name, prompt, hotkey binding
+  - Provider: AI provider config (endpoint, model, API key reference)
+  - HistoryRecord: timestamp, input, output, action, provider
+
+  ## Design System
+  - Creative direction: "The Technical Curator" — high-end utilitarian editorial
+  - Palette: Warm Bone (#faf9f6), Charcoal (#2f3430), Pale Blue accent (#d3e5f0)
+  - Typography: Manrope (display), Inter (body), SF Mono (shortcuts/code)
+  - No 1px borders — use tonal shifts and ghost borders
+  - Elevation via tonal layering and ambient diffusion, not drop shadows
+
+  ## Key Constraints
+  - The app MUST NEVER change its activation policy from .accessory
+  - The app MUST remain an LSUIElement (no Dock icon)
+  - All services MUST be protocol-based for testability
+  - API keys MUST be stored in Keychain, never in UserDefaults or plain files
+  - Privacy-first: no telemetry, no cloud sync, all data local
+
+  ## Testing Strategy — Test-Driven Development (TDD)
+  - ALWAYS write tests BEFORE writing implementation code
+  - Red-Green-Refactor cycle: failing test → minimal implementation → refactor
+  - Unit tests: XCTest framework, one test file per service/model
+  - UI tests: XCUITest for end-to-end user flows
+  - All services are mockable via protocols — use mock implementations in tests
+  - Test targets: InDraftTests (unit), InDraftUITests (UI/E2E)
+  - Run tests via: xcodebuild test -scheme InDraft -destination 'platform=macOS'
+
+  ## Verification Strategy
+  - Build and run the app in Xcode to verify changes visually
+  - Interact with the app end-to-end: open menus, trigger hotkeys, check settings
+  - Take screenshots of the running app to confirm UI correctness
+  - Verify accessibility permissions flow works on fresh launch
+  - Test with real AI providers to confirm API integration
+  - Check menu bar icon presence and dropdown behavior
+  - Verify window focus and activation behavior
+
+  ## Conventions
+  - Commit style: conventional commits (feat:, fix:, refactor:, test:, docs:)
+  - Specs: BDD Given/When/Then scenario format
+  - File organization: App/, Models/, Services/, ViewModels/, Views/, Utilities/
+  - Naming: Swift API Design Guidelines — clear, expressive, no abbreviations
+
+rules:
+  proposal:
+    - Include a "Non-goals" section to prevent scope creep
+    - Note any macOS API version constraints (e.g., macOS 14+ only APIs)
+    - Include a rollback plan for any change touching window management or activation policy
+    - Identify which services and models are affected
+    - Estimate complexity as S/M/L
+
+  design:
+    - Reference specific protocols and service interfaces that will be modified
+    - Include a testability section explaining how the change will be tested
+    - Note any AppKit/SwiftUI bridging required
+    - Call out any changes to the AppCoordinator or window controllers
+    - Specify mock implementations needed for new protocols
+
+  specs:
+    - Use Given/When/Then BDD scenario format (established convention)
+    - Reference the activation policy constraint explicitly for any window-related requirement
+    - Include edge cases and error scenarios
+    - Note accessibility API dependencies where relevant
+    - Specify expected behavior for both AX API and clipboard fallback paths
+
+  tasks:
+    - Break tasks into chunks completable in under 2 hours
+    - ALWAYS start with test tasks before implementation tasks (TDD)
+    - Order tasks as: write tests → implement → integrate → verify
+    - Flag any task that touches AppCoordinator or activation policy for extra review
+    - Include specific file paths for files to create or modify
+    - Each task should specify which test file to update or create
+
+  apply:
+    - Follow TDD: write failing tests first, then implement until tests pass
+    - Run the full test suite after each task completion
+    - Build and run the app in Xcode after implementation tasks
+    - Take screenshots of UI changes to verify visual correctness
+    - Interact with the app end-to-end to verify behavior
+    - Never skip test writing — every new function needs a corresponding test
+    - Use protocol mocks for service dependencies in unit tests
+
+  verify:
+    - Run full test suite via Xcode (xcodebuild test)
+    - Build and launch the app in Xcode
+    - Interact with the app end-to-end exercising all changed functionality
+    - Take screenshots of the running app to document verification
+    - Verify no regressions in menu bar behavior, window focus, or hotkey triggering
+    - Confirm the app remains an LSUIElement with .accessory activation policy
+    - Check that all new code has corresponding test coverage

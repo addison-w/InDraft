@@ -4,11 +4,12 @@ import SwiftData
 struct MenuBarMenuView: View {
     @EnvironmentObject var appState: AppState
     @Query(sort: \Action.sortOrder) private var actions: [Action]
+    @Query(filter: #Predicate<Provider> { $0.isActive == true }) private var activeProviders: [Provider]
     @Environment(\.openSettings) private var openSettings
 
     var body: some View {
         // Header info
-        Text("OpenAI · gpt-4o")
+        Text(providerDisplayName)
             .font(.caption)
 
         Divider()
@@ -30,19 +31,13 @@ struct MenuBarMenuView: View {
 
         Divider()
 
-        Button("Retry Last") {
-            NSLog("[InDraft] Retry Last tapped")
-        }
-
-        Divider()
-
-        Button("Open Settings...") {
+        Button("Settings") {
             SettingsWindowController.shared.showSettings()
         }
         .keyboardShortcut(",", modifiers: .command)
 
-        Button("Open History...") {
-            NSLog("[InDraft] Open History tapped")
+        Button("History") {
+            HistoryWindowController.shared.showHistory()
         }
         .keyboardShortcut("h", modifiers: .command)
 
@@ -52,5 +47,12 @@ struct MenuBarMenuView: View {
             NSApplication.shared.terminate(nil)
         }
         .keyboardShortcut("q", modifiers: .command)
+    }
+
+    private var providerDisplayName: String {
+        if let provider = activeProviders.first {
+            return provider.displayName
+        }
+        return "No provider configured"
     }
 }

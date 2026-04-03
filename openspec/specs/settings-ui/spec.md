@@ -4,8 +4,8 @@
 The settings window SHALL have a left sidebar with tabs: General, Actions, Providers, History, Diagnostics. The window title SHALL be "InDraft Settings".
 
 #### Scenario: Open settings
-- **WHEN** the user clicks "Open Settings..." in the menu bar dropdown
-- **THEN** the settings window opens with the previously selected tab (or General on first open)
+- **WHEN** the user clicks "Settings" in the menu bar dropdown
+- **THEN** the settings window opens and comes to front with the previously selected tab (or General on first open)
 
 ### Requirement: General settings tab
 General tab SHALL include: Launch at Login toggle, Show Dock Icon toggle, appearance preference, and notification behavior settings.

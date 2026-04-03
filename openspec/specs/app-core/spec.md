@@ -38,11 +38,11 @@ The app SHALL support automatic launch at login, configurable in Settings > Gene
 - **THEN** the app unregisters as a login item
 
 ### Requirement: Menu bar dropdown displays app state
-The menu bar dropdown SHALL show: active provider name and model, list of enabled actions with hotkeys, Retry Last item, Open Settings, Open History, and Quit InDraft.
+The menu bar dropdown SHALL show: active provider name, list of enabled actions with hotkeys, Settings, History, and Quit InDraft.
 
 #### Scenario: Dropdown shows active provider
 - **WHEN** the user clicks the menu bar icon with a configured active provider
-- **THEN** the dropdown header shows "INDRAFT" with the provider name and model (e.g., "OpenAI · gpt-4o")
+- **THEN** the dropdown header shows "INDRAFT" with the provider name (e.g., "Claude" or "OpenAI")
 
 #### Scenario: Dropdown lists enabled actions
 - **WHEN** the user opens the dropdown with 3 default actions enabled
@@ -51,6 +51,17 @@ The menu bar dropdown SHALL show: active provider name and model, list of enable
 #### Scenario: Dropdown with no active provider
 - **WHEN** the user opens the dropdown with no active provider configured
 - **THEN** the dropdown shows a warning message "No AI provider configured — click to set up"
+
+### Requirement: History window accessible from dropdown
+The history window SHALL be accessible from the menu bar dropdown. Clicking "History" in the dropdown SHALL open the history window and bring it to front.
+
+#### Scenario: Open history from dropdown
+- **WHEN** the user clicks "History" in the menu bar dropdown
+- **THEN** the history window opens and comes to front
+
+#### Scenario: History window already open
+- **WHEN** the user clicks "History" in the dropdown AND the history window is already open
+- **THEN** the existing history window is brought to front and made key
 
 ### Requirement: App handles incomplete setup gracefully
 When required setup is incomplete, the app SHALL display a warning state in the menu bar and provide direct links to resolve the issue.

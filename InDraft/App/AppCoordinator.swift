@@ -152,23 +152,6 @@ final class AppCoordinator: ObservableObject {
         handleHotkeyPress(actionID: action.id, context: context)
     }
 
-    // MARK: - Retry Last
-
-    func retryLast() {
-        guard let modelContainer = modelContainer else { return }
-        let context = ModelContext(modelContainer)
-
-        guard let lastRecord = historyService?.mostRecentRecord() else {
-            toastManager.show(.info("No previous transformation"))
-            return
-        }
-
-        // Find the action or use the snapshot data
-        if let actionID = lastRecord.actionID {
-            handleHotkeyPress(actionID: actionID, context: context)
-        }
-    }
-
     // MARK: - Hotkey Registration
 
     func registerAllHotkeys(context: ModelContext) {

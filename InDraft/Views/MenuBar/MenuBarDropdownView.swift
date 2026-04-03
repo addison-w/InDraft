@@ -4,6 +4,7 @@ import SwiftData
 struct MenuBarDropdownView: View {
     @EnvironmentObject var appState: AppState
     @Query(sort: \Action.sortOrder) private var actions: [Action]
+    @Query(filter: #Predicate<Provider> { $0.isActive == true }) private var activeProviders: [Provider]
     @Environment(\.dismiss) private var dismiss
 
     let coordinator: AppCoordinator
@@ -52,7 +53,7 @@ struct MenuBarDropdownView: View {
                     .font(.system(size: 9, weight: .medium))
                     .foregroundColor(Theme.Colors.textTertiary)
                     .tracking(0.8)
-                Text("OpenAI · gpt-4o")
+                Text(providerDisplayName)
                     .font(.system(size: 11))
                     .foregroundColor(Theme.Colors.textSecondary)
                 Text("▾")
@@ -62,6 +63,13 @@ struct MenuBarDropdownView: View {
         }
         .padding(.horizontal, Theme.Spacing.lg)
         .padding(.vertical, Theme.Spacing.md)
+    }
+
+    private var providerDisplayName: String {
+        if let provider = activeProviders.first {
+            return provider.displayName
+        }
+        return "No provider configured"
     }
 
     @ViewBuilder
@@ -108,17 +116,8 @@ struct MenuBarDropdownView: View {
     private var utilitySection: some View {
         Group {
             MenuBarRowView(
-                icon: "arrow.counterclockwise",
-                title: "Retry Last",
-                hotkey: "⌃R"
-            ) {
-                dismiss()
-                coordinator.retryLast()
-            }
-
-            MenuBarRowView(
                 icon: "gearshape",
-                title: "Open Settings...",
+                title: "Settings",
                 hotkey: "⌘,"
             ) {
                 dismiss()
@@ -129,10 +128,13 @@ struct MenuBarDropdownView: View {
 
             MenuBarRowView(
                 icon: "clock.arrow.circlepath",
-                title: "Open History...",
+                title: "History",
                 hotkey: "⌘H"
             ) {
                 dismiss()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    HistoryWindowController.shared.showHistory()
+                }
             }
         }
     }

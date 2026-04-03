@@ -131,7 +131,7 @@ struct ProvidersSettingsView: View {
                     provider: provider,
                     keychainService: keychainService,
                     onSetActive: { setActive(provider) },
-                    onTest: { testProvider(provider) },
+                    onTest: {},
                     onDelete: {
                         withAnimation(Theme.Motion.standard) {
                             expandedProviderID = nil
@@ -299,13 +299,6 @@ struct ProvidersSettingsView: View {
         }
     }
 
-    private func testProvider(_ provider: Provider) {
-        provider.lastTestStatus = .success
-        provider.lastTestedAt = Date()
-        provider.lastTestError = nil
-        provider.updatedAt = Date()
-    }
-
     private func deleteProvider(_ provider: Provider) {
         if !provider.apiKeyReference.isEmpty {
             try? keychainService.delete(forReference: provider.apiKeyReference)
@@ -357,6 +350,8 @@ struct ProviderInlineEditor: View {
     @State private var apiKey: String = ""
     @State private var showAPIKey = false
     @State private var isTesting = false
+    @State private var testResultMessage: String?
+    @State private var testSucceeded: Bool?
     @State private var showDeleteConfirmation = false
 
     var body: some View {
@@ -449,7 +444,18 @@ struct ProviderInlineEditor: View {
                     }
                 }
                 .buttonStyle(.plain)
-                .disabled(isTesting)
+                .disabled(isTesting || apiKey.isEmpty)
+
+                if let succeeded = testSucceeded, let message = testResultMessage {
+                    HStack(spacing: Theme.Spacing.xs) {
+                        Image(systemName: succeeded ? "checkmark.circle.fill" : "xmark.circle.fill")
+                            .font(.system(size: 11))
+                        Text(message)
+                            .font(Theme.Typography.caption(11))
+                            .lineLimit(1)
+                    }
+                    .foregroundColor(succeeded ? Theme.Colors.statusGreen : Theme.Colors.error)
+                }
 
                 Spacer()
 
@@ -514,11 +520,33 @@ struct ProviderInlineEditor: View {
 
     private func runTest() {
         isTesting = true
+        testResultMessage = nil
+        testSucceeded = nil
+
         Task {
-            try? await Task.sleep(for: .seconds(0.5))
+            let service = LiveProviderService()
+            let result = await service.testConnection(
+                baseURL: provider.baseURL,
+                apiKey: apiKey,
+                model: provider.defaultModel
+            )
+
             await MainActor.run {
                 isTesting = false
-                onTest()
+                switch result {
+                case .success(_, let latencyMs):
+                    testSucceeded = true
+                    testResultMessage = "Connected — \(latencyMs)ms"
+                    provider.lastTestStatus = .success
+                    provider.lastTestedAt = Date()
+                    provider.lastTestError = nil
+                case .failure(let message):
+                    testSucceeded = false
+                    testResultMessage = message
+                    provider.lastTestStatus = .failed
+                    provider.lastTestError = message
+                }
+                provider.updatedAt = Date()
             }
         }
     }

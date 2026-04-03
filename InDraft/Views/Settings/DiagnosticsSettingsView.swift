@@ -197,19 +197,35 @@ struct DiagnosticsSettingsView: View {
         checkAccessibility()
 
         Task {
-            // Simulate provider test latency
-            let start = Date()
-            try? await Task.sleep(for: .seconds(0.5))
-            let elapsed = Date().timeIntervalSince(start)
+            guard let active = activeProvider else {
+                await MainActor.run { isTesting = false }
+                return
+            }
+
+            // Resolve API key from Keychain
+            let keychain = LiveKeychainService()
+            let apiKey = keychain.retrieve(forReference: active.apiKeyReference) ?? ""
+
+            let service = LiveProviderService()
+            let result = await service.testConnection(
+                baseURL: active.baseURL,
+                apiKey: apiKey,
+                model: active.defaultModel
+            )
 
             await MainActor.run {
-                providerLatency = elapsed
-                if let active = activeProvider {
+                switch result {
+                case .success(_, let latencyMs):
+                    providerLatency = Double(latencyMs) / 1000.0
                     active.lastTestStatus = .success
                     active.lastTestedAt = Date()
                     active.lastTestError = nil
-                    active.updatedAt = Date()
+                case .failure(let message):
+                    providerLatency = nil
+                    active.lastTestStatus = .failed
+                    active.lastTestError = message
                 }
+                active.updatedAt = Date()
                 isTesting = false
             }
         }

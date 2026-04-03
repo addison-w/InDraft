@@ -12,7 +12,7 @@ struct WelcomeStepView: View {
                 .foregroundColor(Theme.Colors.textPrimary)
 
             Text("Rewrite anything,\nanywhere.")
-                .font(Theme.Typography.headline(28))
+                .font(Theme.Typography.pageTitle(28))
                 .multilineTextAlignment(.center)
                 .foregroundColor(Theme.Colors.textPrimary)
 

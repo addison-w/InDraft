@@ -49,7 +49,6 @@ struct SettingsView: View {
 
     private var sidebar: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Close button + drag area
             HStack {
                 WindowCloseButton()
                 Spacer()
@@ -59,10 +58,9 @@ struct SettingsView: View {
             .padding(.bottom, Theme.Spacing.sm)
             .background(WindowDragArea())
 
-            // Header
-            VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+            VStack(alignment: .leading, spacing: 3) {
                 Text("InDraft")
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(Theme.Typography.label(14))
                     .foregroundColor(Theme.Colors.textPrimary)
                 Text("PREFERENCES")
                     .font(Theme.Typography.allCaps(9))
@@ -72,7 +70,6 @@ struct SettingsView: View {
             .padding(.horizontal, Theme.Spacing.lg)
             .padding(.bottom, Theme.Spacing.lg)
 
-            // Nav items
             ForEach(SettingsTab.allCases) { tab in
                 sidebarItem(tab)
             }
@@ -89,10 +86,11 @@ struct SettingsView: View {
         } label: {
             HStack(spacing: Theme.Spacing.sm) {
                 Image(systemName: tab.icon)
-                    .font(.system(size: 12))
+                    .font(.system(size: 11))
+                    .foregroundColor(selectedTab == tab ? Theme.Colors.textPrimary : Theme.Colors.textTertiary)
                     .frame(width: 16)
                 Text(tab.rawValue)
-                    .font(Theme.Typography.body())
+                    .font(Theme.Typography.body(13))
             }
             .foregroundColor(selectedTab == tab ? Theme.Colors.textPrimary : Theme.Colors.textSecondary)
             .fontWeight(selectedTab == tab ? .medium : .regular)
@@ -110,7 +108,7 @@ struct SettingsView: View {
         }
         .buttonStyle(.plain)
         .onHover { isHovered in
-            withAnimation(.easeInOut(duration: 0.1)) {
+            withAnimation(Theme.Motion.quick) {
                 hoveredTab = isHovered ? tab : nil
             }
         }

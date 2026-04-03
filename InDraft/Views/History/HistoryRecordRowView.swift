@@ -40,18 +40,16 @@ struct HistoryRecordRowView: View {
                         .font(Theme.Typography.mono(10))
                         .foregroundColor(Theme.Colors.textTertiary)
 
-                    // Source app badge
                     Text(record.sourceApp.uppercased())
-                        .font(Theme.Typography.caption(9))
+                        .font(Theme.Typography.allCaps(9))
                         .foregroundColor(.white)
                         .padding(.horizontal, Theme.Spacing.sm)
                         .padding(.vertical, 2)
-                        .background(Theme.Colors.textPrimary)
+                        .background(Theme.Colors.inverseSurface)
                         .clipShape(Capsule())
 
-                    // Action name — italic serif
                     Text(record.actionName)
-                        .font(.system(size: 14, design: .serif))
+                        .font(Theme.Typography.sectionTitle(14))
                         .italic()
                         .foregroundColor(Theme.Colors.textPrimary)
 
@@ -62,23 +60,11 @@ struct HistoryRecordRowView: View {
                         .font(Theme.Typography.mono(10))
                         .foregroundColor(Theme.Colors.textTertiary)
 
-                    // Status badge — pale green/red pill
-                    Text(record.status == .success ? "SUCCESS" : "ERROR")
-                        .font(Theme.Typography.caption(9))
-                        .fontWeight(.medium)
-                        .foregroundColor(
-                            record.status == .success
-                                ? Color(hex: "346538")
-                                : Color(hex: "9F2F2D")
-                        )
-                        .padding(.horizontal, Theme.Spacing.sm)
-                        .padding(.vertical, 2)
-                        .background(
-                            record.status == .success
-                                ? Color(hex: "EDF3EC")
-                                : Color(hex: "FDEBEC")
-                        )
-                        .clipShape(Capsule())
+                    // Status badge
+                    StatusPill(
+                        text: record.status == .success ? "SUCCESS" : "ERROR",
+                        color: record.status == .success ? Theme.Colors.statusGreenText : Theme.Colors.statusRed
+                    )
 
                     // Expand chevron
                     Image(systemName: isExpanded ? "chevron.down" : "chevron.right")

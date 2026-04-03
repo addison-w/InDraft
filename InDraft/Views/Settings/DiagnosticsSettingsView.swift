@@ -14,8 +14,7 @@ struct DiagnosticsSettingsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: Theme.Spacing.xl) {
                 Text("Diagnostics")
-                    .font(.system(size: 28, design: .serif))
-                    .fontWeight(.medium)
+                    .font(Theme.Typography.pageTitle())
                     .foregroundColor(Theme.Colors.textPrimary)
 
                 Text("Verify system permissions and check connection stability across your local and cloud providers.")
@@ -43,9 +42,9 @@ struct DiagnosticsSettingsView: View {
                             .font(Theme.Typography.caption(11))
                             .buttonStyle(SecondaryButtonStyle())
                         }
-                        statusBadge(
+                        StatusPill(
                             text: accessibilityGranted ? "GRANTED" : "NOT GRANTED",
-                            color: accessibilityGranted ? Color(hex: "3A7D44") : Color(hex: "C0392B")
+                            color: accessibilityGranted ? Theme.Colors.statusGreen : Theme.Colors.error
                         )
                     }
                 }
@@ -64,9 +63,9 @@ struct DiagnosticsSettingsView: View {
                                     .foregroundColor(Theme.Colors.textSecondary)
                             }
                             Spacer()
-                            statusBadge(
+                            StatusPill(
                                 text: "\(hotkeyActions.count) OF \(hotkeyActions.count) REGISTERED",
-                                color: Color(hex: "4A7FB5")
+                                color: Theme.Colors.statusBlue
                             )
                         }
 
@@ -100,12 +99,12 @@ struct DiagnosticsSettingsView: View {
                             }
                             Spacer()
                             if let active = activeProvider {
-                                statusBadge(
+                                StatusPill(
                                     text: active.lastTestStatus == .success ? "CONNECTED" : "UNTESTED",
-                                    color: active.lastTestStatus == .success ? Color(hex: "3A7D44") : Color(hex: "C4930A")
+                                    color: active.lastTestStatus == .success ? Theme.Colors.statusGreen : Theme.Colors.statusAmber
                                 )
                             } else {
-                                statusBadge(text: "NO PROVIDER", color: Color(hex: "C0392B"))
+                                StatusPill(text: "NO PROVIDER", color: Theme.Colors.error)
                             }
                         }
 
@@ -166,24 +165,7 @@ struct DiagnosticsSettingsView: View {
     private func diagnosticCard<Content: View>(@ViewBuilder content: () -> Content) -> some View {
         content()
             .padding(Theme.Spacing.xl)
-            .background(Theme.Colors.cardBackground)
-            .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.md))
-            .overlay(
-                RoundedRectangle(cornerRadius: Theme.Radius.md)
-                    .stroke(Theme.Colors.cardBorder, lineWidth: 1)
-            )
-            .shadow(color: Color(hex: "2F3430").opacity(0.03), radius: 8, y: 2)
-    }
-
-    private func statusBadge(text: String, color: Color) -> some View {
-        Text(text)
-            .font(Theme.Typography.allCaps(9))
-            .tracking(0.5)
-            .foregroundColor(color)
-            .padding(.horizontal, Theme.Spacing.sm + 2)
-            .padding(.vertical, 3)
-            .background(color.opacity(0.1))
-            .clipShape(Capsule())
+            .cardStyle()
     }
 
     private func providerDetail(label: String) -> some View {

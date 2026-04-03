@@ -22,8 +22,7 @@ struct ActionEditorView: View {
     var body: some View {
         VStack(spacing: 0) {
             Text(isNew ? "New Action" : "Edit Action")
-                .font(.system(size: 18, design: .serif))
-                .fontWeight(.medium)
+                .font(Theme.Typography.sectionTitle())
                 .foregroundColor(Theme.Colors.textPrimary)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, Theme.Spacing.lg)
@@ -35,11 +34,7 @@ struct ActionEditorView: View {
                 VStack(alignment: .leading, spacing: Theme.Spacing.xl) {
                     fieldSection("NAME") {
                         TextField("Action name", text: $name)
-                            .textFieldStyle(.plain)
-                            .font(Theme.Typography.body(14))
-                            .padding(Theme.Spacing.md)
-                            .background(Theme.Colors.surfaceContainerLow)
-                            .cornerRadius(Theme.Radius.md)
+                            .inputFieldStyle()
                     }
 
                     fieldSection("PROMPT") {
@@ -50,7 +45,7 @@ struct ActionEditorView: View {
                             .frame(minHeight: 80, maxHeight: 120)
                             .padding(Theme.Spacing.sm)
                             .background(Theme.Colors.surfaceContainerLow)
-                            .cornerRadius(Theme.Radius.md)
+                            .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.md))
                     }
 
                     fieldSection("HOTKEY") {
@@ -88,12 +83,7 @@ struct ActionEditorView: View {
                             }
 
                             TextField("Model override (optional)", text: $modelOverride)
-                                .textFieldStyle(.plain)
-                                .font(Theme.Typography.body(13))
-                                .foregroundColor(Theme.Colors.textSecondary)
-                                .padding(Theme.Spacing.md)
-                                .background(Theme.Colors.surfaceContainerLow)
-                                .cornerRadius(Theme.Radius.md)
+                                .inputFieldStyle()
                         }
                     }
 

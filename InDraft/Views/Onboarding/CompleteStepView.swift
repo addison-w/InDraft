@@ -6,7 +6,7 @@ struct CompleteStepView: View {
     var body: some View {
         VStack(spacing: Theme.Spacing.lg) {
             Text("You're All Set")
-                .font(Theme.Typography.headline())
+                .font(Theme.Typography.pageTitle())
                 .foregroundColor(Theme.Colors.textPrimary)
 
             Text("InDraft is ready to use. Access it from the menu bar.")

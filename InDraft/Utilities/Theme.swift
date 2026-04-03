@@ -20,14 +20,10 @@ enum Theme {
         static let accent = Color(hex: "51616B")
         /// Accent container — pale blue background
         static let accentContainer = Color(hex: "D3E5F0")
-        /// Success — derived from secondary
-        static let success = Color(hex: "51616B")
         /// Error — warm red
         static let error = Color(hex: "9F403D")
         /// Error container
         static let errorContainer = Color(hex: "FE8983")
-        /// Warning — amber (tertiary)
-        static let warning = Color(hex: "5E5F5F")
         /// Badge background — tertiary-container
         static let badgeBackground = Color(hex: "F4F3F3")
         /// Divider — ghost border
@@ -45,6 +41,28 @@ enum Theme {
         /// Inverse surface — for dark elements
         static let inverseSurface = Color(hex: "0D0F0D")
 
+        // MARK: Semantic Status Colors
+        /// Status green — for active, success, connected, granted
+        static let statusGreen = Color(hex: "3A7D44")
+        /// Status green background
+        static let statusGreenBg = Color(hex: "EDF3EC")
+        /// Status green text — darker for readability
+        static let statusGreenText = Color(hex: "346538")
+        /// Status amber — for warnings, untested
+        static let statusAmber = Color(hex: "C4930A")
+        /// Status amber background
+        static let statusAmberBg = Color(hex: "FBF3DB")
+        /// Status amber text
+        static let statusAmberText = Color(hex: "956400")
+        /// Status red — for errors, failures
+        static let statusRed = Color(hex: "9F2F2D")
+        /// Status red background
+        static let statusRedBg = Color(hex: "FDEBEC")
+        /// Status blue — for info, connected
+        static let statusBlue = Color(hex: "4A7FB5")
+        /// Status blue background
+        static let statusBlueBg = Color(hex: "4A7FB5").opacity(0.1)
+
         // MARK: Window Controls — desaturated pastels matching warm editorial palette
         /// Default (inactive) dot — warm gray
         static let windowControlDefault = Color(hex: "C8C8C5")
@@ -61,24 +79,24 @@ enum Theme {
     // MARK: - Typography (Manrope for Display/Headlines, Inter for Body/Labels)
 
     enum Typography {
-        /// Display headline — Manrope (falls back to rounded system)
-        static func headline(_ size: CGFloat = 28) -> Font {
-            .custom("Manrope", size: size).weight(.medium)
+        /// Page title — system serif for editorial warmth
+        static func pageTitle(_ size: CGFloat = 24) -> Font {
+            .system(size: size, design: .serif).weight(.medium)
         }
 
-        /// Section title — Manrope, smaller
-        static func sectionTitle(_ size: CGFloat = 20) -> Font {
-            .custom("Manrope", size: size).weight(.medium)
+        /// Section title — system serif, smaller
+        static func sectionTitle(_ size: CGFloat = 18) -> Font {
+            .system(size: size, design: .serif).weight(.medium)
         }
 
-        /// Body text — Inter (falls back to system default)
+        /// Body text — system default for crisp rendering
         static func body(_ size: CGFloat = 13) -> Font {
-            .custom("Inter", size: size)
+            .system(size: size)
         }
 
-        /// Label text — Inter, medium weight
+        /// Label text — medium weight
         static func label(_ size: CGFloat = 11) -> Font {
-            .custom("Inter", size: size).weight(.medium)
+            .system(size: size).weight(.medium)
         }
 
         /// Monospaced — SF Mono for keyboard shortcuts
@@ -86,14 +104,14 @@ enum Theme {
             .system(size: size, design: .monospaced)
         }
 
-        /// Caption — Inter, small
+        /// Caption — small
         static func caption(_ size: CGFloat = 10) -> Font {
-            .custom("Inter", size: size)
+            .system(size: size)
         }
 
-        /// All caps label — Inter, medium
+        /// All caps label — medium weight for tracking
         static func allCaps(_ size: CGFloat = 10) -> Font {
-            .custom("Inter", size: size).weight(.medium)
+            .system(size: size).weight(.medium)
         }
     }
 
@@ -115,6 +133,17 @@ enum Theme {
         static let md: CGFloat = 8
         static let lg: CGFloat = 12
         static let full: CGFloat = 999
+    }
+
+    // MARK: - Animation
+
+    enum Motion {
+        /// Quick state change — hover, toggle (120ms)
+        static let quick: Animation = .easeOut(duration: 0.12)
+        /// Standard transition — expand, collapse (200ms)
+        static let standard: Animation = .easeOut(duration: 0.2)
+        /// Gentle entrance — sheet, panel (300ms)
+        static let gentle: Animation = .easeOut(duration: 0.3)
     }
 }
 
@@ -151,7 +180,22 @@ struct CardStyle: ViewModifier {
         content
             .background(Theme.Colors.cardBackground)
             .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.md))
-            .shadow(color: Color(hex: "2F3430").opacity(0.04), radius: 12, y: 4)
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.Radius.md)
+                    .stroke(Theme.Colors.cardBorder, lineWidth: 1)
+            )
+            .shadow(color: Color(hex: "2F3430").opacity(0.03), radius: 8, y: 2)
+    }
+}
+
+struct InputFieldStyle: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .textFieldStyle(.plain)
+            .font(Theme.Typography.body(14))
+            .padding(Theme.Spacing.md)
+            .background(Theme.Colors.surfaceContainerLow)
+            .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.md))
     }
 }
 
@@ -199,7 +243,29 @@ extension View {
         modifier(CardStyle())
     }
 
+    func inputFieldStyle() -> some View {
+        modifier(InputFieldStyle())
+    }
+
     func badgeStyle(color: Color = Theme.Colors.badgeBackground) -> some View {
         modifier(BadgeStyle(color: color))
+    }
+}
+
+// MARK: - Reusable Status Badge
+
+struct StatusPill: View {
+    let text: String
+    let color: Color
+
+    var body: some View {
+        Text(text)
+            .font(Theme.Typography.allCaps(9))
+            .tracking(0.5)
+            .foregroundColor(color)
+            .padding(.horizontal, Theme.Spacing.sm + 2)
+            .padding(.vertical, 3)
+            .background(color.opacity(0.1))
+            .clipShape(Capsule())
     }
 }

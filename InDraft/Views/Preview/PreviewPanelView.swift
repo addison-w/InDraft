@@ -9,12 +9,11 @@ struct PreviewPanelView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Title bar
             HStack {
                 Spacer()
 
                 Text("InDraft")
-                    .font(.system(size: 16, design: .serif))
+                    .font(Theme.Typography.sectionTitle(16))
                     .italic()
                     .foregroundColor(Theme.Colors.textPrimary)
 
@@ -81,7 +80,10 @@ struct PreviewPanelView: View {
                 .padding(Theme.Spacing.md)
                 .background(Theme.Colors.cardBackground)
                 .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
-                .shadow(color: Color(hex: "2F3430").opacity(0.03), radius: 8, y: 2)
+                .overlay(
+                    RoundedRectangle(cornerRadius: Theme.Radius.sm)
+                        .stroke(Theme.Colors.cardBorder, lineWidth: 1)
+                )
             }
             .padding(.horizontal, Theme.Spacing.lg)
 
@@ -135,6 +137,6 @@ struct PreviewPanelView: View {
             RoundedRectangle(cornerRadius: Theme.Radius.lg)
                 .stroke(Theme.Colors.cardBorder, lineWidth: 1)
         )
-        .shadow(color: Color(hex: "2F3430").opacity(0.04), radius: 16, y: 6)
+        .shadow(color: Theme.Colors.textPrimary.opacity(0.06), radius: 16, y: 6)
     }
 }

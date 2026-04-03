@@ -41,7 +41,10 @@ struct HistoryRecordDetailView: View {
                             .padding(Theme.Spacing.md)
                             .background(Theme.Colors.cardBackground)
                             .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
-                            .shadow(color: Color(hex: "2F3430").opacity(0.03), radius: 8, y: 2)
+                            .overlay(
+                            RoundedRectangle(cornerRadius: Theme.Radius.sm)
+                                .stroke(Theme.Colors.cardBorder, lineWidth: 1)
+                        )
                     } else if let errorMessage = record.errorMessage {
                         Text(errorMessage)
                             .font(Theme.Typography.body())

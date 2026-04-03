@@ -7,8 +7,7 @@ struct GeneralSettingsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: Theme.Spacing.xl) {
                 Text("General")
-                    .font(.system(size: 28, design: .serif))
-                    .fontWeight(.medium)
+                    .font(Theme.Typography.pageTitle())
                     .foregroundColor(Theme.Colors.textPrimary)
 
                 VStack(alignment: .leading, spacing: 0) {
@@ -19,13 +18,7 @@ struct GeneralSettingsView: View {
                     )
                     .padding(Theme.Spacing.xl)
                 }
-                .background(Theme.Colors.cardBackground)
-                .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.md))
-                .overlay(
-                    RoundedRectangle(cornerRadius: Theme.Radius.md)
-                        .stroke(Theme.Colors.cardBorder, lineWidth: 1)
-                )
-                .shadow(color: Color(hex: "2F3430").opacity(0.03), radius: 8, y: 2)
+                .cardStyle()
 
                 Spacer()
             }

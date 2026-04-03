@@ -43,8 +43,7 @@ struct ActionsSettingsView: View {
     private var headerRow: some View {
         HStack(alignment: .top) {
             Text("Actions")
-                .font(.system(size: 28, design: .serif))
-                .fontWeight(.medium)
+                .font(Theme.Typography.pageTitle())
                 .foregroundColor(Theme.Colors.textPrimary)
 
             Spacer()
@@ -222,7 +221,7 @@ struct ActionsSettingsView: View {
         switch behavior {
         case .replace: return Theme.Colors.badgeBackground
         case .preview: return Theme.Colors.accent.opacity(0.15)
-        case .clipboard: return Theme.Colors.warning.opacity(0.15)
+        case .clipboard: return Theme.Colors.statusAmber.opacity(0.15)
         }
     }
 

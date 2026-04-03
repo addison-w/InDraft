@@ -8,7 +8,7 @@ struct SampleTransformStepView: View {
     var body: some View {
         VStack(spacing: Theme.Spacing.lg) {
             Text("Sample Transform")
-                .font(Theme.Typography.headline())
+                .font(Theme.Typography.pageTitle())
                 .foregroundColor(Theme.Colors.textPrimary)
 
             Text("Try a sample transformation to see InDraft in action.")

@@ -11,8 +11,7 @@ struct ProvidersSettingsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: Theme.Spacing.xl) {
                 Text("Providers")
-                    .font(.system(size: 28, design: .serif))
-                    .fontWeight(.medium)
+                    .font(Theme.Typography.pageTitle())
                     .foregroundColor(Theme.Colors.textPrimary)
 
                 ForEach(providers) { provider in
@@ -64,14 +63,7 @@ struct ProvidersSettingsView: View {
                             .foregroundColor(Theme.Colors.textPrimary)
 
                         if provider.isActive {
-                            Text("ACTIVE")
-                                .font(Theme.Typography.allCaps(9))
-                                .tracking(0.5)
-                                .foregroundColor(Color(hex: "3A7D44"))
-                                .padding(.horizontal, Theme.Spacing.sm)
-                                .padding(.vertical, 2)
-                                .background(Color(hex: "3A7D44").opacity(0.1))
-                                .clipShape(Capsule())
+                            StatusPill(text: "ACTIVE", color: Theme.Colors.statusGreen)
                         }
 
                         statusBadge(provider)
@@ -123,23 +115,17 @@ struct ProvidersSettingsView: View {
             }
         }
         .padding(Theme.Spacing.xl)
-        .background(Theme.Colors.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.md))
-        .overlay(
-            RoundedRectangle(cornerRadius: Theme.Radius.md)
-                .stroke(Theme.Colors.cardBorder, lineWidth: 1)
-        )
-        .shadow(color: Color(hex: "2F3430").opacity(0.03), radius: 8, y: 2)
+        .cardStyle()
     }
 
     private func providerDotColor(_ provider: Provider) -> Color {
         if provider.isActive {
-            return Color(hex: "3A7D44") // green
+            return Theme.Colors.statusGreen
         }
         switch provider.lastTestStatus {
-        case .success: return Color(hex: "3A7D44")
+        case .success: return Theme.Colors.statusGreen
         case .failed: return Theme.Colors.error
-        case .untested: return Color(hex: "C4930A") // amber
+        case .untested: return Theme.Colors.statusAmber
         }
     }
 
@@ -147,32 +133,11 @@ struct ProvidersSettingsView: View {
     private func statusBadge(_ provider: Provider) -> some View {
         switch provider.lastTestStatus {
         case .success:
-            Text("CONNECTED")
-                .font(Theme.Typography.allCaps(9))
-                .tracking(0.5)
-                .foregroundColor(Color(hex: "4A7FB5"))
-                .padding(.horizontal, Theme.Spacing.sm)
-                .padding(.vertical, 2)
-                .background(Color(hex: "4A7FB5").opacity(0.1))
-                .clipShape(Capsule())
+            StatusPill(text: "CONNECTED", color: Theme.Colors.statusBlue)
         case .failed:
-            Text("FAILED")
-                .font(Theme.Typography.allCaps(9))
-                .tracking(0.5)
-                .foregroundColor(Theme.Colors.error)
-                .padding(.horizontal, Theme.Spacing.sm)
-                .padding(.vertical, 2)
-                .background(Theme.Colors.error.opacity(0.1))
-                .clipShape(Capsule())
+            StatusPill(text: "FAILED", color: Theme.Colors.error)
         case .untested:
-            Text("UNTESTED")
-                .font(Theme.Typography.allCaps(9))
-                .tracking(0.5)
-                .foregroundColor(Color(hex: "C4930A"))
-                .padding(.horizontal, Theme.Spacing.sm)
-                .padding(.vertical, 2)
-                .background(Color(hex: "C4930A").opacity(0.1))
-                .clipShape(Capsule())
+            StatusPill(text: "UNTESTED", color: Theme.Colors.statusAmber)
         }
     }
 

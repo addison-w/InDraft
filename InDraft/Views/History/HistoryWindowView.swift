@@ -57,12 +57,8 @@ struct HistoryWindowView: View {
                                 record: record,
                                 isExpanded: expandedRecordID == record.id,
                                 onToggle: {
-                                    withAnimation(.easeInOut(duration: 0.2)) {
-                                        if expandedRecordID == record.id {
-                                            expandedRecordID = nil
-                                        } else {
-                                            expandedRecordID = record.id
-                                        }
+                                    withAnimation(Theme.Motion.standard) {
+                                        expandedRecordID = expandedRecordID == record.id ? nil : record.id
                                     }
                                 }
                             )
@@ -125,14 +121,7 @@ struct HistoryWindowView: View {
 
             Spacer()
 
-            // Retention badge
-            Text("\(retentionDays) days")
-                .font(Theme.Typography.caption())
-                .foregroundColor(Theme.Colors.accent)
-                .padding(.horizontal, Theme.Spacing.sm)
-                .padding(.vertical, 2)
-                .background(Theme.Colors.accentContainer.opacity(0.5))
-                .clipShape(Capsule())
+            StatusPill(text: "\(retentionDays) days", color: Theme.Colors.accent)
 
             // Clear all
             Button {

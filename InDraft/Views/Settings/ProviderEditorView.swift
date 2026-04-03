@@ -24,7 +24,7 @@ struct ProviderEditorView: View {
     var body: some View {
         VStack(spacing: 0) {
             Text(isNew ? "Add Provider" : "Edit Provider")
-                .font(Theme.Typography.sectionTitle(18))
+                .font(Theme.Typography.sectionTitle())
                 .foregroundColor(Theme.Colors.textPrimary)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, Theme.Spacing.lg)
@@ -36,28 +36,12 @@ struct ProviderEditorView: View {
                 VStack(alignment: .leading, spacing: Theme.Spacing.xl) {
                     fieldSection("DISPLAY NAME") {
                         TextField("e.g. OpenAI", text: $displayName)
-                            .textFieldStyle(.plain)
-                            .font(Theme.Typography.body(14))
-                            .padding(Theme.Spacing.md)
-                            .background(Theme.Colors.cardBackground)
-                            .cornerRadius(Theme.Radius.sm)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: Theme.Radius.sm)
-                                    .stroke(Theme.Colors.cardBorder, lineWidth: 1)
-                            )
+                            .inputFieldStyle()
                     }
 
                     fieldSection("BASE URL") {
                         TextField(Constants.Defaults.defaultBaseURL, text: $baseURL)
-                            .textFieldStyle(.plain)
-                            .font(Theme.Typography.body(14))
-                            .padding(Theme.Spacing.md)
-                            .background(Theme.Colors.cardBackground)
-                            .cornerRadius(Theme.Radius.sm)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: Theme.Radius.sm)
-                                    .stroke(Theme.Colors.cardBorder, lineWidth: 1)
-                            )
+                            .inputFieldStyle()
                     }
 
                     fieldSection("API KEY") {
@@ -72,19 +56,15 @@ struct ProviderEditorView: View {
                             .textFieldStyle(.plain)
                             .font(Theme.Typography.mono(13))
                             .padding(Theme.Spacing.md)
-                            .background(Theme.Colors.cardBackground)
-                            .cornerRadius(Theme.Radius.sm)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: Theme.Radius.sm)
-                                    .stroke(Theme.Colors.cardBorder, lineWidth: 1)
-                            )
+                            .background(Theme.Colors.surfaceContainerLow)
+                            .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.md))
 
                             Button {
                                 showAPIKey.toggle()
                             } label: {
                                 Image(systemName: showAPIKey ? "eye.slash" : "eye")
                                     .font(.system(size: 12))
-                                    .foregroundColor(Theme.Colors.textSecondary)
+                                    .foregroundColor(Theme.Colors.textTertiary)
                             }
                             .buttonStyle(.plain)
                         }
@@ -92,15 +72,7 @@ struct ProviderEditorView: View {
 
                     fieldSection("DEFAULT MODEL") {
                         TextField("e.g. gpt-4o", text: $defaultModel)
-                            .textFieldStyle(.plain)
-                            .font(Theme.Typography.body(14))
-                            .padding(Theme.Spacing.md)
-                            .background(Theme.Colors.cardBackground)
-                            .cornerRadius(Theme.Radius.sm)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: Theme.Radius.sm)
-                                    .stroke(Theme.Colors.cardBorder, lineWidth: 1)
-                            )
+                            .inputFieldStyle()
                     }
 
                     HStack {

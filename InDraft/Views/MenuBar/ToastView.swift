@@ -77,6 +77,6 @@ struct ToastView: View {
             RoundedRectangle(cornerRadius: Theme.Radius.md)
                 .stroke(Theme.Colors.cardBorder, lineWidth: 1)
         )
-        .shadow(color: .black.opacity(0.1), radius: 8, y: 4)
+        .shadow(color: Theme.Colors.textPrimary.opacity(0.08), radius: 8, y: 4)
     }
 }

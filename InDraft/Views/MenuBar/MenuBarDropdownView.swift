@@ -50,6 +50,12 @@ struct MenuBarDropdownView: View {
                 Text(providerDisplayName)
                     .font(Theme.Typography.caption(11))
                     .foregroundColor(Theme.Colors.textTertiary)
+
+                if let model = activeProviders.first?.defaultModel, !model.isEmpty {
+                    Text(model)
+                        .font(Theme.Typography.mono(10))
+                        .foregroundColor(Theme.Colors.textTertiary)
+                }
             }
 
             Spacer()

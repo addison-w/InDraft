@@ -1,6 +1,7 @@
 import Cocoa
 import SwiftUI
 import SwiftData
+import Combine
 
 /// Manages the menu bar status item and custom popover dropdown.
 /// Uses NSStatusItem + NSPopover instead of SwiftUI MenuBarExtra
@@ -12,11 +13,14 @@ final class MenuBarController: NSObject {
     private var eventMonitor: Any?
     private var appState: AppState?
     private var modelContainer: ModelContainer?
+    private var appCoordinator: AppCoordinator?
+    private var statusCancellable: AnyCancellable?
 
-    func setup(appState: AppState, modelContainer: ModelContainer) {
+    func setup(appState: AppState, modelContainer: ModelContainer, appCoordinator: AppCoordinator) {
         NSLog("[InDraft] MenuBarController.setup called")
         self.appState = appState
         self.modelContainer = modelContainer
+        self.appCoordinator = appCoordinator
 
         // Create status item
         let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
@@ -33,7 +37,7 @@ final class MenuBarController: NSObject {
         popover.animates = true
         popover.contentSize = NSSize(width: 260, height: 340)
 
-        let dropdownView = MenuBarDropdownView()
+        let dropdownView = MenuBarDropdownView(coordinator: appCoordinator)
             .environmentObject(appState)
             .modelContainer(modelContainer)
 
@@ -48,6 +52,11 @@ final class MenuBarController: NSObject {
             appState: appState,
             modelContainer: modelContainer
         )
+
+        // Observe status changes to update the menu bar icon
+        statusCancellable = appState.$status.sink { [weak self] status in
+            self?.updateIcon(for: status)
+        }
     }
 
     @objc private func togglePopover() {

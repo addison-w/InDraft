@@ -6,6 +6,8 @@ struct MenuBarDropdownView: View {
     @Query(sort: \Action.sortOrder) private var actions: [Action]
     @Environment(\.dismiss) private var dismiss
 
+    let coordinator: AppCoordinator
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             // MARK: - Header
@@ -96,6 +98,7 @@ struct MenuBarDropdownView: View {
                 hotkey: action.hasHotkey ? hotkeyBadgeText(action) : nil
             ) {
                 dismiss()
+                coordinator.triggerAction(action)
             }
         }
     }
@@ -110,6 +113,7 @@ struct MenuBarDropdownView: View {
                 hotkey: "⌃R"
             ) {
                 dismiss()
+                coordinator.retryLast()
             }
 
             MenuBarRowView(

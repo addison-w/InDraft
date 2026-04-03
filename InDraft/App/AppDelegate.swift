@@ -5,6 +5,8 @@ import SwiftData
 final class AppDelegate: NSObject, NSApplicationDelegate {
     let menuBarController = MenuBarController()
     let appState = AppState()
+    let toastManager = ToastManager()
+    private var appCoordinator: AppCoordinator?
 
     lazy var sharedModelContainer: ModelContainer = {
         let schema = Schema([
@@ -28,10 +30,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             NSApp.setActivationPolicy(.accessory)
         }
 
+        // Set up the app coordinator (hotkeys, text transformation, etc.)
+        let coordinator = AppCoordinator(appState: appState, toastManager: toastManager)
+        coordinator.setup(modelContainer: sharedModelContainer)
+        self.appCoordinator = coordinator
+
         // Set up the custom menu bar popover
         menuBarController.setup(
             appState: appState,
-            modelContainer: sharedModelContainer
+            modelContainer: sharedModelContainer,
+            appCoordinator: coordinator
         )
 
         NSLog("[InDraft] Menu bar setup complete")

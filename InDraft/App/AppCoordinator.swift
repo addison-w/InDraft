@@ -48,7 +48,9 @@ final class AppCoordinator: ObservableObject {
         self.hotkeyService = hotkeyService
         hotkeyService.onHotkeyPressed = { [weak self] actionID in
             Task { @MainActor in
-                self?.handleHotkeyPress(actionID: actionID, context: context)
+                guard let self = self, let container = self.modelContainer else { return }
+                let freshContext = ModelContext(container)
+                self.handleHotkeyPress(actionID: actionID, context: freshContext)
             }
         }
 
@@ -176,6 +178,15 @@ final class AppCoordinator: ObservableObject {
     }
 
     // MARK: - Hotkey Registration
+
+    /// Re-register all hotkeys from current database state.
+    /// Call this after any action mutation (create, delete, edit hotkey, toggle enable).
+    func refreshHotkeys() {
+        guard let modelContainer = modelContainer else { return }
+        let context = modelContainer.mainContext
+        try? context.save()
+        registerAllHotkeys(context: context)
+    }
 
     func registerAllHotkeys(context: ModelContext) {
         hotkeyService?.deregisterAll()

@@ -53,7 +53,8 @@ final class MenuBarController: NSObject {
         // Configure settings window controller
         SettingsWindowController.shared.configure(
             appState: appState,
-            modelContainer: modelContainer
+            modelContainer: modelContainer,
+            appCoordinator: appCoordinator
         )
 
         // Observe status changes to update the menu bar icon

@@ -3,6 +3,7 @@ import SwiftData
 
 struct ActionsSettingsView: View {
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var appCoordinator: AppCoordinator
     @Query(sort: \Action.sortOrder) private var actions: [Action]
     @State private var expandedActionID: UUID?
     @State private var isReordering = false
@@ -136,6 +137,7 @@ struct ActionsSettingsView: View {
                             set: { newValue in
                                 action.enabled = newValue
                                 action.updatedAt = Date()
+                                appCoordinator.refreshHotkeys()
                             }
                         ))
                         .toggleStyle(.switch)
@@ -336,10 +338,12 @@ struct ActionsSettingsView: View {
             sortOrder: maxOrder + 1
         )
         modelContext.insert(newAction)
+        appCoordinator.refreshHotkeys()
     }
 
     private func deleteAction(_ action: Action) {
         modelContext.delete(action)
+        appCoordinator.refreshHotkeys()
     }
 
     private func createAction() {
@@ -361,6 +365,7 @@ struct ActionsSettingsView: View {
             sortOrder: maxOrder + 1
         )
         modelContext.insert(action)
+        appCoordinator.refreshHotkeys()
 
         withAnimation(Theme.Motion.standard) {
             resetNewAction()
@@ -402,6 +407,7 @@ struct ActionsSettingsView: View {
             )
             modelContext.insert(action)
         }
+        appCoordinator.refreshHotkeys()
     }
 }
 
@@ -409,6 +415,7 @@ struct ActionsSettingsView: View {
 
 struct ActionInlineEditor: View {
     @Bindable var action: Action
+    @EnvironmentObject private var appCoordinator: AppCoordinator
     @Query(sort: \Provider.displayName) private var providers: [Provider]
 
     let onDelete: () -> Void
@@ -444,11 +451,18 @@ struct ActionInlineEditor: View {
                 HotkeyRecorderView(
                     keyCode: Binding(
                         get: { action.hotkeyKeyCode },
-                        set: { action.hotkeyKeyCode = $0; action.updatedAt = Date() }
+                        set: {
+                            action.hotkeyKeyCode = $0
+                            action.updatedAt = Date()
+                        }
                     ),
                     modifiers: Binding(
                         get: { action.hotkeyModifiers },
-                        set: { action.hotkeyModifiers = $0; action.updatedAt = Date() }
+                        set: {
+                            action.hotkeyModifiers = $0
+                            action.updatedAt = Date()
+                            appCoordinator.refreshHotkeys()
+                        }
                     )
                 )
             }

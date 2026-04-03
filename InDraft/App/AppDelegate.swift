@@ -34,7 +34,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         self.appCoordinator = coordinator
 
         // Configure window controllers
-        SettingsWindowController.shared.configure(appState: appState, modelContainer: sharedModelContainer)
+        SettingsWindowController.shared.configure(appState: appState, modelContainer: sharedModelContainer, appCoordinator: coordinator)
         HistoryWindowController.shared.configure(appState: appState, modelContainer: sharedModelContainer)
 
         // Set up the custom menu bar popover

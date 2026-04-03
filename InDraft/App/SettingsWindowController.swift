@@ -12,10 +12,16 @@ final class SettingsWindowController {
     private var window: NSWindow?
     private var appState: AppState?
     private var modelContainer: ModelContainer?
+    private var appCoordinator: AppCoordinator?
 
-    func configure(appState: AppState, modelContainer: ModelContainer) {
+    func configure(appState: AppState, modelContainer: ModelContainer, appCoordinator: AppCoordinator) {
         self.appState = appState
         self.modelContainer = modelContainer
+        self.appCoordinator = appCoordinator
+    }
+
+    private func refreshHotkeys() {
+        appCoordinator?.refreshHotkeys()
     }
 
     func showSettings() {
@@ -35,10 +41,11 @@ final class SettingsWindowController {
             appState = AppState()
         }
 
-        guard let appState = appState, let modelContainer = modelContainer else { return }
+        guard let appState = appState, let modelContainer = modelContainer, let appCoordinator = appCoordinator else { return }
 
         let settingsView = SettingsView()
             .environmentObject(appState)
+            .environmentObject(appCoordinator)
             .modelContainer(modelContainer)
 
         let hostingController = NSHostingController(rootView: settingsView)
@@ -73,6 +80,7 @@ final class SettingsWindowController {
             queue: .main
         ) { [weak self] _ in
             Task { @MainActor in
+                self?.refreshHotkeys()
                 self?.window = nil
             }
         }

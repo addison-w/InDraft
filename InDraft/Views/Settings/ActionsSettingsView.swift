@@ -140,9 +140,8 @@ struct ActionsSettingsView: View {
                                 appCoordinator.refreshHotkeys()
                             }
                         ))
-                        .toggleStyle(.switch)
+                        .toggleStyle(WabiSabiToggleStyle())
                         .labelsHidden()
-                        .controlSize(.small)
 
                         Image(systemName: "chevron.right")
                             .font(.system(size: 10, weight: .medium))
@@ -240,12 +239,10 @@ struct ActionsSettingsView: View {
             }
 
             inlineFieldSection("OUTPUT") {
-                Picker("", selection: $newOutputBehavior) {
-                    ForEach(OutputBehavior.allCases, id: \.self) { behavior in
-                        Text(behavior.rawValue.capitalized).tag(behavior)
-                    }
-                }
-                .pickerStyle(.segmented)
+                InkSegmentPicker(
+                    options: OutputBehavior.allCases.map { ($0.rawValue.capitalized, $0) },
+                    selection: $newOutputBehavior
+                )
             }
 
             HStack {
@@ -469,28 +466,25 @@ struct ActionInlineEditor: View {
 
             // Output behavior
             fieldSection("OUTPUT") {
-                Picker("", selection: Binding(
-                    get: { action.outputBehavior },
-                    set: { action.outputBehavior = $0; action.updatedAt = Date() }
-                )) {
-                    ForEach(OutputBehavior.allCases, id: \.self) { behavior in
-                        Text(behavior.rawValue.capitalized).tag(behavior)
-                    }
-                }
-                .pickerStyle(.segmented)
+                InkSegmentPicker(
+                    options: OutputBehavior.allCases.map { ($0.rawValue.capitalized, $0) },
+                    selection: Binding(
+                        get: { action.outputBehavior },
+                        set: { action.outputBehavior = $0; action.updatedAt = Date() }
+                    )
+                )
             }
 
             // Provider
             fieldSection("PROVIDER") {
                 VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-                    Picker("", selection: Binding(
-                        get: { action.providerMode },
-                        set: { action.providerMode = $0; action.updatedAt = Date() }
-                    )) {
-                        Text("Use Active").tag(ProviderMode.active)
-                        Text("Fixed Provider").tag(ProviderMode.fixed)
-                    }
-                    .pickerStyle(.segmented)
+                    InkSegmentPicker(
+                        options: [("Use Active", ProviderMode.active), ("Fixed Provider", ProviderMode.fixed)],
+                        selection: Binding(
+                            get: { action.providerMode },
+                            set: { action.providerMode = $0; action.updatedAt = Date() }
+                        )
+                    )
 
                     if action.providerMode == .fixed {
                         Picker("Provider", selection: Binding(

@@ -8,37 +8,49 @@ struct HotkeyRecorderView: View {
     @State private var localMonitor: Any?
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: Theme.Spacing.sm) {
             Text(displayString)
+                .font(Theme.Typography.mono(11))
+                .foregroundColor(isRecording ? Theme.Colors.textTertiary : Theme.Colors.textPrimary)
                 .frame(minWidth: 80)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(isRecording ? Color.accentColor.opacity(0.15) : Color.secondary.opacity(0.1))
-                .cornerRadius(6)
+                .padding(.horizontal, Theme.Spacing.sm)
+                .padding(.vertical, Theme.Spacing.xs + 1)
+                .background(Theme.Colors.surfaceContainerLow)
+                .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 6)
-                        .stroke(isRecording ? Color.accentColor : Color.secondary.opacity(0.3), lineWidth: 1)
+                    RoundedRectangle(cornerRadius: Theme.Radius.sm)
+                        .stroke(isRecording ? Theme.Colors.textTertiary : Theme.Colors.divider, lineWidth: 1)
                 )
 
             if isRecording {
-                Button("Cancel") {
+                Button {
                     stopRecording()
+                } label: {
+                    Text("Cancel")
+                        .font(Theme.Typography.caption(11))
+                        .foregroundColor(Theme.Colors.textTertiary)
                 }
                 .buttonStyle(.plain)
-                .foregroundColor(.secondary)
             } else {
-                Button("Record") {
+                Button {
                     startRecording()
+                } label: {
+                    Text("Record")
+                        .font(Theme.Typography.caption(11))
+                        .foregroundColor(Theme.Colors.textSecondary)
                 }
                 .buttonStyle(.plain)
 
                 if keyCode != nil {
-                    Button("Clear") {
+                    Button {
                         keyCode = nil
                         modifiers = nil
+                    } label: {
+                        Text("Clear")
+                            .font(Theme.Typography.caption(11))
+                            .foregroundColor(Theme.Colors.textTertiary)
                     }
                     .buttonStyle(.plain)
-                    .foregroundColor(.secondary)
                 }
             }
         }

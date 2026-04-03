@@ -252,6 +252,70 @@ extension View {
     }
 }
 
+// MARK: - Wabi-Sabi Toggle Style
+
+struct WabiSabiToggleStyle: ToggleStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
+            configuration.label
+            ZStack(alignment: configuration.isOn ? .trailing : .leading) {
+                RoundedRectangle(cornerRadius: 7)
+                    .fill(configuration.isOn ? Theme.Colors.textSecondary : Theme.Colors.surfaceContainerHigh)
+                    .frame(width: 28, height: 14)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 7)
+                            .stroke(Theme.Colors.divider, lineWidth: 1)
+                    )
+
+                Circle()
+                    .fill(configuration.isOn ? Theme.Colors.cardBackground : Theme.Colors.textTertiary)
+                    .frame(width: 12, height: 12)
+                    .padding(.horizontal, 1)
+                    .shadow(color: Color.black.opacity(0.06), radius: 1, y: 1)
+            }
+            .animation(Theme.Motion.quick, value: configuration.isOn)
+            .onTapGesture {
+                configuration.isOn.toggle()
+            }
+        }
+    }
+}
+
+// MARK: - Ink Segment Picker
+
+struct InkSegmentPicker<T: Hashable>: View {
+    let options: [(label: String, value: T)]
+    @Binding var selection: T
+
+    var body: some View {
+        HStack(spacing: Theme.Spacing.sm) {
+            ForEach(Array(options.enumerated()), id: \.offset) { _, option in
+                let isSelected = selection == option.value
+
+                Button {
+                    withAnimation(Theme.Motion.quick) {
+                        selection = option.value
+                    }
+                } label: {
+                    Text(option.label)
+                        .font(Theme.Typography.label(11))
+                        .foregroundColor(isSelected ? Theme.Colors.textPrimary : Theme.Colors.textTertiary)
+                        .padding(.horizontal, Theme.Spacing.md)
+                        .padding(.vertical, Theme.Spacing.xs + 2)
+                        .background(isSelected ? Theme.Colors.surfaceContainerLow : Color.clear)
+                        .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: Theme.Radius.sm)
+                                .stroke(isSelected ? Theme.Colors.cardBorder : Color.clear, lineWidth: 1)
+                        )
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+}
+
 // MARK: - Reusable Status Badge
 
 struct StatusPill: View {

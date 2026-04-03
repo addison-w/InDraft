@@ -35,6 +35,13 @@ struct DiagnosticsSettingsView: View {
                                 .foregroundColor(Theme.Colors.textSecondary)
                         }
                         Spacer()
+                        if !accessibilityGranted {
+                            Button("Open System Settings") {
+                                AccessibilityService.openAccessibilitySettings()
+                            }
+                            .font(Theme.Typography.caption(11))
+                            .buttonStyle(SecondaryButtonStyle())
+                        }
                         statusBadge(
                             text: accessibilityGranted ? "GRANTED" : "NOT GRANTED",
                             color: accessibilityGranted ? Color(hex: "3A7D44") : Color(hex: "C0392B")

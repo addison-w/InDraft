@@ -76,7 +76,7 @@ final class AppCoordinator: ObservableObject {
     private func handleHotkeyPress(actionID: UUID, context: ModelContext) {
         // Check accessibility
         guard AccessibilityService.isAccessibilityGranted else {
-            toastManager.show(.error("Accessibility permission required — check Settings > Diagnostics"))
+            toastManager.show(.error("Accessibility permission required — use the menu bar to open Settings"))
             return
         }
 

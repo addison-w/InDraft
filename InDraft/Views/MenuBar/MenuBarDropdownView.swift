@@ -90,9 +90,18 @@ struct MenuBarDropdownView: View {
                 .badgeStyle(color: Color(hex: "FDEBEC"))
                 .foregroundColor(Color(hex: "9F2F2D"))
         case .permissionRequired:
-            Text("needs access")
-                .badgeStyle(color: Color(hex: "FBF3DB"))
+            HStack(spacing: Theme.Spacing.sm) {
+                Text("needs access")
+                    .badgeStyle(color: Color(hex: "FBF3DB"))
+                    .foregroundColor(Color(hex: "956400"))
+                Button("Open Settings") {
+                    AccessibilityService.openAccessibilitySettings()
+                }
+                .font(Theme.Typography.caption(11))
+                .buttonStyle(.plain)
                 .foregroundColor(Color(hex: "956400"))
+                .underline()
+            }
         }
     }
 

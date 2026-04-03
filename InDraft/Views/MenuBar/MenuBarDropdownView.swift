@@ -13,6 +13,11 @@ struct MenuBarDropdownView: View {
         VStack(alignment: .leading, spacing: 0) {
             headerSection
 
+            // Permission banner — shown below header, above divider
+            if appState.status == .permissionRequired {
+                permissionBanner
+            }
+
             thematicDivider
 
             if !actions.isEmpty {
@@ -26,33 +31,62 @@ struct MenuBarDropdownView: View {
 
             quitSection
         }
-        .padding(.vertical, Theme.Spacing.xs + 2)
+        .padding(.vertical, Theme.Spacing.sm)
         .background(Theme.Colors.background)
-        .frame(width: 248)
+        .frame(width: 240)
     }
 
     // MARK: - Header
 
     private var headerSection: some View {
-        VStack(alignment: .leading, spacing: 3) {
-            HStack {
+        HStack(alignment: .center) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text("INDRAFT")
                     .font(Theme.Typography.allCaps(10))
                     .fontWeight(.semibold)
                     .foregroundColor(Theme.Colors.textPrimary)
                     .tracking(1.5)
-                Spacer()
-                statusBadge
-            }
 
-            HStack(spacing: Theme.Spacing.xs) {
                 Text(providerDisplayName)
                     .font(Theme.Typography.caption(11))
                     .foregroundColor(Theme.Colors.textTertiary)
             }
+
+            Spacer()
+
+            compactStatusBadge
         }
-        .padding(.horizontal, Theme.Spacing.md + 2)
+        .padding(.horizontal, Theme.Spacing.lg)
         .padding(.vertical, Theme.Spacing.sm + 2)
+    }
+
+    // MARK: - Permission Banner
+
+    private var permissionBanner: some View {
+        Button {
+            AccessibilityService.openAccessibilitySettings()
+        } label: {
+            HStack(spacing: Theme.Spacing.sm) {
+                Circle()
+                    .fill(Theme.Colors.statusAmber)
+                    .frame(width: 6, height: 6)
+
+                Text("Accessibility access required")
+                    .font(Theme.Typography.caption(11))
+                    .foregroundColor(Theme.Colors.statusAmberText)
+
+                Spacer()
+
+                Text("Open Settings")
+                    .font(Theme.Typography.caption(11))
+                    .foregroundColor(Theme.Colors.statusAmberText)
+                    .underline()
+            }
+            .padding(.horizontal, Theme.Spacing.lg)
+            .padding(.vertical, Theme.Spacing.sm)
+            .background(Theme.Colors.statusAmberBg)
+        }
+        .buttonStyle(.plain)
     }
 
     private var providerDisplayName: String {
@@ -63,9 +97,21 @@ struct MenuBarDropdownView: View {
     }
 
     @ViewBuilder
-    private var statusBadge: some View {
+    private var compactStatusBadge: some View {
         switch appState.status {
         case .idle:
+            if activeProviders.first?.lastTestStatus == .success {
+                HStack(spacing: Theme.Spacing.xs) {
+                    Circle()
+                        .fill(Theme.Colors.statusGreen)
+                        .frame(width: 6, height: 6)
+                    Text("ready")
+                        .font(Theme.Typography.allCaps(9))
+                        .foregroundColor(Theme.Colors.statusGreenText)
+                        .tracking(0.5)
+                }
+            }
+        case .permissionRequired:
             EmptyView()
         case .processing:
             ProcessingBadge()
@@ -77,19 +123,6 @@ struct MenuBarDropdownView: View {
             Text("error")
                 .badgeStyle(color: Theme.Colors.statusRedBg)
                 .foregroundColor(Theme.Colors.statusRed)
-        case .permissionRequired:
-            HStack(spacing: Theme.Spacing.sm) {
-                Text("needs access")
-                    .badgeStyle(color: Theme.Colors.statusAmberBg)
-                    .foregroundColor(Theme.Colors.statusAmberText)
-                Button("Open Settings") {
-                    AccessibilityService.openAccessibilitySettings()
-                }
-                .font(Theme.Typography.caption(11))
-                .buttonStyle(.plain)
-                .foregroundColor(Theme.Colors.statusAmberText)
-                .underline()
-            }
         }
     }
 
@@ -191,11 +224,11 @@ struct MenuBarRowView: View {
         Button {
             action()
         } label: {
-            HStack(spacing: Theme.Spacing.sm) {
+            HStack(spacing: Theme.Spacing.sm + 2) {
                 Image(systemName: icon)
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.system(size: 12, weight: .regular))
                     .foregroundColor(isHovered ? Theme.Colors.textPrimary : Theme.Colors.textTertiary)
-                    .frame(width: 16, alignment: .center)
+                    .frame(width: 18, alignment: .center)
 
                 Text(title)
                     .font(Theme.Typography.body(13))
@@ -207,19 +240,15 @@ struct MenuBarRowView: View {
                     Text(hotkey)
                         .font(Theme.Typography.mono(10))
                         .foregroundColor(Theme.Colors.textTertiary)
-                        .padding(.horizontal, Theme.Spacing.sm)
-                        .padding(.vertical, 2)
-                        .background(Theme.Colors.badgeBackground)
-                        .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
                 }
             }
-            .padding(.horizontal, Theme.Spacing.md + 2)
-            .padding(.vertical, Theme.Spacing.sm)
+            .padding(.horizontal, Theme.Spacing.lg)
+            .padding(.vertical, 7)
             .contentShape(Rectangle())
             .background(
-                RoundedRectangle(cornerRadius: Theme.Radius.sm)
-                    .fill(isHovered ? Theme.Colors.surfaceContainerLow : Color.clear)
-                    .padding(.horizontal, Theme.Spacing.xs)
+                RoundedRectangle(cornerRadius: Theme.Radius.sm + 1)
+                    .fill(isHovered ? Theme.Colors.surfaceContainerHigh.opacity(0.6) : Color.clear)
+                    .padding(.horizontal, Theme.Spacing.sm)
             )
         }
         .buttonStyle(.plain)

@@ -1,4 +1,4 @@
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Menu bar icon state machine
 The menu bar icon SHALL reflect the current app state: idle (default icon), processing (animated spinning icon), success (checkmark, 3s), error (red dot, 10s), permission-required (warning, persistent). The processing state SHALL use an animated icon rather than a static image.
@@ -100,6 +100,8 @@ When accessibility permission is not granted, the app SHALL provide a direct act
 - **WHEN** the user opens the menu bar dropdown
 - **THEN** only actions with `enabled == true` SHALL be listed
 - **AND** each action SHALL display its assigned hotkey badge if one exists
+
+## ADDED Requirements
 
 ### Requirement: Dropdown processing status indicator
 The menu bar dropdown SHALL display a contextual processing indicator in the header section when a transformation is in progress.

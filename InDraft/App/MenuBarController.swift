@@ -15,8 +15,11 @@ final class MenuBarController: NSObject {
     private var modelContainer: ModelContainer?
     private var appCoordinator: AppCoordinator?
     private var statusCancellable: AnyCancellable?
+    private var toastOverlay: ToastOverlayController?
+    private var processingAnimationTimer: Timer?
+    private var processingAnimationFrame: Int = 0
 
-    func setup(appState: AppState, modelContainer: ModelContainer, appCoordinator: AppCoordinator) {
+    func setup(appState: AppState, modelContainer: ModelContainer, appCoordinator: AppCoordinator, toastManager: ToastManager) {
         NSLog("[InDraft] MenuBarController.setup called")
         self.appState = appState
         self.modelContainer = modelContainer
@@ -57,6 +60,9 @@ final class MenuBarController: NSObject {
         statusCancellable = appState.$status.sink { [weak self] status in
             self?.updateIcon(for: status)
         }
+
+        // Set up toast overlay near the status item
+        self.toastOverlay = ToastOverlayController(toastManager: toastManager, statusItem: statusItem)
     }
 
     @objc private func togglePopover() {
@@ -84,11 +90,17 @@ final class MenuBarController: NSObject {
 
     func updateIcon(for status: AppStatus) {
         guard let button = statusItem?.button else { return }
+
+        // Stop any running animation when leaving processing state
+        if status != .processing {
+            stopProcessingAnimation()
+        }
+
         switch status {
         case .idle:
             button.image = NSImage(systemSymbolName: "pencil.line", accessibilityDescription: "InDraft")
         case .processing:
-            button.image = NSImage(systemSymbolName: "arrow.trianglehead.2.counterclockwise", accessibilityDescription: "Processing")
+            startProcessingAnimation()
         case .success:
             button.image = NSImage(systemSymbolName: "checkmark", accessibilityDescription: "Success")
         case .error:
@@ -96,5 +108,59 @@ final class MenuBarController: NSObject {
         case .permissionRequired:
             button.image = NSImage(systemSymbolName: "exclamationmark.triangle", accessibilityDescription: "Permission Required")
         }
+    }
+
+    // MARK: - Processing Animation
+
+    private func startProcessingAnimation() {
+        guard processingAnimationTimer == nil else { return }
+        processingAnimationFrame = 0
+        updateProcessingFrame()
+
+        processingAnimationTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in
+            Task { @MainActor in
+                self?.updateProcessingFrame()
+            }
+        }
+    }
+
+    private func stopProcessingAnimation() {
+        processingAnimationTimer?.invalidate()
+        processingAnimationTimer = nil
+        processingAnimationFrame = 0
+    }
+
+    private func updateProcessingFrame() {
+        guard let button = statusItem?.button else { return }
+        let angles: [CGFloat] = [0, 120, 240]
+        let angle = angles[processingAnimationFrame % angles.count]
+        button.image = Self.rotatedSymbol(
+            name: "arrow.trianglehead.2.counterclockwise",
+            degrees: angle,
+            accessibilityDescription: "Processing"
+        )
+        processingAnimationFrame += 1
+    }
+
+    static func rotatedSymbol(name: String, degrees: CGFloat, accessibilityDescription: String) -> NSImage? {
+        guard let original = NSImage(systemSymbolName: name, accessibilityDescription: accessibilityDescription) else {
+            return nil
+        }
+
+        let size = original.size
+        let radians = degrees * .pi / 180
+
+        let newImage = NSImage(size: size)
+        newImage.lockFocus()
+        let transform = NSAffineTransform()
+        transform.translateX(by: size.width / 2, yBy: size.height / 2)
+        transform.rotate(byRadians: radians)
+        transform.translateX(by: -size.width / 2, yBy: -size.height / 2)
+        transform.concat()
+        original.draw(in: NSRect(origin: .zero, size: size))
+        newImage.unlockFocus()
+        newImage.isTemplate = true
+
+        return newImage
     }
 }

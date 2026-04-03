@@ -40,7 +40,8 @@ final class LiveTextReplaceService: TextReplaceServiceProtocol {
         }
 
         // Strategy 2: Clipboard fallback (simulate Cmd+V)
-        if (try? await replaceViaClipboard(text: text)) != nil {
+        let clipboardSucceeded = (try? await replaceViaClipboard(text: text)) ?? false
+        if clipboardSucceeded {
             return .fallbackClipboard
         }
 
@@ -93,11 +94,26 @@ final class LiveTextReplaceService: TextReplaceServiceProtocol {
         guard setResult == .success else {
             throw ReplaceError.replaceFailedAX
         }
+
+        // Verify the write actually took effect by reading back.
+        var verifyValue: AnyObject?
+        let verifyResult = AXUIElementCopyAttributeValue(
+            element,
+            kAXSelectedTextAttribute as CFString,
+            &verifyValue
+        )
+        if verifyResult == .success, let verifyText = verifyValue as? String {
+            // If we can read back and it doesn't match, the write failed silently.
+            if verifyText != text {
+                throw ReplaceError.replaceFailedAX
+            }
+        }
+        // If we can't read back at all, trust the .success from the set call.
     }
 
     // MARK: - Strategy 2: Clipboard Fallback
 
-    func replaceViaClipboard(text: String) async throws {
+    func replaceViaClipboard(text: String) async throws -> Bool {
         let pasteboard = NSPasteboard.general
         let savedContents = saveClipboard(pasteboard)
 
@@ -105,14 +121,44 @@ final class LiveTextReplaceService: TextReplaceServiceProtocol {
         pasteboard.clearContents()
         pasteboard.setString(text, forType: .string)
 
+        // Wait for clipboard to settle before simulating paste.
+        try await Task.sleep(nanoseconds: 50_000_000) // 50ms
+
         // Simulate Cmd+V.
         simulateCmdV()
 
-        // Brief delay for the paste to be processed.
+        // Wait for the paste to be processed by the target app.
         try await Task.sleep(nanoseconds: 100_000_000) // 100ms
 
         // Schedule clipboard restoration after the delay.
         scheduleClipboardRestore(pasteboard, contents: savedContents)
+
+        // Best-effort verification: if we can read back via AX, check the text changed.
+        // If AX isn't available for reading, assume success (can't verify).
+        let systemWide = AXUIElementCreateSystemWide()
+        var focusedAppValue: AnyObject?
+        guard AXUIElementCopyAttributeValue(systemWide, kAXFocusedApplicationAttribute as CFString, &focusedAppValue) == .success,
+              let focusedApp = focusedAppValue else {
+            return true // Can't verify, assume success
+        }
+        let appElement = focusedApp as! AXUIElement // swiftlint:disable:this force_cast
+        var focusedElementValue: AnyObject?
+        guard AXUIElementCopyAttributeValue(appElement, kAXFocusedUIElementAttribute as CFString, &focusedElementValue) == .success,
+              let focusedElement = focusedElementValue else {
+            return true // Can't verify, assume success
+        }
+        let element = focusedElement as! AXUIElement // swiftlint:disable:this force_cast
+
+        // Try to read the value of the focused element to see if paste worked.
+        var valueRef: AnyObject?
+        let valueResult = AXUIElementCopyAttributeValue(element, kAXValueAttribute as CFString, &valueRef)
+        if valueResult == .success, let currentValue = valueRef as? String {
+            // If the pasted text appears in the element's value, consider it successful.
+            return currentValue.contains(text)
+        }
+
+        // Can't read back — assume paste worked (best effort).
+        return true
     }
 
     // MARK: - Clipboard Helpers
@@ -147,6 +193,9 @@ final class LiveTextReplaceService: TextReplaceServiceProtocol {
         let keyDown = CGEvent(keyboardEventSource: source, virtualKey: 0x09, keyDown: true)
         keyDown?.flags = .maskCommand
         keyDown?.post(tap: .cghidEventTap)
+
+        // Brief delay between key-down and key-up for reliable event processing
+        Thread.sleep(forTimeInterval: 0.05) // 50ms
 
         // Key up
         let keyUp = CGEvent(keyboardEventSource: source, virtualKey: 0x09, keyDown: false)

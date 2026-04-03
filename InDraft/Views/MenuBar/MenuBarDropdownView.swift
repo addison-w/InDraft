@@ -78,9 +78,7 @@ struct MenuBarDropdownView: View {
         case .idle:
             EmptyView()
         case .processing:
-            Text("processing")
-                .badgeStyle(color: Theme.Colors.badgeBackground)
-                .foregroundColor(Theme.Colors.textSecondary)
+            ProcessingBadge()
         case .success:
             Text("done")
                 .badgeStyle(color: Color(hex: "EDF3EC"))
@@ -238,5 +236,23 @@ struct MenuBarRowView: View {
         .onHover { hovering in
             isHovered = hovering
         }
+    }
+}
+
+// MARK: - Processing Badge
+
+struct ProcessingBadge: View {
+    @State private var isPulsing = false
+
+    var body: some View {
+        Text("processing")
+            .badgeStyle(color: Theme.Colors.badgeBackground)
+            .foregroundColor(Theme.Colors.textSecondary)
+            .opacity(isPulsing ? 0.5 : 1.0)
+            .animation(
+                .easeInOut(duration: 0.8).repeatForever(autoreverses: true),
+                value: isPulsing
+            )
+            .onAppear { isPulsing = true }
     }
 }

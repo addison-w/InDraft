@@ -52,4 +52,33 @@ final class TextReplaceServiceTests: XCTestCase {
         let service: TextReplaceServiceProtocol = LiveTextReplaceService()
         XCTAssertNotNil(service)
     }
+
+    // MARK: - ReplaceResult Equality
+
+    func testReplaceResultEquality() {
+        XCTAssertEqual(ReplaceResult.replaced, ReplaceResult.replaced)
+        XCTAssertEqual(ReplaceResult.fallbackClipboard, ReplaceResult.fallbackClipboard)
+        XCTAssertEqual(ReplaceResult.copiedToClipboard, ReplaceResult.copiedToClipboard)
+        XCTAssertNotEqual(ReplaceResult.replaced, ReplaceResult.copiedToClipboard)
+        XCTAssertNotEqual(ReplaceResult.replaced, ReplaceResult.fallbackClipboard)
+    }
+
+    // MARK: - ReplaceError Cases
+
+    func testReplaceErrorCases() {
+        let axError = ReplaceError.replaceFailedAX
+        let clipError = ReplaceError.replaceFailedClipboard
+        XCTAssertNotEqual(axError, clipError)
+    }
+
+    // MARK: - Strategy Fallthrough Behavior (via mock)
+
+    func testAllThreeResultsArePossible() async throws {
+        // Verify the mock can return each result type
+        for expected: ReplaceResult in [.replaced, .fallbackClipboard, .copiedToClipboard] {
+            sut.resultToReturn = expected
+            let result = try await sut.replaceSelectedText(with: "test")
+            XCTAssertEqual(result, expected)
+        }
+    }
 }

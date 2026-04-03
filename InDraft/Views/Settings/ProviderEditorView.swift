@@ -196,6 +196,8 @@ struct ProviderEditorView: View {
         }
     }
 
+    private let keychainService = LiveKeychainService()
+
     private func loadProvider() {
         guard let provider else {
             baseURL = Constants.Defaults.defaultBaseURL
@@ -203,8 +205,12 @@ struct ProviderEditorView: View {
         }
         displayName = provider.displayName
         baseURL = provider.baseURL
-        apiKey = provider.apiKeyReference
         defaultModel = provider.defaultModel
+
+        // Load actual API key from Keychain (not the reference ID)
+        if !provider.apiKeyReference.isEmpty {
+            apiKey = keychainService.retrieve(forReference: provider.apiKeyReference) ?? ""
+        }
     }
 
     private func save() {
@@ -212,19 +218,45 @@ struct ProviderEditorView: View {
         guard !trimmedName.isEmpty else { return }
 
         if let provider {
+            // Update existing provider
             provider.displayName = trimmedName
             provider.baseURL = baseURL
-            provider.apiKeyReference = apiKey
             provider.defaultModel = defaultModel
             provider.updatedAt = Date()
+
+            // Update API key in Keychain
+            if !apiKey.isEmpty {
+                if provider.apiKeyReference.isEmpty {
+                    // No reference yet — generate one and store
+                    let reference = "provider-\(UUID().uuidString)"
+                    try? keychainService.store(apiKey: apiKey, forReference: reference)
+                    provider.apiKeyReference = reference
+                } else {
+                    // Update existing Keychain entry
+                    do {
+                        try keychainService.update(apiKey: apiKey, forReference: provider.apiKeyReference)
+                    } catch KeychainError.itemNotFound {
+                        // Entry was lost — re-store it
+                        try? keychainService.store(apiKey: apiKey, forReference: provider.apiKeyReference)
+                    } catch {
+                        // Ignore other errors
+                    }
+                }
+            }
         } else {
+            // Create new provider with Keychain storage
+            let reference = "provider-\(UUID().uuidString)"
             let newProvider = Provider(
                 displayName: trimmedName,
                 baseURL: baseURL,
-                apiKeyReference: apiKey,
+                apiKeyReference: reference,
                 defaultModel: defaultModel
             )
             modelContext.insert(newProvider)
+
+            if !apiKey.isEmpty {
+                try? keychainService.store(apiKey: apiKey, forReference: reference)
+            }
         }
 
         dismiss()
@@ -232,6 +264,10 @@ struct ProviderEditorView: View {
 
     private func deleteProvider() {
         if let provider {
+            // Clean up Keychain entry
+            if !provider.apiKeyReference.isEmpty {
+                try? keychainService.delete(forReference: provider.apiKeyReference)
+            }
             modelContext.delete(provider)
         }
         dismiss()

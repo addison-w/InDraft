@@ -41,7 +41,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menuBarController.setup(
             appState: appState,
             modelContainer: sharedModelContainer,
-            appCoordinator: coordinator
+            appCoordinator: coordinator,
+            toastManager: toastManager
         )
 
         NSLog("[InDraft] Menu bar setup complete")

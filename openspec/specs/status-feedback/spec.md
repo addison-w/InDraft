@@ -101,6 +101,17 @@ When accessibility permission is not granted, the app SHALL provide a direct act
 - **THEN** only actions with `enabled == true` SHALL be listed
 - **AND** each action SHALL display its assigned hotkey badge if one exists
 
+#### Scenario: Single click toggles dropdown
+- **WHEN** the user clicks the menu bar status item button
+- **THEN** the dropdown SHALL toggle open or closed with a single click
+- **AND** clicking the button while the dropdown is open SHALL close it
+- **AND** clicking outside the dropdown SHALL close it without requiring an extra click on the button to reopen
+
+#### Scenario: Hotkey badge displays all registered modifiers
+- **WHEN** the dropdown displays an action with a registered hotkey
+- **THEN** the hotkey badge SHALL display all modifier symbols (⌃ for Control, ⌥ for Option, ⇧ for Shift, ⌘ for Command) followed by the key
+- **AND** the display SHALL match the actual registered hotkey combination (e.g., Control+Option+1 displays as "⌃⌥1", not "⌃1")
+
 ### Requirement: Dropdown processing status indicator
 The menu bar dropdown SHALL display a contextual processing indicator in the header section when a transformation is in progress.
 

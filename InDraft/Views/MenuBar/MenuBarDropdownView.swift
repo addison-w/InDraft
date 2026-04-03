@@ -110,7 +110,7 @@ struct MenuBarDropdownView: View {
             MenuBarRowView(
                 icon: iconForAction(action),
                 title: action.name,
-                hotkey: action.hasHotkey ? hotkeyBadgeText(action) : nil
+                hotkey: action.hasHotkey ? action.hotkeyDisplayString : nil
             ) {
                 dismiss()
                 coordinator.triggerAction(action)
@@ -185,10 +185,6 @@ struct MenuBarDropdownView: View {
         }
     }
 
-    private func hotkeyBadgeText(_ action: Action) -> String {
-        guard let keyCode = action.hotkeyKeyCode else { return "" }
-        return "⌃\(KeyCodeMapping.stringForKeyCode(keyCode))"
-    }
 }
 
 // MARK: - Menu Bar Row View

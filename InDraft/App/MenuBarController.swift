@@ -68,6 +68,15 @@ final class MenuBarController: NSObject {
     @objc private func togglePopover() {
         guard let popover = popover, let button = statusItem?.button else { return }
 
+        // Remove any existing event monitor first to prevent it from
+        // interfering with this click (the monitor would otherwise catch
+        // the status bar button click as an "outside" click, closing the
+        // popover before this toggle can process it).
+        if let monitor = eventMonitor {
+            NSEvent.removeMonitor(monitor)
+            eventMonitor = nil
+        }
+
         if popover.isShown {
             popover.performClose(nil)
         } else {

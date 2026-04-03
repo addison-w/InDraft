@@ -44,6 +44,18 @@ enum Theme {
         static let onPrimary = Color(hex: "F4F8FC")
         /// Inverse surface — for dark elements
         static let inverseSurface = Color(hex: "0D0F0D")
+
+        // MARK: Window Controls — desaturated pastels matching warm editorial palette
+        /// Default (inactive) dot — warm gray
+        static let windowControlDefault = Color(hex: "C8C8C5")
+        /// Close button — muted warm red
+        static let windowControlClose = Color(hex: "E8706B")
+        /// Minimize button — muted warm amber
+        static let windowControlMinimize = Color(hex: "E5BF4B")
+        /// Zoom button — muted sage green
+        static let windowControlZoom = Color(hex: "6BBF6A")
+        /// Icon glyph on hover — dark charcoal for contrast
+        static let windowControlIcon = Color(hex: "3A3A38").opacity(0.85)
     }
 
     // MARK: - Typography (Manrope for Display/Headlines, Inter for Body/Labels)

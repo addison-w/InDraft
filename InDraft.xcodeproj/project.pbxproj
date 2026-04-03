@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AA1111111111111111111111 /* WindowChromeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2222222222222222222222 /* WindowChromeView.swift */; };
+		AA3333333333333333333333 /* SettingsTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4444444444444444444444 /* SettingsTabBar.swift */; };
 		04481DB42F6E953B805554B7 /* ProviderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9E62A885D166A4D55769A39 /* ProviderService.swift */; };
 		091A46906C1A289BE9A810C5 /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3800B3C1F0BDAB10EB964F /* Action.swift */; };
 		0A32F3023C7087E257705655 /* ProviderEditorKeychainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9269EBDBA2E4C0C49C80602C /* ProviderEditorKeychainTests.swift */; };
@@ -165,6 +167,8 @@
 		F803D0DC62861CB9DB98DA6A /* AccessibilityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityService.swift; sourceTree = "<group>"; };
 		F8A230394BAC333A9EC07E1E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		FB1E051DE08D6A76424E15B4 /* InDraftUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InDraftUITests.swift; sourceTree = "<group>"; };
+		AA2222222222222222222222 /* WindowChromeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowChromeView.swift; sourceTree = "<group>"; };
+		AA4444444444444444444444 /* SettingsTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTabBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -224,6 +228,7 @@
 				82D8DD142631B6168328AE71 /* HotkeyRecorderView.swift */,
 				7E2B54C8108E14C28ABDAE50 /* ProviderEditorView.swift */,
 				959986EC6611CF708BDA6049 /* ProvidersSettingsView.swift */,
+				AA4444444444444444444444 /* SettingsTabBar.swift */,
 				23D1BADE0D6750320AA56F5D /* SettingsView.swift */,
 			);
 			path = Settings;
@@ -377,6 +382,14 @@
 			path = App;
 			sourceTree = "<group>";
 		};
+		AA5555555555555555555555 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				AA2222222222222222222222 /* WindowChromeView.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
 		F998B43A6B3DB76BCD6E2DDA /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -385,6 +398,7 @@
 				AAFBD60149D25941A49CCD50 /* Onboarding */,
 				03761CF09AAD5FEED5FA801A /* Preview */,
 				4153813A31CB777D3DFDD7F2 /* Settings */,
+				AA5555555555555555555555 /* Shared */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -556,8 +570,10 @@
 				567369A472319961FAE9F6EC /* ProvidersSettingsView.swift in Sources */,
 				B7864036C9D72703486AE915 /* SampleTransformStepView.swift in Sources */,
 				492846E4538506B609660C4B /* SeedData.swift in Sources */,
+				AA3333333333333333333333 /* SettingsTabBar.swift in Sources */,
 				4BBB80888DB48CCD47B5AD5E /* SettingsView.swift in Sources */,
 				A173A50D50528EACB31C6676 /* SettingsWindowController.swift in Sources */,
+				AA1111111111111111111111 /* WindowChromeView.swift in Sources */,
 				FD8650E79B37DC40BE5F45A0 /* TestConnectionStepView.swift in Sources */,
 				978377F123D3C44BAA573700 /* TextCaptureService.swift in Sources */,
 				66D355AB0BBDD26AADCC8244 /* TextReplaceService.swift in Sources */,

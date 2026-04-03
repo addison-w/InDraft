@@ -25,14 +25,23 @@ struct SettingsView: View {
     @EnvironmentObject var appState: AppState
     @Environment(\.modelContext) private var modelContext
     @State private var selectedTab: SettingsTab = .general
+    @State private var hoveredTab: SettingsTab?
 
     var body: some View {
-        NavigationSplitView {
+        HStack(spacing: 0) {
             sidebar
-        } detail: {
+
+            // Vertical divider
+            Rectangle()
+                .fill(Theme.Colors.divider)
+                .frame(width: 1)
+
+            // Detail
             detailView
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .frame(width: 700, height: 500)
+        .ignoresSafeArea()
+        .frame(width: 760, height: 540)
         .background(Theme.Colors.background)
     }
 
@@ -40,6 +49,17 @@ struct SettingsView: View {
 
     private var sidebar: some View {
         VStack(alignment: .leading, spacing: 0) {
+            // Close button + drag area
+            HStack {
+                WindowCloseButton()
+                Spacer()
+            }
+            .padding(.horizontal, Theme.Spacing.lg)
+            .padding(.top, Theme.Spacing.lg)
+            .padding(.bottom, Theme.Spacing.sm)
+            .background(WindowDragArea())
+
+            // Header
             VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
                 Text("InDraft")
                     .font(.system(size: 14, weight: .semibold))
@@ -50,20 +70,18 @@ struct SettingsView: View {
                     .tracking(1)
             }
             .padding(.horizontal, Theme.Spacing.lg)
-            .padding(.top, Theme.Spacing.lg)
-            .padding(.bottom, Theme.Spacing.xl)
+            .padding(.bottom, Theme.Spacing.lg)
 
+            // Nav items
             ForEach(SettingsTab.allCases) { tab in
                 sidebarItem(tab)
             }
 
             Spacer()
         }
-        .frame(minWidth: 140, maxWidth: 160)
+        .frame(width: 170)
         .background(Theme.Colors.background)
     }
-
-    @State private var hoveredTab: SettingsTab?
 
     private func sidebarItem(_ tab: SettingsTab) -> some View {
         Button {
@@ -78,11 +96,11 @@ struct SettingsView: View {
             }
             .foregroundColor(selectedTab == tab ? Theme.Colors.textPrimary : Theme.Colors.textSecondary)
             .fontWeight(selectedTab == tab ? .medium : .regular)
-            .padding(.horizontal, Theme.Spacing.lg)
+            .padding(.horizontal, Theme.Spacing.md)
             .padding(.vertical, Theme.Spacing.sm + 2)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
-                RoundedRectangle(cornerRadius: Theme.Radius.md)
+                RoundedRectangle(cornerRadius: Theme.Radius.sm)
                     .fill(selectedTab == tab
                         ? Theme.Colors.surfaceContainerLow
                         : hoveredTab == tab
@@ -92,7 +110,9 @@ struct SettingsView: View {
         }
         .buttonStyle(.plain)
         .onHover { isHovered in
-            hoveredTab = isHovered ? tab : nil
+            withAnimation(.easeInOut(duration: 0.1)) {
+                hoveredTab = isHovered ? tab : nil
+            }
         }
         .padding(.horizontal, Theme.Spacing.sm)
     }

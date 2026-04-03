@@ -4,118 +4,261 @@ import SwiftData
 struct ProvidersSettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Provider.displayName) private var providers: [Provider]
-    @State private var editingProvider: Provider?
+    @State private var expandedProviderID: UUID?
+
+    // Inline new provider state
     @State private var isCreatingNew = false
+    @State private var newDisplayName = ""
+    @State private var newBaseURL = Constants.Defaults.defaultBaseURL
+    @State private var newAPIKey = ""
+    @State private var newShowAPIKey = false
+    @State private var newDefaultModel = ""
+
+    private let keychainService = LiveKeychainService()
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: Theme.Spacing.xl) {
-                Text("Providers")
-                    .font(Theme.Typography.pageTitle())
-                    .foregroundColor(Theme.Colors.textPrimary)
+                headerRow
 
-                ForEach(providers) { provider in
-                    providerCard(provider)
+                providersList
+
+                if isCreatingNew {
+                    newProviderForm
                 }
 
-                HStack {
-                    Spacer()
-                    Button {
-                        isCreatingNew = true
-                    } label: {
-                        HStack(spacing: Theme.Spacing.xs) {
-                            Image(systemName: "plus")
-                                .font(.system(size: 12))
-                            Text("Add Provider")
-                                .font(Theme.Typography.body(13))
-                        }
-                        .foregroundColor(Theme.Colors.textPrimary)
-                    }
-                    .buttonStyle(SecondaryButtonStyle())
-                    Spacer()
-                }
+                bottomBar
             }
             .padding(Theme.Spacing.xl)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Theme.Colors.background)
-        .sheet(item: $editingProvider) { provider in
-            ProviderEditorView(provider: provider, isNew: false)
-        }
-        .sheet(isPresented: $isCreatingNew) {
-            ProviderEditorView(provider: nil, isNew: true)
+    }
+
+    // MARK: - Header
+
+    private var headerRow: some View {
+        HStack(alignment: .firstTextBaseline) {
+            Text("Providers")
+                .font(Theme.Typography.pageTitle())
+                .foregroundColor(Theme.Colors.textPrimary)
+
+            Spacer()
+
+            Text("\(providers.count) configured")
+                .font(Theme.Typography.caption(11))
+                .foregroundColor(Theme.Colors.textTertiary)
         }
     }
 
-    private func providerCard(_ provider: Provider) -> some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.lg) {
-            HStack(alignment: .top) {
-                Circle()
-                    .fill(providerDotColor(provider))
-                    .frame(width: 8, height: 8)
-                    .padding(.top, 6)
+    // MARK: - Providers List
 
-                VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-                    HStack(spacing: Theme.Spacing.sm) {
-                        Text(provider.displayName)
-                            .font(Theme.Typography.body(15))
-                            .fontWeight(.medium)
-                            .foregroundColor(Theme.Colors.textPrimary)
+    private var providersList: some View {
+        VStack(spacing: 0) {
+            ForEach(Array(providers.enumerated()), id: \.element.id) { index, provider in
+                if index > 0 {
+                    Rectangle()
+                        .fill(Theme.Colors.divider)
+                        .frame(height: 1)
+                        .padding(.horizontal, Theme.Spacing.lg)
+                }
+                providerRow(provider)
+            }
+        }
+        .cardStyle()
+    }
 
-                        if provider.isActive {
-                            StatusPill(text: "ACTIVE", color: Theme.Colors.statusGreen)
+    // MARK: - Provider Row
+
+    private func providerRow(_ provider: Provider) -> some View {
+        let isExpanded = expandedProviderID == provider.id
+
+        return VStack(alignment: .leading, spacing: 0) {
+            // Collapsed header
+            Button {
+                withAnimation(Theme.Motion.standard) {
+                    expandedProviderID = isExpanded ? nil : provider.id
+                }
+            } label: {
+                HStack(spacing: Theme.Spacing.md) {
+                    Circle()
+                        .fill(providerDotColor(provider))
+                        .frame(width: 7, height: 7)
+
+                    VStack(alignment: .leading, spacing: 3) {
+                        HStack(spacing: Theme.Spacing.sm) {
+                            Text(provider.displayName)
+                                .font(Theme.Typography.body(14))
+                                .fontWeight(.medium)
+                                .foregroundColor(Theme.Colors.textPrimary)
+
+                            if provider.isActive {
+                                StatusPill(text: "ACTIVE", color: Theme.Colors.statusGreen)
+                            }
+
+                            statusBadge(provider)
                         }
 
-                        statusBadge(provider)
+                        HStack(spacing: Theme.Spacing.sm) {
+                            Text(provider.defaultModel)
+                                .font(Theme.Typography.mono(11))
+                                .foregroundColor(Theme.Colors.textTertiary)
+
+                            if provider.lastTestStatus == .success, let testedAt = provider.lastTestedAt {
+                                Text("tested \(timeAgo(testedAt))")
+                                    .font(Theme.Typography.caption(10))
+                                    .foregroundColor(Theme.Colors.textTertiary)
+                            }
+                        }
                     }
 
-                    Text(provider.baseURL)
-                        .font(Theme.Typography.mono(11))
-                        .foregroundColor(Theme.Colors.textSecondary)
+                    Spacer()
 
-                    Text(provider.defaultModel)
-                        .font(Theme.Typography.mono(11))
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundColor(Theme.Colors.textTertiary)
+                        .rotationEffect(.degrees(isExpanded ? 90 : 0))
+                }
+                .padding(.horizontal, Theme.Spacing.xl)
+                .padding(.vertical, Theme.Spacing.lg)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+
+            // Expanded inline editor
+            if isExpanded {
+                ProviderInlineEditor(
+                    provider: provider,
+                    keychainService: keychainService,
+                    onSetActive: { setActive(provider) },
+                    onTest: { testProvider(provider) },
+                    onDelete: {
+                        withAnimation(Theme.Motion.standard) {
+                            expandedProviderID = nil
+                            deleteProvider(provider)
+                        }
+                    }
+                )
+                .transition(.opacity)
+            }
+        }
+    }
+
+    // MARK: - New Provider Form
+
+    private var newProviderForm: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.lg) {
+            HStack {
+                Text("New Provider")
+                    .font(Theme.Typography.body(14))
+                    .fontWeight(.medium)
+                    .foregroundColor(Theme.Colors.textPrimary)
+                Spacer()
+                Button {
+                    withAnimation(Theme.Motion.standard) {
+                        resetNewProvider()
+                    }
+                } label: {
+                    Text("Cancel")
+                        .font(Theme.Typography.caption(11))
                         .foregroundColor(Theme.Colors.textTertiary)
                 }
+                .buttonStyle(.plain)
+            }
 
-                Spacer()
+            fieldSection("DISPLAY NAME") {
+                TextField("e.g. OpenAI", text: $newDisplayName)
+                    .inputFieldStyle()
+            }
 
-                if provider.lastTestStatus == .success, let testedAt = provider.lastTestedAt {
-                    Text("Tested \(timeAgo(testedAt))")
-                        .font(Theme.Typography.caption(10))
-                        .foregroundColor(Theme.Colors.textTertiary)
+            fieldSection("BASE URL") {
+                TextField("https://api.openai.com/v1", text: $newBaseURL)
+                    .inputFieldStyle()
+            }
+
+            fieldSection("API KEY") {
+                HStack(spacing: Theme.Spacing.sm) {
+                    Group {
+                        if newShowAPIKey {
+                            TextField("sk-...", text: $newAPIKey)
+                        } else {
+                            SecureField("sk-...", text: $newAPIKey)
+                        }
+                    }
+                    .textFieldStyle(.plain)
+                    .font(Theme.Typography.mono(13))
+                    .padding(Theme.Spacing.md)
+                    .background(Theme.Colors.surfaceContainerLow)
+                    .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.md))
+
+                    Button {
+                        newShowAPIKey.toggle()
+                    } label: {
+                        Image(systemName: newShowAPIKey ? "eye.slash" : "eye")
+                            .font(.system(size: 12))
+                            .foregroundColor(Theme.Colors.textTertiary)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
 
-            HStack(spacing: Theme.Spacing.lg) {
+            fieldSection("DEFAULT MODEL") {
+                TextField("e.g. gpt-4o", text: $newDefaultModel)
+                    .inputFieldStyle()
+            }
+
+            HStack {
                 Spacer()
-
-                Button("Edit") {
-                    editingProvider = provider
+                Button {
+                    createProvider()
+                } label: {
+                    Text("Add Provider")
                 }
-                .buttonStyle(.plain)
-                .font(Theme.Typography.label(12))
-                .foregroundColor(Theme.Colors.textSecondary)
-
-                Button("Test") {
-                    testProvider(provider)
-                }
-                .buttonStyle(.plain)
-                .font(Theme.Typography.label(12))
-                .foregroundColor(Theme.Colors.textSecondary)
-
-                if !provider.isActive {
-                    Button("Set Active") {
-                        setActive(provider)
-                    }
-                    .buttonStyle(.plain)
-                    .font(Theme.Typography.label(12))
-                    .foregroundColor(Theme.Colors.accent)
-                }
+                .buttonStyle(PrimaryButtonStyle())
+                .disabled(newDisplayName.trimmingCharacters(in: .whitespaces).isEmpty || newBaseURL.isEmpty)
+                .opacity(newDisplayName.trimmingCharacters(in: .whitespaces).isEmpty || newBaseURL.isEmpty ? 0.5 : 1.0)
             }
         }
         .padding(Theme.Spacing.xl)
         .cardStyle()
+        .transition(.opacity)
+    }
+
+    // MARK: - Bottom Bar
+
+    private var bottomBar: some View {
+        HStack {
+            Button {
+                withAnimation(Theme.Motion.standard) {
+                    expandedProviderID = nil
+                    isCreatingNew = true
+                }
+            } label: {
+                HStack(spacing: Theme.Spacing.xs) {
+                    Image(systemName: "plus")
+                        .font(.system(size: 11, weight: .medium))
+                    Text("Add Provider")
+                        .font(Theme.Typography.label(12))
+                }
+                .foregroundColor(Theme.Colors.textSecondary)
+            }
+            .buttonStyle(.plain)
+            .disabled(isCreatingNew)
+
+            Spacer()
+        }
+    }
+
+    // MARK: - Helpers
+
+    private func fieldSection<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            Text(title)
+                .font(Theme.Typography.allCaps(9))
+                .foregroundColor(Theme.Colors.textTertiary)
+                .tracking(1)
+            content()
+        }
     }
 
     private func providerDotColor(_ provider: Provider) -> Color {
@@ -161,5 +304,222 @@ struct ProvidersSettingsView: View {
         provider.lastTestedAt = Date()
         provider.lastTestError = nil
         provider.updatedAt = Date()
+    }
+
+    private func deleteProvider(_ provider: Provider) {
+        if !provider.apiKeyReference.isEmpty {
+            try? keychainService.delete(forReference: provider.apiKeyReference)
+        }
+        modelContext.delete(provider)
+    }
+
+    private func createProvider() {
+        let trimmedName = newDisplayName.trimmingCharacters(in: .whitespaces)
+        guard !trimmedName.isEmpty else { return }
+
+        let reference = "provider-\(UUID().uuidString)"
+        let provider = Provider(
+            displayName: trimmedName,
+            baseURL: newBaseURL,
+            apiKeyReference: reference,
+            defaultModel: newDefaultModel
+        )
+        modelContext.insert(provider)
+
+        if !newAPIKey.isEmpty {
+            try? keychainService.store(apiKey: newAPIKey, forReference: reference)
+        }
+
+        withAnimation(Theme.Motion.standard) {
+            resetNewProvider()
+        }
+    }
+
+    private func resetNewProvider() {
+        isCreatingNew = false
+        newDisplayName = ""
+        newBaseURL = Constants.Defaults.defaultBaseURL
+        newAPIKey = ""
+        newShowAPIKey = false
+        newDefaultModel = ""
+    }
+}
+
+// MARK: - Provider Inline Editor
+
+struct ProviderInlineEditor: View {
+    @Bindable var provider: Provider
+    let keychainService: LiveKeychainService
+    let onSetActive: () -> Void
+    let onTest: () -> Void
+    let onDelete: () -> Void
+
+    @State private var apiKey: String = ""
+    @State private var showAPIKey = false
+    @State private var isTesting = false
+    @State private var showDeleteConfirmation = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.lg) {
+            Rectangle()
+                .fill(Theme.Colors.divider)
+                .frame(height: 1)
+
+            // Display name
+            fieldSection("DISPLAY NAME") {
+                TextField("Provider name", text: $provider.displayName)
+                    .inputFieldStyle()
+                    .onChange(of: provider.displayName) { _, _ in
+                        provider.updatedAt = Date()
+                    }
+            }
+
+            // Base URL
+            fieldSection("BASE URL") {
+                TextField("https://api.openai.com/v1", text: $provider.baseURL)
+                    .inputFieldStyle()
+                    .onChange(of: provider.baseURL) { _, _ in
+                        provider.updatedAt = Date()
+                    }
+            }
+
+            // API Key
+            fieldSection("API KEY") {
+                HStack(spacing: Theme.Spacing.sm) {
+                    Group {
+                        if showAPIKey {
+                            TextField("sk-...", text: $apiKey)
+                        } else {
+                            SecureField("sk-...", text: $apiKey)
+                        }
+                    }
+                    .textFieldStyle(.plain)
+                    .font(Theme.Typography.mono(13))
+                    .padding(Theme.Spacing.md)
+                    .background(Theme.Colors.surfaceContainerLow)
+                    .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.md))
+                    .onChange(of: apiKey) { _, newValue in
+                        saveAPIKey(newValue)
+                    }
+
+                    Button {
+                        showAPIKey.toggle()
+                    } label: {
+                        Image(systemName: showAPIKey ? "eye.slash" : "eye")
+                            .font(.system(size: 12))
+                            .foregroundColor(Theme.Colors.textTertiary)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+
+            // Default model
+            fieldSection("DEFAULT MODEL") {
+                TextField("e.g. gpt-4o", text: $provider.defaultModel)
+                    .inputFieldStyle()
+                    .onChange(of: provider.defaultModel) { _, _ in
+                        provider.updatedAt = Date()
+                    }
+            }
+
+            // Action buttons
+            HStack(spacing: Theme.Spacing.lg) {
+                if !provider.isActive {
+                    Button {
+                        onSetActive()
+                    } label: {
+                        Text("Set Active")
+                            .font(Theme.Typography.caption(11))
+                            .foregroundColor(Theme.Colors.accent)
+                    }
+                    .buttonStyle(.plain)
+                }
+
+                Button {
+                    runTest()
+                } label: {
+                    HStack(spacing: Theme.Spacing.xs) {
+                        if isTesting {
+                            ProgressView()
+                                .controlSize(.mini)
+                        }
+                        Text("Test Connection")
+                            .font(Theme.Typography.caption(11))
+                            .foregroundColor(Theme.Colors.textSecondary)
+                    }
+                }
+                .buttonStyle(.plain)
+                .disabled(isTesting)
+
+                Spacer()
+
+                Button {
+                    showDeleteConfirmation = true
+                } label: {
+                    Text("Delete")
+                        .font(Theme.Typography.caption(11))
+                        .foregroundColor(Theme.Colors.error)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal, Theme.Spacing.xl)
+        .padding(.bottom, Theme.Spacing.lg)
+        .onAppear {
+            loadAPIKey()
+        }
+        .alert("Delete Provider", isPresented: $showDeleteConfirmation) {
+            Button("Cancel", role: .cancel) {}
+            Button("Delete", role: .destructive) {
+                onDelete()
+            }
+        } message: {
+            Text("This will permanently remove this provider and its API key.")
+        }
+    }
+
+    // MARK: - Helpers
+
+    private func fieldSection<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            Text(title)
+                .font(Theme.Typography.allCaps(9))
+                .foregroundColor(Theme.Colors.textTertiary)
+                .tracking(1)
+            content()
+        }
+    }
+
+    private func loadAPIKey() {
+        if !provider.apiKeyReference.isEmpty {
+            apiKey = keychainService.retrieve(forReference: provider.apiKeyReference) ?? ""
+        }
+    }
+
+    private func saveAPIKey(_ newValue: String) {
+        guard !newValue.isEmpty else { return }
+        if provider.apiKeyReference.isEmpty {
+            let reference = "provider-\(UUID().uuidString)"
+            try? keychainService.store(apiKey: newValue, forReference: reference)
+            provider.apiKeyReference = reference
+        } else {
+            do {
+                try keychainService.update(apiKey: newValue, forReference: provider.apiKeyReference)
+            } catch KeychainError.itemNotFound {
+                try? keychainService.store(apiKey: newValue, forReference: provider.apiKeyReference)
+            } catch {}
+        }
+        provider.updatedAt = Date()
+    }
+
+    private func runTest() {
+        isTesting = true
+        Task {
+            try? await Task.sleep(for: .seconds(0.5))
+            await MainActor.run {
+                isTesting = false
+                onTest()
+            }
+        }
     }
 }

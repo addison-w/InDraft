@@ -1,4 +1,5 @@
 import Carbon.HIToolbox
+import Cocoa
 
 enum Constants {
     enum App {
@@ -28,25 +29,29 @@ enum Constants {
     }
 
     enum DefaultActions {
+        /// NSEvent modifier flags for Control+Option — matches the encoding used by
+        /// HotkeyRecorderView and expected by LiveHotkeyService.register().
+        static let controlOptionModifiers = UInt32(NSEvent.ModifierFlags([.control, .option]).rawValue)
+
         static let rewriteForClarity = (
             name: "Rewrite for Clarity",
             prompt: "Rewrite the following text to be clearer and more concise. Preserve the original meaning. Return only the rewritten text, no explanations.",
             keyCode: UInt32(kVK_ANSI_1),
-            modifiers: UInt32(controlKey | optionKey)
+            modifiers: controlOptionModifiers
         )
 
         static let grammarFix = (
             name: "Grammar Fix",
             prompt: "Fix all grammar, spelling, and punctuation errors in the following text. Preserve the original meaning and tone. Return only the corrected text, no explanations.",
             keyCode: UInt32(kVK_ANSI_2),
-            modifiers: UInt32(controlKey | optionKey)
+            modifiers: controlOptionModifiers
         )
 
         static let paraphrase = (
             name: "Paraphrase",
             prompt: "Paraphrase the following text while preserving its meaning. Use different wording and sentence structure. Return only the paraphrased text, no explanations.",
             keyCode: UInt32(kVK_ANSI_3),
-            modifiers: UInt32(controlKey | optionKey)
+            modifiers: controlOptionModifiers
         )
     }
 }

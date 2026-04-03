@@ -126,6 +126,7 @@ final class LiveHotkeyService: HotkeyServiceProtocol {
         }
         registrations.removeAll()
         idToAction.removeAll()
+        nextCarbonID = 1
     }
 
     func isRegistered(actionID: UUID) -> Bool {

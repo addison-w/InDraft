@@ -1,4 +1,5 @@
 import XCTest
+import Carbon.HIToolbox
 @testable import InDraft
 
 final class HotkeyServiceTests: XCTestCase {
@@ -127,6 +128,100 @@ final class HotkeyServiceTests: XCTestCase {
 
         sut.simulateHotkeyPress(actionID: UUID())
         XCTAssertFalse(callbackCalled)
+    }
+
+    // MARK: - DeregisterAll Reset & Re-registration
+
+    func testDeregisterAllAllowsReRegistration() throws {
+        let id1 = UUID(), id2 = UUID(), id3 = UUID()
+        try sut.register(keyCode: 18, modifiers: 0, actionID: id1)
+        try sut.register(keyCode: 19, modifiers: 0, actionID: id2)
+        try sut.register(keyCode: 20, modifiers: 0, actionID: id3)
+
+        sut.deregisterAll()
+
+        // Re-register with new action IDs — should succeed
+        let id4 = UUID(), id5 = UUID(), id6 = UUID()
+        try sut.register(keyCode: 18, modifiers: 0, actionID: id4)
+        try sut.register(keyCode: 19, modifiers: 0, actionID: id5)
+        try sut.register(keyCode: 20, modifiers: 0, actionID: id6)
+
+        XCTAssertTrue(sut.isRegistered(actionID: id4))
+        XCTAssertTrue(sut.isRegistered(actionID: id5))
+        XCTAssertTrue(sut.isRegistered(actionID: id6))
+    }
+
+    func testMultipleDeregisterRegisterCycles() throws {
+        for _ in 0..<5 {
+            let ids = (0..<3).map { _ in UUID() }
+            for (i, id) in ids.enumerated() {
+                try sut.register(keyCode: UInt32(18 + i), modifiers: 0, actionID: id)
+            }
+            for id in ids {
+                XCTAssertTrue(sut.isRegistered(actionID: id))
+            }
+            sut.deregisterAll()
+        }
+    }
+
+    func testRegisterThreeOrMoreHotkeysSimultaneously() throws {
+        let modifiers = UInt32(NSEvent.ModifierFlags([.control, .option]).rawValue)
+        let ids = (0..<5).map { _ in UUID() }
+
+        for (i, id) in ids.enumerated() {
+            try sut.register(keyCode: UInt32(18 + i), modifiers: modifiers, actionID: id)
+        }
+
+        for id in ids {
+            XCTAssertTrue(sut.isRegistered(actionID: id))
+        }
+    }
+
+    // MARK: - Live Service Carbon ID Reset
+
+    func testLiveDeregisterAllResetsCarbonIDs() throws {
+        let live = LiveHotkeyService()
+        let id1 = UUID(), id2 = UUID()
+        let modifiers = UInt32(NSEvent.ModifierFlags([.control, .option]).rawValue)
+
+        try live.register(keyCode: 18, modifiers: modifiers, actionID: id1)
+        try live.register(keyCode: 19, modifiers: modifiers, actionID: id2)
+        live.deregisterAll()
+
+        // After deregisterAll, re-registration should succeed
+        let id3 = UUID(), id4 = UUID(), id5 = UUID()
+        try live.register(keyCode: 18, modifiers: modifiers, actionID: id3)
+        try live.register(keyCode: 19, modifiers: modifiers, actionID: id4)
+        try live.register(keyCode: 20, modifiers: modifiers, actionID: id5)
+
+        XCTAssertTrue(live.isRegistered(actionID: id3))
+        XCTAssertTrue(live.isRegistered(actionID: id4))
+        XCTAssertTrue(live.isRegistered(actionID: id5))
+
+        live.deregisterAll()
+    }
+
+    // MARK: - Modifier Conversion
+
+    func testNSToCarbonModifiersConvertsCorrectly() {
+        let nsModifiers = UInt32(NSEvent.ModifierFlags([.control, .option]).rawValue)
+        let carbon = LiveHotkeyService.nsToCarbonModifiers(nsModifiers)
+
+        XCTAssertEqual(carbon & UInt32(controlKey), UInt32(controlKey))
+        XCTAssertEqual(carbon & UInt32(optionKey), UInt32(optionKey))
+        XCTAssertEqual(carbon & UInt32(cmdKey), 0)
+        XCTAssertEqual(carbon & UInt32(shiftKey), 0)
+    }
+
+    func testNSToCarbonModifiersRejectsCarbonInput() {
+        // Carbon flags (controlKey | optionKey) should NOT produce valid output
+        // when passed through nsToCarbonModifiers (which expects NSEvent flags)
+        let carbonFlags = UInt32(controlKey | optionKey)
+        let result = LiveHotkeyService.nsToCarbonModifiers(carbonFlags)
+
+        // Carbon controlKey=0x1000, optionKey=0x0800 — these bits don't overlap
+        // with NSEvent .control (bit 18) or .option (bit 19), so result should be 0
+        XCTAssertEqual(result, 0, "Carbon flags passed to nsToCarbonModifiers should produce empty result")
     }
 
     // MARK: - Protocol Conformance

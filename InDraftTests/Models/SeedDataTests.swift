@@ -1,6 +1,7 @@
 import XCTest
 import SwiftData
 import Carbon.HIToolbox
+import Cocoa
 @testable import InDraft
 
 final class SeedDataTests: XCTestCase {
@@ -61,7 +62,7 @@ final class SeedDataTests: XCTestCase {
         SeedData.createDefaultActions(in: context)
 
         let actions = try context.fetch(FetchDescriptor<Action>(sortBy: [SortDescriptor(\.sortOrder)]))
-        let expectedModifiers = UInt32(controlKey | optionKey)
+        let expectedModifiers = UInt32(NSEvent.ModifierFlags([.control, .option]).rawValue)
 
         // Rewrite for Clarity → control+option+1 (kVK_ANSI_1 = 18)
         XCTAssertEqual(actions[0].hotkeyKeyCode, UInt32(kVK_ANSI_1))

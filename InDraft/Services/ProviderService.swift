@@ -70,8 +70,8 @@ enum ProviderError: Error, Equatable, LocalizedError {
 // MARK: - Protocol
 
 protocol ProviderServiceProtocol {
-    func transform(text: String, prompt: String, baseURL: String, apiKey: String, model: String) async throws -> String
-    func testConnection(baseURL: String, apiKey: String, model: String) async -> ConnectionTestResult
+    func transform(text: String, prompt: String, baseURL: String, apiKey: String, model: String, timeout: TimeInterval) async throws -> String
+    func testConnection(baseURL: String, apiKey: String, model: String, timeout: TimeInterval) async -> ConnectionTestResult
 }
 
 // MARK: - Live Implementation
@@ -83,8 +83,8 @@ final class LiveProviderService: ProviderServiceProtocol {
         self.session = session
     }
 
-    func transform(text: String, prompt: String, baseURL: String, apiKey: String, model: String) async throws -> String {
-        let request = try buildRequest(baseURL: baseURL, apiKey: apiKey, model: model, systemPrompt: prompt, userContent: text)
+    func transform(text: String, prompt: String, baseURL: String, apiKey: String, model: String, timeout: TimeInterval = 30) async throws -> String {
+        let request = try buildRequest(baseURL: baseURL, apiKey: apiKey, model: model, systemPrompt: prompt, userContent: text, timeout: timeout)
 
         let (data, response): (Data, URLResponse)
         do {
@@ -120,10 +120,10 @@ final class LiveProviderService: ProviderServiceProtocol {
         }
     }
 
-    func testConnection(baseURL: String, apiKey: String, model: String) async -> ConnectionTestResult {
+    func testConnection(baseURL: String, apiKey: String, model: String, timeout: TimeInterval = 30) async -> ConnectionTestResult {
         let start = CFAbsoluteTimeGetCurrent()
         do {
-            let _ = try await transform(text: "Reply with OK", prompt: "Reply with OK", baseURL: baseURL, apiKey: apiKey, model: model)
+            let _ = try await transform(text: "Reply with OK", prompt: "Reply with OK", baseURL: baseURL, apiKey: apiKey, model: model, timeout: timeout)
             let elapsed = CFAbsoluteTimeGetCurrent() - start
             let latencyMs = Int(elapsed * 1000)
             return .success(model: model, latencyMs: latencyMs)
@@ -136,7 +136,7 @@ final class LiveProviderService: ProviderServiceProtocol {
 
     // MARK: - Private Helpers
 
-    private func buildRequest(baseURL: String, apiKey: String, model: String, systemPrompt: String, userContent: String) throws -> URLRequest {
+    private func buildRequest(baseURL: String, apiKey: String, model: String, systemPrompt: String, userContent: String, timeout: TimeInterval = 30) throws -> URLRequest {
         let urlString = baseURL.hasSuffix("/")
             ? "\(baseURL)chat/completions"
             : "\(baseURL)/chat/completions"
@@ -149,7 +149,7 @@ final class LiveProviderService: ProviderServiceProtocol {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        request.timeoutInterval = 10
+        request.timeoutInterval = timeout
 
         let body = ChatCompletionRequest(
             model: model,
@@ -187,14 +187,14 @@ final class MockProviderService: ProviderServiceProtocol {
     var lastTransformText: String?
     var lastTransformPrompt: String?
 
-    func transform(text: String, prompt: String, baseURL: String, apiKey: String, model: String) async throws -> String {
+    func transform(text: String, prompt: String, baseURL: String, apiKey: String, model: String, timeout: TimeInterval = 30) async throws -> String {
         transformCallCount += 1
         lastTransformText = text
         lastTransformPrompt = prompt
         return try transformResult.get()
     }
 
-    func testConnection(baseURL: String, apiKey: String, model: String) async -> ConnectionTestResult {
+    func testConnection(baseURL: String, apiKey: String, model: String, timeout: TimeInterval = 30) async -> ConnectionTestResult {
         testConnectionCallCount += 1
         return connectionTestResult
     }

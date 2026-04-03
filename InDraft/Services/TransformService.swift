@@ -83,7 +83,8 @@ actor LiveTransformService: TransformServiceProtocol {
                 prompt: action.prompt,
                 baseURL: provider.baseURL,
                 apiKey: apiKey,
-                model: model
+                model: model,
+                timeout: TimeInterval(provider.timeoutSeconds)
             )
         } catch {
             let errorMessage = error.localizedDescription

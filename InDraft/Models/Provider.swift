@@ -19,6 +19,7 @@ final class Provider {
     var lastTestStatus: TestStatus
     var lastTestError: String?
     var lastTestedAt: Date?
+    var timeoutSeconds: Int = 30
     var createdAt: Date
     var updatedAt: Date
 
@@ -33,6 +34,7 @@ final class Provider {
         lastTestStatus: TestStatus = .untested,
         lastTestError: String? = nil,
         lastTestedAt: Date? = nil,
+        timeoutSeconds: Int = 30,
         createdAt: Date = Date(),
         updatedAt: Date = Date()
     ) {
@@ -46,6 +48,7 @@ final class Provider {
         self.lastTestStatus = lastTestStatus
         self.lastTestError = lastTestError
         self.lastTestedAt = lastTestedAt
+        self.timeoutSeconds = timeoutSeconds
         self.createdAt = createdAt
         self.updatedAt = updatedAt
     }

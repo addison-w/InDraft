@@ -210,7 +210,8 @@ struct DiagnosticsSettingsView: View {
             let result = await service.testConnection(
                 baseURL: active.baseURL,
                 apiKey: apiKey,
-                model: active.defaultModel
+                model: active.defaultModel,
+                timeout: TimeInterval(active.timeoutSeconds)
             )
 
             await MainActor.run {

@@ -13,6 +13,7 @@ struct ProvidersSettingsView: View {
     @State private var newAPIKey = ""
     @State private var newShowAPIKey = false
     @State private var newDefaultModel = ""
+    @State private var newTimeoutSeconds: Double = 30
 
     private let keychainService = LiveKeychainService()
 
@@ -207,6 +208,17 @@ struct ProvidersSettingsView: View {
                     .inputFieldStyle()
             }
 
+            fieldSection("TIMEOUT") {
+                HStack(spacing: Theme.Spacing.md) {
+                    Slider(value: $newTimeoutSeconds, in: 10...180, step: 5)
+
+                    Text("\(Int(newTimeoutSeconds))s")
+                        .font(Theme.Typography.mono(12))
+                        .foregroundColor(Theme.Colors.textSecondary)
+                        .frame(width: 36, alignment: .trailing)
+                }
+            }
+
             HStack {
                 Spacer()
                 Button {
@@ -315,7 +327,8 @@ struct ProvidersSettingsView: View {
             displayName: trimmedName,
             baseURL: newBaseURL,
             apiKeyReference: reference,
-            defaultModel: newDefaultModel
+            defaultModel: newDefaultModel,
+            timeoutSeconds: Int(newTimeoutSeconds)
         )
         modelContext.insert(provider)
 
@@ -335,6 +348,7 @@ struct ProvidersSettingsView: View {
         newAPIKey = ""
         newShowAPIKey = false
         newDefaultModel = ""
+        newTimeoutSeconds = 30
     }
 }
 
@@ -415,6 +429,28 @@ struct ProviderInlineEditor: View {
                     .onChange(of: provider.defaultModel) { _, _ in
                         provider.updatedAt = Date()
                     }
+            }
+
+            // Timeout
+            fieldSection("TIMEOUT") {
+                HStack(spacing: Theme.Spacing.md) {
+                    Slider(
+                        value: Binding(
+                            get: { Double(provider.timeoutSeconds) },
+                            set: {
+                                provider.timeoutSeconds = Int($0)
+                                provider.updatedAt = Date()
+                            }
+                        ),
+                        in: 10...180,
+                        step: 5
+                    )
+
+                    Text("\(provider.timeoutSeconds)s")
+                        .font(Theme.Typography.mono(12))
+                        .foregroundColor(Theme.Colors.textSecondary)
+                        .frame(width: 36, alignment: .trailing)
+                }
             }
 
             // Action buttons
@@ -528,7 +564,8 @@ struct ProviderInlineEditor: View {
             let result = await service.testConnection(
                 baseURL: provider.baseURL,
                 apiKey: apiKey,
-                model: provider.defaultModel
+                model: provider.defaultModel,
+                timeout: TimeInterval(provider.timeoutSeconds)
             )
 
             await MainActor.run {

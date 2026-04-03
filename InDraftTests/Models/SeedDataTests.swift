@@ -1,5 +1,6 @@
 import XCTest
 import SwiftData
+import Carbon.HIToolbox
 @testable import InDraft
 
 final class SeedDataTests: XCTestCase {
@@ -54,6 +55,25 @@ final class SeedDataTests: XCTestCase {
         for action in actions {
             XCTAssertTrue(action.hasHotkey, "\(action.name) should have a hotkey")
         }
+    }
+
+    func testDefaultActionsHaveCorrectHotkeys() throws {
+        SeedData.createDefaultActions(in: context)
+
+        let actions = try context.fetch(FetchDescriptor<Action>(sortBy: [SortDescriptor(\.sortOrder)]))
+        let expectedModifiers = UInt32(controlKey | optionKey)
+
+        // Rewrite for Clarity → control+option+1 (kVK_ANSI_1 = 18)
+        XCTAssertEqual(actions[0].hotkeyKeyCode, UInt32(kVK_ANSI_1))
+        XCTAssertEqual(actions[0].hotkeyModifiers, expectedModifiers)
+
+        // Grammar Fix → control+option+2 (kVK_ANSI_2 = 19)
+        XCTAssertEqual(actions[1].hotkeyKeyCode, UInt32(kVK_ANSI_2))
+        XCTAssertEqual(actions[1].hotkeyModifiers, expectedModifiers)
+
+        // Paraphrase → control+option+3 (kVK_ANSI_3 = 20)
+        XCTAssertEqual(actions[2].hotkeyKeyCode, UInt32(kVK_ANSI_3))
+        XCTAssertEqual(actions[2].hotkeyModifiers, expectedModifiers)
     }
 
     func testRestoreDefaultsResetsBuiltInActions() throws {

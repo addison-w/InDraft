@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: App runs as menu bar background process
-The app SHALL run as an LSUIElement (no dock icon by default) with a persistent menu bar icon. The app SHALL have no main window — all interaction happens via menu bar dropdown, settings window, history window, and floating preview panel.
+The app SHALL run as an LSUIElement (no dock icon) with a persistent menu bar icon. The app SHALL have no main window — all interaction happens via menu bar dropdown, settings window, history window, and floating preview panel. The app SHALL never change its activation policy — it MUST remain `.accessory` at all times.
 
 #### Scenario: App launches as background process
 - **WHEN** the user launches InDraft
@@ -15,16 +15,9 @@ The app SHALL run as an LSUIElement (no dock icon by default) with a persistent 
 - **WHEN** the user launches InDraft with completed onboarding and valid provider
 - **THEN** the app enters idle state with menu bar icon showing ready status
 
-### Requirement: Dock icon is toggleable
-The app SHALL allow the user to toggle dock icon visibility in Settings > General. When enabled, the app appears in the dock and Cmd+Tab switcher.
-
-#### Scenario: Enable dock icon
-- **WHEN** the user enables "Show Dock Icon" in Settings > General
-- **THEN** the app icon appears in the dock immediately without restart
-
-#### Scenario: Disable dock icon
-- **WHEN** the user disables "Show Dock Icon" in Settings > General
-- **THEN** the app icon is removed from the dock immediately without restart
+#### Scenario: App never shows dock icon
+- **WHEN** any window is opened or closed
+- **THEN** the app activation policy remains `.accessory` AND no dock icon appears
 
 ### Requirement: Launch at login
 The app SHALL support automatic launch at login, configurable in Settings > General. This SHALL use SMAppService (macOS 13+) for login item registration.
@@ -52,16 +45,38 @@ The menu bar dropdown SHALL show: active provider name, list of enabled actions 
 - **WHEN** the user opens the dropdown with no active provider configured
 - **THEN** the dropdown shows a warning message "No AI provider configured — click to set up"
 
+### Requirement: Settings window always activates to front
+The settings window SHALL always come to front when opened from the menu bar dropdown, regardless of what other apps are focused. The window controller SHALL use `orderFrontRegardless()` combined with `NSApp.activate()` to ensure reliable activation without changing activation policy.
+
+#### Scenario: Open settings from dropdown while another app is focused
+- **WHEN** the user clicks "Settings" in the menu bar dropdown AND another application is in the foreground
+- **THEN** the settings window appears in front of all other windows AND receives keyboard focus
+
+#### Scenario: Settings window already open but behind other windows
+- **WHEN** the user clicks "Settings" in the dropdown AND the settings window is already open but not visible
+- **THEN** the existing settings window is brought to front and receives keyboard focus
+
 ### Requirement: History window accessible from dropdown
-The history window SHALL be accessible from the menu bar dropdown. Clicking "History" in the dropdown SHALL open the history window and bring it to front.
+The history window SHALL be accessible from the menu bar dropdown. Clicking "History" in the dropdown SHALL open the history window and bring it to front reliably, without changing activation policy.
 
 #### Scenario: Open history from dropdown
 - **WHEN** the user clicks "History" in the menu bar dropdown
-- **THEN** the history window opens and comes to front
+- **THEN** the history window opens and comes to front using `orderFrontRegardless()` AND `NSApp.activate()` is called
 
 #### Scenario: History window already open
 - **WHEN** the user clicks "History" in the dropdown AND the history window is already open
-- **THEN** the existing history window is brought to front and made key
+- **THEN** the existing history window is brought to front using `orderFrontRegardless()` AND made key
+
+### Requirement: History window always activates to front
+The history window SHALL always come to front when opened from the menu bar dropdown, regardless of what other apps are focused. The window controller SHALL use `orderFrontRegardless()` combined with `NSApp.activate()` to ensure reliable activation without changing activation policy.
+
+#### Scenario: Open history from dropdown while another app is focused
+- **WHEN** the user clicks "History" in the menu bar dropdown AND another application is in the foreground
+- **THEN** the history window appears in front of all other windows AND receives keyboard focus
+
+#### Scenario: History window already open but behind other windows
+- **WHEN** the user clicks "History" in the dropdown AND the history window is already open but not visible
+- **THEN** the existing history window is brought to front and receives keyboard focus
 
 ### Requirement: App handles incomplete setup gracefully
 When required setup is incomplete, the app SHALL display a warning state in the menu bar and provide direct links to resolve the issue.

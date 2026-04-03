@@ -25,10 +25,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         // App launched
 
-        // Run as background app
-        if !UserDefaults.standard.bool(forKey: "showDockIcon") {
-            NSApp.setActivationPolicy(.accessory)
-        }
+        // Always run as background app (no dock icon)
+        NSApp.setActivationPolicy(.accessory)
 
         // Set up the app coordinator (hotkeys, text transformation, etc.)
         let coordinator = AppCoordinator(appState: appState, toastManager: toastManager)

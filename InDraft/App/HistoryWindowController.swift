@@ -3,7 +3,8 @@ import SwiftUI
 import SwiftData
 
 /// Manages the History window for the menu bar app.
-/// Uses the same singleton pattern as SettingsWindowController.
+/// Uses orderFrontRegardless() to reliably bring window to front
+/// without changing activation policy (app stays as LSUIElement).
 @MainActor
 final class HistoryWindowController {
     static let shared = HistoryWindowController()
@@ -21,7 +22,7 @@ final class HistoryWindowController {
 
     func showHistory() {
         if let window = window {
-            window.makeKeyAndOrderFront(nil)
+            window.orderFrontRegardless()
             NSApp.activate()
             return
         }
@@ -58,21 +59,16 @@ final class HistoryWindowController {
 
         self.window = newWindow
 
-        // Temporarily become regular app to show in dock/cmd-tab
-        NSApp.setActivationPolicy(.regular)
-        newWindow.makeKeyAndOrderFront(nil)
+        newWindow.orderFrontRegardless()
         NSApp.activate()
 
-        // Watch for window close to revert activation policy
+        // Watch for window close to clean up reference
         NotificationCenter.default.addObserver(
             forName: NSWindow.willCloseNotification,
             object: newWindow,
             queue: .main
         ) { [weak self] _ in
             Task { @MainActor in
-                if !UserDefaults.standard.bool(forKey: "showDockIcon") {
-                    NSApp.setActivationPolicy(.accessory)
-                }
                 self?.window = nil
             }
         }

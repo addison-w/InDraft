@@ -2,7 +2,6 @@ import SwiftUI
 
 struct GeneralSettingsView: View {
     @AppStorage(Constants.UserDefaultsKeys.launchAtLogin) private var launchAtLogin = false
-    @AppStorage(Constants.UserDefaultsKeys.showDockIcon) private var showDockIcon = false
 
     var body: some View {
         ScrollView {
@@ -17,18 +16,6 @@ struct GeneralSettingsView: View {
                         title: "Launch at Login",
                         subtitle: "Automatically start InDraft when you log in",
                         isOn: $launchAtLogin
-                    )
-                    .padding(Theme.Spacing.xl)
-
-                    Rectangle()
-                        .fill(Theme.Colors.divider)
-                        .frame(height: 1)
-                        .padding(.horizontal, Theme.Spacing.xl)
-
-                    settingsRow(
-                        title: "Show Dock Icon",
-                        subtitle: "Display InDraft in the Dock (requires restart)",
-                        isOn: $showDockIcon
                     )
                     .padding(Theme.Spacing.xl)
                 }

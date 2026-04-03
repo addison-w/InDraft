@@ -219,11 +219,8 @@ final class TransformFlowTests: XCTestCase {
     // MARK: - App Lifecycle
 
     @MainActor
-    func testAppDelegateSetsDockPolicy() {
-        // When showDockIcon is false, app should be .accessory
-        UserDefaults.standard.set(false, forKey: "showDockIcon")
+    func testAppDelegateExists() {
         let delegate = AppDelegate()
-        // applicationDidFinishLaunching sets policy — we verify the logic path exists
         XCTAssertNotNil(delegate)
     }
 

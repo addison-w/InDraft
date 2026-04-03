@@ -3,8 +3,8 @@ import SwiftUI
 import SwiftData
 
 /// Manages the Settings window for the menu bar app.
-/// Using NSWindow directly instead of SwiftUI Settings scene
-/// because LSUIElement apps have issues with the Settings scene.
+/// Uses orderFrontRegardless() to reliably bring window to front
+/// without changing activation policy (app stays as LSUIElement).
 @MainActor
 final class SettingsWindowController {
     static let shared = SettingsWindowController()
@@ -20,7 +20,7 @@ final class SettingsWindowController {
 
     func showSettings() {
         if let window = window {
-            window.makeKeyAndOrderFront(nil)
+            window.orderFrontRegardless()
             NSApp.activate()
             return
         }
@@ -57,21 +57,18 @@ final class SettingsWindowController {
 
         self.window = window
 
-        // Temporarily become regular app to show in dock/cmd-tab
-        NSApp.setActivationPolicy(.regular)
-        window.makeKeyAndOrderFront(nil)
+        window.orderFrontRegardless()
         NSApp.activate()
 
-        // Watch for window close to revert activation policy
+        // Watch for window close to clean up reference
         NotificationCenter.default.addObserver(
             forName: NSWindow.willCloseNotification,
             object: window,
             queue: .main
         ) { [weak self] _ in
-            if !UserDefaults.standard.bool(forKey: "showDockIcon") {
-                NSApp.setActivationPolicy(.accessory)
+            Task { @MainActor in
+                self?.window = nil
             }
-            self?.window = nil
         }
     }
 }

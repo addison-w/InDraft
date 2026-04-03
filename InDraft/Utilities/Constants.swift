@@ -20,7 +20,6 @@ enum Constants {
     }
 
     enum UserDefaultsKeys {
-        static let showDockIcon = "showDockIcon"
         static let launchAtLogin = "launchAtLogin"
         static let onboardingComplete = "onboardingComplete"
         static let onboardingStep = "onboardingStep"

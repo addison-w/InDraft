@@ -66,24 +66,28 @@ struct MenuBarDropdownView: View {
         Button {
             AccessibilityService.openAccessibilitySettings()
         } label: {
-            HStack(spacing: Theme.Spacing.sm) {
-                Circle()
-                    .fill(Theme.Colors.statusAmber)
-                    .frame(width: 6, height: 6)
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: Theme.Spacing.sm) {
+                    Circle()
+                        .fill(Theme.Colors.statusAmber)
+                        .frame(width: 6, height: 6)
 
-                Text("Accessibility access required")
-                    .font(Theme.Typography.caption(11))
-                    .foregroundColor(Theme.Colors.statusAmberText)
+                    Text("Accessibility access required")
+                        .font(Theme.Typography.caption(11))
+                        .foregroundColor(Theme.Colors.statusAmberText)
+                        .lineLimit(1)
+                        .fixedSize(horizontal: true, vertical: false)
+                }
 
-                Spacer()
-
-                Text("Open Settings")
+                Text("Open Settings →")
                     .font(Theme.Typography.caption(11))
                     .foregroundColor(Theme.Colors.statusAmberText)
                     .underline()
+                    .padding(.leading, 6 + Theme.Spacing.sm)
             }
             .padding(.horizontal, Theme.Spacing.lg)
             .padding(.vertical, Theme.Spacing.sm)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .background(Theme.Colors.statusAmberBg)
         }
         .buttonStyle(.plain)
@@ -148,7 +152,7 @@ struct MenuBarDropdownView: View {
             MenuBarRowView(
                 icon: "gearshape",
                 title: "Settings",
-                hotkey: "⌘,"
+                hotkey: nil
             ) {
                 dismiss()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
@@ -159,7 +163,7 @@ struct MenuBarDropdownView: View {
             MenuBarRowView(
                 icon: "clock.arrow.circlepath",
                 title: "History",
-                hotkey: "⌘H"
+                hotkey: nil
             ) {
                 dismiss()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
@@ -175,7 +179,7 @@ struct MenuBarDropdownView: View {
         MenuBarRowView(
             icon: "power",
             title: "Quit InDraft",
-            hotkey: "⌘Q"
+            hotkey: nil
         ) {
             NSApplication.shared.terminate(nil)
         }

@@ -36,6 +36,7 @@ final class ProviderTests: XCTestCase {
         XCTAssertEqual(provider.lastTestStatus, .untested)
         XCTAssertNil(provider.lastTestError)
         XCTAssertNil(provider.lastTestedAt)
+        XCTAssertEqual(provider.timeoutSeconds, 60)
     }
 
     // MARK: - Active Provider Constraint

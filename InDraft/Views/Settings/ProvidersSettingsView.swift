@@ -13,7 +13,7 @@ struct ProvidersSettingsView: View {
     @State private var newAPIKey = ""
     @State private var newShowAPIKey = false
     @State private var newDefaultModel = ""
-    @State private var newTimeoutSeconds: Double = 30
+    @State private var newTimeoutSeconds: Double = 60
 
     private let keychainService = LiveKeychainService()
 
@@ -216,7 +216,7 @@ struct ProvidersSettingsView: View {
                 }
             }
 
-            fieldSection("DEFAULT MODEL") {
+            fieldSection("MODEL") {
                 TextField("e.g. gpt-4o", text: $newDefaultModel)
                     .inputFieldStyle()
             }
@@ -373,7 +373,7 @@ struct ProvidersSettingsView: View {
         newAPIKey = ""
         newShowAPIKey = false
         newDefaultModel = ""
-        newTimeoutSeconds = 30
+        newTimeoutSeconds = 60
     }
 }
 
@@ -449,7 +449,7 @@ struct ProviderInlineEditor: View {
             }
 
             // Default model
-            fieldSection("DEFAULT MODEL") {
+            fieldSection("MODEL") {
                 TextField("e.g. gpt-4o", text: $provider.defaultModel)
                     .inputFieldStyle()
                     .onChange(of: provider.defaultModel) { _, _ in

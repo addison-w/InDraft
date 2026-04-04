@@ -83,7 +83,7 @@ final class LiveProviderService: ProviderServiceProtocol {
         self.session = session
     }
 
-    func transform(text: String, prompt: String, baseURL: String, apiKey: String, model: String, timeout: TimeInterval = 30) async throws -> String {
+    func transform(text: String, prompt: String, baseURL: String, apiKey: String, model: String, timeout: TimeInterval = 60) async throws -> String {
         let request = try buildRequest(baseURL: baseURL, apiKey: apiKey, model: model, systemPrompt: prompt, userContent: text, timeout: timeout)
 
         let (data, response): (Data, URLResponse)
@@ -120,7 +120,7 @@ final class LiveProviderService: ProviderServiceProtocol {
         }
     }
 
-    func testConnection(baseURL: String, apiKey: String, model: String, timeout: TimeInterval = 30) async -> ConnectionTestResult {
+    func testConnection(baseURL: String, apiKey: String, model: String, timeout: TimeInterval = 60) async -> ConnectionTestResult {
         let start = CFAbsoluteTimeGetCurrent()
         do {
             let _ = try await transform(text: "Reply with OK", prompt: "Reply with OK", baseURL: baseURL, apiKey: apiKey, model: model, timeout: timeout)
@@ -145,7 +145,7 @@ final class LiveProviderService: ProviderServiceProtocol {
         5. Preserve all emojis from the original input as-is.
         """
 
-    private func buildRequest(baseURL: String, apiKey: String, model: String, systemPrompt: String, userContent: String, timeout: TimeInterval = 30) throws -> URLRequest {
+    private func buildRequest(baseURL: String, apiKey: String, model: String, systemPrompt: String, userContent: String, timeout: TimeInterval = 60) throws -> URLRequest {
         let urlString = baseURL.hasSuffix("/")
             ? "\(baseURL)chat/completions"
             : "\(baseURL)/chat/completions"
@@ -198,14 +198,14 @@ final class MockProviderService: ProviderServiceProtocol {
     var lastTransformText: String?
     var lastTransformPrompt: String?
 
-    func transform(text: String, prompt: String, baseURL: String, apiKey: String, model: String, timeout: TimeInterval = 30) async throws -> String {
+    func transform(text: String, prompt: String, baseURL: String, apiKey: String, model: String, timeout: TimeInterval = 60) async throws -> String {
         transformCallCount += 1
         lastTransformText = text
         lastTransformPrompt = prompt
         return try transformResult.get()
     }
 
-    func testConnection(baseURL: String, apiKey: String, model: String, timeout: TimeInterval = 30) async -> ConnectionTestResult {
+    func testConnection(baseURL: String, apiKey: String, model: String, timeout: TimeInterval = 60) async -> ConnectionTestResult {
         testConnectionCallCount += 1
         return connectionTestResult
     }

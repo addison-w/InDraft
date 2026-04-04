@@ -266,6 +266,11 @@ struct MenuBarRowView: View {
             withAnimation(Theme.Motion.quick) {
                 isHovered = hovering
             }
+            if hovering {
+                NSCursor.arrow.push()
+            } else {
+                NSCursor.pop()
+            }
         }
     }
 }

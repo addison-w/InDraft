@@ -32,7 +32,7 @@ struct HistorySettingsView: View {
                         }
                         Spacer()
                         Toggle("", isOn: $recordingEnabled)
-                            .toggleStyle(.switch)
+                            .toggleStyle(WabiSabiToggleStyle())
                             .labelsHidden()
                     }
                     .padding(Theme.Spacing.xl)
@@ -43,7 +43,7 @@ struct HistorySettingsView: View {
                         .padding(.horizontal, Theme.Spacing.xl)
 
                     // Retention picker
-                    HStack {
+                    VStack(alignment: .leading, spacing: Theme.Spacing.md) {
                         VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
                             Text("Retention Period")
                                 .font(Theme.Typography.body(14))
@@ -52,14 +52,11 @@ struct HistorySettingsView: View {
                                 .font(Theme.Typography.caption(11))
                                 .foregroundColor(Theme.Colors.textSecondary)
                         }
-                        Spacer()
-                        Picker("", selection: $retentionDays) {
-                            ForEach(retentionOptions, id: \.value) { option in
-                                Text(option.label).tag(option.value)
-                            }
-                        }
-                        .labelsHidden()
-                        .frame(width: 120)
+
+                        InkSegmentPicker(
+                            options: retentionOptions,
+                            selection: $retentionDays
+                        )
                     }
                     .padding(Theme.Spacing.xl)
 
@@ -79,10 +76,15 @@ struct HistorySettingsView: View {
                                 .foregroundColor(Theme.Colors.textSecondary)
                         }
                         Spacer()
-                        Button("Clear All") {
+                        Button {
                             showClearConfirmation = true
+                        } label: {
+                            Text("Clear All")
+                                .font(Theme.Typography.label(11))
+                                .foregroundColor(Theme.Colors.error)
+                                .underline()
                         }
-                        .buttonStyle(SecondaryButtonStyle())
+                        .buttonStyle(.plain)
                     }
                     .padding(Theme.Spacing.xl)
                 }

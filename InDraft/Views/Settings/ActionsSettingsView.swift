@@ -259,10 +259,20 @@ struct ActionsSettingsView: View {
                     createAction()
                 } label: {
                     Text("Create Action")
+                        .font(Theme.Typography.label(12))
+                        .foregroundColor(Theme.Colors.textSecondary)
+                        .padding(.horizontal, Theme.Spacing.lg)
+                        .padding(.vertical, Theme.Spacing.sm)
+                        .background(Theme.Colors.surfaceContainerLow)
+                        .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: Theme.Radius.sm)
+                                .stroke(Theme.Colors.cardBorder, lineWidth: 1)
+                        )
                 }
-                .buttonStyle(PrimaryButtonStyle())
+                .buttonStyle(.plain)
                 .disabled(newName.trimmingCharacters(in: .whitespaces).isEmpty)
-                .opacity(newName.trimmingCharacters(in: .whitespaces).isEmpty ? 0.5 : 1.0)
+                .opacity(newName.trimmingCharacters(in: .whitespaces).isEmpty ? 0.4 : 1.0)
             }
         }
         .padding(Theme.Spacing.xl)
@@ -426,6 +436,7 @@ struct ActionInlineEditor: View {
     let onDelete: () -> Void
     let onDuplicate: () -> Void
 
+    @State private var editingName: String = ""
     @State private var editingPrompt: String = ""
     @State private var editingModelOverride: String = ""
 
@@ -434,6 +445,16 @@ struct ActionInlineEditor: View {
             Rectangle()
                 .fill(Theme.Colors.divider)
                 .frame(height: 1)
+
+            // Name
+            fieldSection("NAME") {
+                TextField("Action name", text: $editingName)
+                    .inputFieldStyle()
+                    .onChange(of: editingName) { _, newValue in
+                        action.name = newValue
+                        action.updatedAt = Date()
+                    }
+            }
 
             // Prompt
             fieldSection("PROMPT") {
@@ -542,6 +563,7 @@ struct ActionInlineEditor: View {
         .padding(.horizontal, Theme.Spacing.xl)
         .padding(.bottom, Theme.Spacing.lg)
         .onAppear {
+            editingName = action.name
             editingPrompt = action.prompt
             editingModelOverride = action.modelOverride ?? ""
         }

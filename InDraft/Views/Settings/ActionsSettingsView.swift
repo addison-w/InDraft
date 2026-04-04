@@ -381,9 +381,9 @@ struct ActionsSettingsView: View {
         }
 
         let defaults = [
-            Constants.DefaultActions.rewriteForClarity,
             Constants.DefaultActions.grammarFix,
-            Constants.DefaultActions.paraphrase,
+            Constants.DefaultActions.rewriteForClarity,
+            Constants.DefaultActions.shorten,
         ]
 
         for (index, def) in defaults.enumerated() {

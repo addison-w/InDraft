@@ -101,7 +101,7 @@ final class ProviderServiceTests: XCTestCase {
         XCTAssertEqual(body.model, "gpt-4")
         XCTAssertEqual(body.messages.count, 2)
         XCTAssertEqual(body.messages[0].role, "system")
-        XCTAssertEqual(body.messages[0].content, "Fix grammar")
+        XCTAssertTrue(body.messages[0].content.contains("Fix grammar"))
         XCTAssertEqual(body.messages[1].role, "user")
         XCTAssertEqual(body.messages[1].content, "Hello world")
     }

@@ -16,9 +16,9 @@ struct CompleteStepView: View {
             modifiers: Constants.DefaultActions.grammarFix.modifiers
         ),
         (
-            name: Constants.DefaultActions.paraphrase.name,
-            keyCode: Constants.DefaultActions.paraphrase.keyCode,
-            modifiers: Constants.DefaultActions.paraphrase.modifiers
+            name: Constants.DefaultActions.shorten.name,
+            keyCode: Constants.DefaultActions.shorten.keyCode,
+            modifiers: Constants.DefaultActions.shorten.modifiers
         ),
     ]
 

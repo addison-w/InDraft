@@ -197,9 +197,9 @@ struct OnboardingContainerView: View {
         try? keychain.store(apiKey: providerAPIKey, forReference: provider.apiKeyReference)
 
         let actions = [
-            Constants.DefaultActions.rewriteForClarity,
             Constants.DefaultActions.grammarFix,
-            Constants.DefaultActions.paraphrase
+            Constants.DefaultActions.rewriteForClarity,
+            Constants.DefaultActions.shorten
         ]
         for (index, def) in actions.enumerated() {
             let action = Action(

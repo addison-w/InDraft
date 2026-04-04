@@ -27,9 +27,9 @@ final class SeedDataTests: XCTestCase {
 
         let actions = try context.fetch(FetchDescriptor<Action>(sortBy: [SortDescriptor(\.sortOrder)]))
         XCTAssertEqual(actions.count, 3)
-        XCTAssertEqual(actions[0].name, "Rewrite for Clarity")
-        XCTAssertEqual(actions[1].name, "Grammar Fix")
-        XCTAssertEqual(actions[2].name, "Paraphrase")
+        XCTAssertEqual(actions[0].name, "Grammar Fix")
+        XCTAssertEqual(actions[1].name, "Rewrite for Clarity")
+        XCTAssertEqual(actions[2].name, "Shorten")
     }
 
     func testCreateDefaultActionsIdempotent() throws {
@@ -64,15 +64,15 @@ final class SeedDataTests: XCTestCase {
         let actions = try context.fetch(FetchDescriptor<Action>(sortBy: [SortDescriptor(\.sortOrder)]))
         let expectedModifiers = UInt32(NSEvent.ModifierFlags([.control, .option]).rawValue)
 
-        // Rewrite for Clarity → control+option+1 (kVK_ANSI_1 = 18)
+        // Grammar Fix → control+option+1 (kVK_ANSI_1 = 18)
         XCTAssertEqual(actions[0].hotkeyKeyCode, UInt32(kVK_ANSI_1))
         XCTAssertEqual(actions[0].hotkeyModifiers, expectedModifiers)
 
-        // Grammar Fix → control+option+2 (kVK_ANSI_2 = 19)
+        // Rewrite for Clarity → control+option+2 (kVK_ANSI_2 = 19)
         XCTAssertEqual(actions[1].hotkeyKeyCode, UInt32(kVK_ANSI_2))
         XCTAssertEqual(actions[1].hotkeyModifiers, expectedModifiers)
 
-        // Paraphrase → control+option+3 (kVK_ANSI_3 = 20)
+        // Shorten → control+option+3 (kVK_ANSI_3 = 20)
         XCTAssertEqual(actions[2].hotkeyKeyCode, UInt32(kVK_ANSI_3))
         XCTAssertEqual(actions[2].hotkeyModifiers, expectedModifiers)
     }

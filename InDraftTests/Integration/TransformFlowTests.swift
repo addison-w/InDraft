@@ -228,7 +228,7 @@ final class TransformFlowTests: XCTestCase {
         SeedData.createDefaultActions(in: context)
         let actions = try context.fetch(FetchDescriptor<Action>(sortBy: [SortDescriptor(\.sortOrder)]))
         XCTAssertEqual(actions.count, 3)
-        XCTAssertEqual(actions[0].name, "Rewrite for Clarity")
+        XCTAssertEqual(actions[0].name, "Grammar Fix")
         XCTAssertTrue(actions[0].hasHotkey)
     }
 }

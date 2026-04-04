@@ -33,23 +33,23 @@ enum Constants {
         /// HotkeyRecorderView and expected by LiveHotkeyService.register().
         static let controlOptionModifiers = UInt32(NSEvent.ModifierFlags([.control, .option]).rawValue)
 
-        static let rewriteForClarity = (
-            name: "Rewrite for Clarity",
-            prompt: "Rewrite the following text to be clearer and more concise. Preserve the original meaning. Return only the rewritten text, no explanations.",
+        static let grammarFix = (
+            name: "Grammar Fix",
+            prompt: "Fix grammar, spelling, and punctuation errors. Keep the original language, meaning, and tone intact.",
             keyCode: UInt32(kVK_ANSI_1),
             modifiers: controlOptionModifiers
         )
 
-        static let grammarFix = (
-            name: "Grammar Fix",
-            prompt: "Fix all grammar, spelling, and punctuation errors in the following text. Preserve the original meaning and tone. Return only the corrected text, no explanations.",
+        static let rewriteForClarity = (
+            name: "Rewrite for Clarity",
+            prompt: "Rewrite for clarity. Simplify sentence structure, remove ambiguity, and keep the tone natural. Preserve the original meaning.",
             keyCode: UInt32(kVK_ANSI_2),
             modifiers: controlOptionModifiers
         )
 
-        static let paraphrase = (
-            name: "Paraphrase",
-            prompt: "Paraphrase the following text while preserving its meaning. Use different wording and sentence structure. Return only the paraphrased text, no explanations.",
+        static let shorten = (
+            name: "Shorten",
+            prompt: "Shorten the text while preserving all key information and the original tone. Remove filler, redundancy, and unnecessary qualifiers.",
             keyCode: UInt32(kVK_ANSI_3),
             modifiers: controlOptionModifiers
         )

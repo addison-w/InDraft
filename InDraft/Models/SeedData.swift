@@ -7,9 +7,9 @@ enum SeedData {
         guard existing.isEmpty else { return }
 
         let defaults = [
-            Constants.DefaultActions.rewriteForClarity,
             Constants.DefaultActions.grammarFix,
-            Constants.DefaultActions.paraphrase,
+            Constants.DefaultActions.rewriteForClarity,
+            Constants.DefaultActions.shorten,
         ]
 
         for (index, def) in defaults.enumerated() {
@@ -29,9 +29,9 @@ enum SeedData {
 
     static func restoreDefaultActions(in context: ModelContext) {
         let defaults: [(name: String, prompt: String, keyCode: UInt32, modifiers: UInt32)] = [
-            Constants.DefaultActions.rewriteForClarity,
             Constants.DefaultActions.grammarFix,
-            Constants.DefaultActions.paraphrase,
+            Constants.DefaultActions.rewriteForClarity,
+            Constants.DefaultActions.shorten,
         ]
 
         let allActions = (try? context.fetch(FetchDescriptor<Action>())) ?? []

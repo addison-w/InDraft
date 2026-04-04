@@ -210,6 +210,8 @@ struct MenuBarDropdownView: View {
             return "pencil.line"
         } else if name.contains("grammar") || name.contains("fix") {
             return "checkmark.circle"
+        } else if name.contains("shorten") || name.contains("condense") {
+            return "arrow.down.right.and.arrow.up.left"
         } else if name.contains("paraphrase") || name.contains("rephrase") {
             return "arrow.2.squarepath"
         } else if name.contains("summarize") || name.contains("summary") {

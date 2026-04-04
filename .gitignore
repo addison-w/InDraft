@@ -5,6 +5,38 @@
 xcuserdata/
 DerivedData/
 build/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.moved-aside
+*.hmap
+*.ipa
+
+# Release artifacts (use GitHub Releases instead)
+release/
+
+# Environment / secrets
+.env
+.env.*
+
+# Signing & certificates
+*.p12
+*.p8
+*.pem
+*.key
+*.cer
+*.mobileprovision
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Editor artifacts
+*.swp
+*.swo
+*~
 
 # macOS
 .DS_Store

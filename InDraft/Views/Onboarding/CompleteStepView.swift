@@ -6,14 +6,14 @@ struct CompleteStepView: View {
 
     private let actions = [
         (
-            name: Constants.DefaultActions.rewriteForClarity.name,
-            keyCode: Constants.DefaultActions.rewriteForClarity.keyCode,
-            modifiers: Constants.DefaultActions.rewriteForClarity.modifiers
-        ),
-        (
             name: Constants.DefaultActions.grammarFix.name,
             keyCode: Constants.DefaultActions.grammarFix.keyCode,
             modifiers: Constants.DefaultActions.grammarFix.modifiers
+        ),
+        (
+            name: Constants.DefaultActions.rewriteForClarity.name,
+            keyCode: Constants.DefaultActions.rewriteForClarity.keyCode,
+            modifiers: Constants.DefaultActions.rewriteForClarity.modifiers
         ),
         (
             name: Constants.DefaultActions.shorten.name,

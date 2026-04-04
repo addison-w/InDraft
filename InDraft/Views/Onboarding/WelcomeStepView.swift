@@ -7,7 +7,11 @@ struct WelcomeStepView: View {
         VStack(spacing: Theme.Spacing.xl) {
             Spacer()
 
-            WabiSabiArrowIllustration()
+            Image(nsImage: NSImage(contentsOfFile: Bundle.main.path(forResource: "quill-logo", ofType: "svg") ?? "") ?? NSImage())
+                .resizable()
+                .scaledToFit()
+                .frame(height: 80)
+                .foregroundColor(Theme.Colors.textPrimary)
 
             VStack(spacing: Theme.Spacing.md) {
                 Text("Rewrite anything,\nanywhere.")

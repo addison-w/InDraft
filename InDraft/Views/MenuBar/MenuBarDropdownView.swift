@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import Hugeicons
 
 struct MenuBarDropdownView: View {
     @EnvironmentObject var appState: AppState
@@ -159,7 +160,7 @@ struct MenuBarDropdownView: View {
     private var utilitySection: some View {
         Group {
             MenuBarRowView(
-                icon: "gearshape",
+                icon: .settings,
                 title: "Settings",
                 hotkey: nil
             ) {
@@ -170,7 +171,7 @@ struct MenuBarDropdownView: View {
             }
 
             MenuBarRowView(
-                icon: "clock.arrow.circlepath",
+                icon: .clockRewind,
                 title: "History",
                 hotkey: nil
             ) {
@@ -186,7 +187,7 @@ struct MenuBarDropdownView: View {
 
     private var quitSection: some View {
         MenuBarRowView(
-            icon: "power",
+            icon: .power,
             title: "Quit InDraft",
             hotkey: nil
         ) {
@@ -204,22 +205,22 @@ struct MenuBarDropdownView: View {
             .padding(.vertical, Theme.Spacing.xs)
     }
 
-    private func iconForAction(_ action: Action) -> String {
+    private func iconForAction(_ action: Action) -> AppIcon {
         let name = action.name.lowercased()
         if name.contains("rewrite") || name.contains("write") {
-            return "pencil.line"
+            return .edit
         } else if name.contains("grammar") || name.contains("fix") {
-            return "checkmark.circle"
+            return .grammarCheck
         } else if name.contains("shorten") || name.contains("condense") {
-            return "arrow.down.right.and.arrow.up.left"
+            return .shorten
         } else if name.contains("paraphrase") || name.contains("rephrase") {
-            return "arrow.2.squarepath"
+            return .paraphrase
         } else if name.contains("summarize") || name.contains("summary") {
-            return "doc.text"
+            return .summarize
         } else if name.contains("translate") {
-            return "globe"
+            return .translate
         } else {
-            return "text.alignleft"
+            return .textDefault
         }
     }
 
@@ -228,7 +229,7 @@ struct MenuBarDropdownView: View {
 // MARK: - Menu Bar Row View
 
 struct MenuBarRowView: View {
-    let icon: String
+    let icon: AppIcon
     let title: String
     let hotkey: String?
     let action: () -> Void
@@ -240,8 +241,10 @@ struct MenuBarRowView: View {
             action()
         } label: {
             HStack(spacing: Theme.Spacing.sm + 2) {
-                Image(systemName: icon)
-                    .font(.system(size: 12, weight: .regular))
+                icon.image()
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 14, height: 14)
                     .foregroundColor(isHovered ? Theme.Colors.textPrimary : Theme.Colors.textTertiary)
                     .frame(width: 18, alignment: .center)
 

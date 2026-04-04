@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import Hugeicons
 
 struct HistoryWindowView: View {
     @Environment(\.modelContext) private var modelContext
@@ -41,8 +42,10 @@ struct HistoryWindowView: View {
             if filteredRecords.isEmpty {
                 Spacer()
                 VStack(spacing: Theme.Spacing.sm) {
-                    Image(systemName: "clock.arrow.circlepath")
-                        .font(.system(size: 28))
+                    AppIcon.clockRewind.image()
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 28, height: 28)
                         .foregroundColor(Theme.Colors.textTertiary)
                     Text(searchText.isEmpty ? "No transformation history yet" : "No results found")
                         .font(Theme.Typography.body())
@@ -107,8 +110,10 @@ struct HistoryWindowView: View {
         HStack(spacing: Theme.Spacing.md) {
             // Search field
             HStack(spacing: Theme.Spacing.sm) {
-                Image(systemName: "magnifyingglass")
-                    .font(.system(size: 12))
+                AppIcon.search.image()
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 14, height: 14)
                     .foregroundColor(Theme.Colors.textTertiary)
                 TextField("Search history...", text: $searchText)
                     .textFieldStyle(.plain)

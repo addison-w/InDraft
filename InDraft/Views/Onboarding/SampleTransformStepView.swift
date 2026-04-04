@@ -1,4 +1,5 @@
 import SwiftUI
+import Hugeicons
 
 struct SampleTransformStepView: View {
     let baseURL: String
@@ -58,9 +59,11 @@ struct SampleTransformStepView: View {
                 .disabled(isTransforming || sampleText.trimmingCharacters(in: .whitespaces).isEmpty)
 
                 if hasTransformed {
-                    Image(systemName: "checkmark")
+                    AppIcon.success.image()
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 16, height: 16)
                         .foregroundColor(Theme.Colors.statusGreen)
-                        .font(.system(size: 14))
                 }
             }
 

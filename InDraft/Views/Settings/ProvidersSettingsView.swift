@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import Hugeicons
 
 struct ProvidersSettingsView: View {
     @Environment(\.modelContext) private var modelContext
@@ -125,8 +126,10 @@ struct ProvidersSettingsView: View {
 
                         Spacer()
 
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 10, weight: .medium))
+                        AppIcon.chevronRight.image()
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 12, height: 12)
                             .foregroundColor(Theme.Colors.textTertiary)
                             .rotationEffect(.degrees(isExpanded ? 90 : 0))
                     }
@@ -208,8 +211,10 @@ struct ProvidersSettingsView: View {
                     Button {
                         newShowAPIKey.toggle()
                     } label: {
-                        Image(systemName: newShowAPIKey ? "eye.slash" : "eye")
-                            .font(.system(size: 12))
+                        (newShowAPIKey ? AppIcon.eyeSlash : AppIcon.eye).image()
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 14, height: 14)
                             .foregroundColor(Theme.Colors.textTertiary)
                     }
                     .buttonStyle(.plain)
@@ -264,8 +269,10 @@ struct ProvidersSettingsView: View {
                 }
             } label: {
                 HStack(spacing: Theme.Spacing.xs) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 11, weight: .medium))
+                    AppIcon.add.image()
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 13, height: 13)
                     Text("Add Provider")
                         .font(Theme.Typography.label(12))
                 }
@@ -440,8 +447,10 @@ struct ProviderInlineEditor: View {
                     Button {
                         showAPIKey.toggle()
                     } label: {
-                        Image(systemName: showAPIKey ? "eye.slash" : "eye")
-                            .font(.system(size: 12))
+                        (showAPIKey ? AppIcon.eyeSlash : AppIcon.eye).image()
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 14, height: 14)
                             .foregroundColor(Theme.Colors.textTertiary)
                     }
                     .buttonStyle(.plain)
@@ -514,8 +523,10 @@ struct ProviderInlineEditor: View {
 
                 if let succeeded = testSucceeded, let message = testResultMessage {
                     HStack(spacing: Theme.Spacing.xs) {
-                        Image(systemName: succeeded ? "checkmark.circle.fill" : "xmark.circle.fill")
-                            .font(.system(size: 11))
+                        (succeeded ? AppIcon.successCircle : AppIcon.errorCircle).image()
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 13, height: 13)
                         Text(message)
                             .font(Theme.Typography.caption(11))
                             .lineLimit(1)

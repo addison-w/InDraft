@@ -1,4 +1,5 @@
 import SwiftUI
+import Hugeicons
 
 /// A single close button matching the app's warm minimal aesthetic.
 /// This app lives in the menu bar (no dock icon), so minimize/zoom are unnecessary.
@@ -17,8 +18,10 @@ struct WindowCloseButton: View {
                     .frame(width: 14, height: 14)
 
                 if isHovered {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 8, weight: .bold))
+                    AppIcon.close.image()
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 8, height: 8)
                         .foregroundColor(Theme.Colors.windowControlIcon)
                         .transition(.opacity.animation(.easeInOut(duration: 0.1)))
                 }

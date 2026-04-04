@@ -1,4 +1,5 @@
 import SwiftUI
+import Hugeicons
 
 struct PreviewPanelView: View {
     let originalText: String
@@ -30,8 +31,10 @@ struct PreviewPanelView: View {
                         NSPasteboard.general.setString(transformedText, forType: .string)
                     }
                 } label: {
-                    Image(systemName: "ellipsis")
-                        .font(.system(size: 12))
+                    AppIcon.menu.image()
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 14, height: 14)
                         .foregroundColor(Theme.Colors.textSecondary)
                         .frame(width: 24, height: 24)
                 }

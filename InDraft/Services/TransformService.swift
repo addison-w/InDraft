@@ -77,7 +77,7 @@ actor LiveTransformService: TransformServiceProtocol {
         // Step 2: Send to AI provider
         let transformedText: String
         do {
-            let model = action.modelOverride ?? provider.defaultModel
+            let model = provider.defaultModel
             transformedText = try await providerService.transform(
                 text: originalText,
                 prompt: action.prompt,
@@ -152,7 +152,7 @@ actor LiveTransformService: TransformServiceProtocol {
             actionName: action.name,
             providerID: provider.id,
             providerName: provider.displayName,
-            modelName: action.modelOverride ?? provider.defaultModel,
+            modelName: provider.defaultModel,
             originalText: originalText,
             transformedText: transformedText,
             latencyMs: latencyMs
@@ -166,7 +166,7 @@ actor LiveTransformService: TransformServiceProtocol {
             actionName: action.name,
             providerID: provider.id,
             providerName: provider.displayName,
-            modelName: action.modelOverride ?? provider.defaultModel,
+            modelName: provider.defaultModel,
             originalText: originalText,
             latencyMs: latencyMs,
             errorCode: errorCode,

@@ -7,11 +7,6 @@ enum OutputBehavior: String, Codable, CaseIterable {
     case clipboard
 }
 
-enum ProviderMode: String, Codable, CaseIterable {
-    case active
-    case fixed
-}
-
 @Model
 final class Action {
     @Attribute(.unique) var id: UUID
@@ -20,9 +15,6 @@ final class Action {
     var hotkeyKeyCode: UInt32?
     var hotkeyModifiers: UInt32?
     var outputBehavior: OutputBehavior
-    var providerMode: ProviderMode
-    var providerID: UUID?
-    var modelOverride: String?
     var enabled: Bool
     var sortOrder: Int
     var createdAt: Date
@@ -35,9 +27,6 @@ final class Action {
         hotkeyKeyCode: UInt32? = nil,
         hotkeyModifiers: UInt32? = nil,
         outputBehavior: OutputBehavior = .replace,
-        providerMode: ProviderMode = .active,
-        providerID: UUID? = nil,
-        modelOverride: String? = nil,
         enabled: Bool = true,
         sortOrder: Int = 0,
         createdAt: Date = Date(),
@@ -49,9 +38,6 @@ final class Action {
         self.hotkeyKeyCode = hotkeyKeyCode
         self.hotkeyModifiers = hotkeyModifiers
         self.outputBehavior = outputBehavior
-        self.providerMode = providerMode
-        self.providerID = providerID
-        self.modelOverride = modelOverride
         self.enabled = enabled
         self.sortOrder = sortOrder
         self.createdAt = createdAt

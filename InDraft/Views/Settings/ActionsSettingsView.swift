@@ -16,9 +16,6 @@ struct ActionsSettingsView: View {
     @State private var newHotkeyKeyCode: UInt32?
     @State private var newHotkeyModifiers: UInt32?
     @State private var newOutputBehavior: OutputBehavior = .replace
-    @State private var newProviderMode: ProviderMode = .active
-    @State private var newProviderID: UUID?
-    @State private var newModelOverride = ""
 
     var body: some View {
         ScrollView {
@@ -346,9 +343,6 @@ struct ActionsSettingsView: View {
             name: "\(action.name) Copy",
             prompt: action.prompt,
             outputBehavior: action.outputBehavior,
-            providerMode: action.providerMode,
-            providerID: action.providerID,
-            modelOverride: action.modelOverride,
             enabled: action.enabled,
             sortOrder: maxOrder + 1
         )
@@ -373,9 +367,6 @@ struct ActionsSettingsView: View {
             hotkeyKeyCode: newHotkeyKeyCode,
             hotkeyModifiers: newHotkeyModifiers,
             outputBehavior: newOutputBehavior,
-            providerMode: newProviderMode,
-            providerID: newProviderMode == .fixed ? newProviderID : nil,
-            modelOverride: newModelOverride.isEmpty ? nil : newModelOverride,
             enabled: true,
             sortOrder: maxOrder + 1
         )
@@ -394,9 +385,6 @@ struct ActionsSettingsView: View {
         newHotkeyKeyCode = nil
         newHotkeyModifiers = nil
         newOutputBehavior = .replace
-        newProviderMode = .active
-        newProviderID = nil
-        newModelOverride = ""
     }
 
     private func restoreDefaults() {
@@ -431,14 +419,12 @@ struct ActionsSettingsView: View {
 struct ActionInlineEditor: View {
     @Bindable var action: Action
     @EnvironmentObject private var appCoordinator: AppCoordinator
-    @Query(sort: \Provider.displayName) private var providers: [Provider]
 
     let onDelete: () -> Void
     let onDuplicate: () -> Void
 
     @State private var editingName: String = ""
     @State private var editingPrompt: String = ""
-    @State private var editingModelOverride: String = ""
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.lg) {
@@ -504,39 +490,6 @@ struct ActionInlineEditor: View {
                 )
             }
 
-            // Provider
-            fieldSection("PROVIDER") {
-                VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-                    InkSegmentPicker(
-                        options: [("Use Active", ProviderMode.active), ("Fixed Provider", ProviderMode.fixed)],
-                        selection: Binding(
-                            get: { action.providerMode },
-                            set: { action.providerMode = $0; action.updatedAt = Date() }
-                        )
-                    )
-
-                    if action.providerMode == .fixed {
-                        Picker("Provider", selection: Binding(
-                            get: { action.providerID },
-                            set: { action.providerID = $0; action.updatedAt = Date() }
-                        )) {
-                            Text("Select...").tag(nil as UUID?)
-                            ForEach(providers) { provider in
-                                Text(provider.displayName).tag(provider.id as UUID?)
-                            }
-                        }
-                        .labelsHidden()
-                    }
-
-                    TextField("Model override (optional)", text: $editingModelOverride)
-                        .inputFieldStyle()
-                        .onChange(of: editingModelOverride) { _, newValue in
-                            action.modelOverride = newValue.isEmpty ? nil : newValue
-                            action.updatedAt = Date()
-                        }
-                }
-            }
-
             // Actions row
             HStack(spacing: Theme.Spacing.lg) {
                 Button {
@@ -565,7 +518,6 @@ struct ActionInlineEditor: View {
         .onAppear {
             editingName = action.name
             editingPrompt = action.prompt
-            editingModelOverride = action.modelOverride ?? ""
         }
     }
 

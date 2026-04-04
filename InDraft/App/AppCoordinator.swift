@@ -113,15 +113,9 @@ final class AppCoordinator: ObservableObject {
 
         guard action.enabled else { return }
 
-        // Find the provider
-        let provider: Provider?
-        if action.providerMode == .fixed, let providerID = action.providerID {
-            let provPredicate = #Predicate<Provider> { $0.id == providerID }
-            provider = try? context.fetch(FetchDescriptor<Provider>(predicate: provPredicate)).first
-        } else {
-            let activePredicate = #Predicate<Provider> { $0.isActive == true }
-            provider = try? context.fetch(FetchDescriptor<Provider>(predicate: activePredicate)).first
-        }
+        // Find the active provider
+        let activePredicate = #Predicate<Provider> { $0.isActive == true }
+        let provider = try? context.fetch(FetchDescriptor<Provider>(predicate: activePredicate)).first
 
         guard let provider = provider else {
             toastManager.show(.error("No active provider — configure one in Settings > Providers"))

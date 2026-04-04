@@ -33,24 +33,17 @@ final class ActionTests: XCTestCase {
         XCTAssertNil(action.hotkeyKeyCode)
         XCTAssertNil(action.hotkeyModifiers)
         XCTAssertEqual(action.outputBehavior, .replace)
-        XCTAssertEqual(action.providerMode, .active)
-        XCTAssertNil(action.providerID)
-        XCTAssertNil(action.modelOverride)
         XCTAssertTrue(action.enabled)
         XCTAssertEqual(action.sortOrder, 0)
     }
 
     func testActionWithAllFields() {
-        let providerID = UUID()
         let action = Action(
             name: "Custom",
             prompt: "Translate to English",
             hotkeyKeyCode: 18,
             hotkeyModifiers: 0x040000 | 0x080000,
             outputBehavior: .preview,
-            providerMode: .fixed,
-            providerID: providerID,
-            modelOverride: "gpt-4o",
             enabled: false,
             sortOrder: 5
         )
@@ -58,9 +51,6 @@ final class ActionTests: XCTestCase {
         try! context.save()
 
         XCTAssertEqual(action.outputBehavior, .preview)
-        XCTAssertEqual(action.providerMode, .fixed)
-        XCTAssertEqual(action.providerID, providerID)
-        XCTAssertEqual(action.modelOverride, "gpt-4o")
         XCTAssertFalse(action.enabled)
         XCTAssertEqual(action.sortOrder, 5)
     }
@@ -84,14 +74,6 @@ final class ActionTests: XCTestCase {
         XCTAssertTrue(OutputBehavior.allCases.contains(.replace))
         XCTAssertTrue(OutputBehavior.allCases.contains(.preview))
         XCTAssertTrue(OutputBehavior.allCases.contains(.clipboard))
-    }
-
-    // MARK: - Provider Mode Enum
-
-    func testProviderModeCases() {
-        XCTAssertEqual(ProviderMode.allCases.count, 2)
-        XCTAssertTrue(ProviderMode.allCases.contains(.active))
-        XCTAssertTrue(ProviderMode.allCases.contains(.fixed))
     }
 
     // MARK: - Persistence

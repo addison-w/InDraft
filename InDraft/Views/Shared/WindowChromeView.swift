@@ -13,12 +13,12 @@ struct WindowCloseButton: View {
         } label: {
             ZStack {
                 Circle()
-                    .fill(isHovered ? Theme.Colors.windowControlClose : Theme.Colors.windowControlDefault)
-                    .frame(width: 12, height: 12)
+                    .fill(Theme.Colors.windowControlClose)
+                    .frame(width: 14, height: 14)
 
                 if isHovered {
                     Image(systemName: "xmark")
-                        .font(.system(size: 7, weight: .bold))
+                        .font(.system(size: 8, weight: .bold))
                         .foregroundColor(Theme.Colors.windowControlIcon)
                         .transition(.opacity.animation(.easeInOut(duration: 0.1)))
                 }

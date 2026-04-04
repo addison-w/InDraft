@@ -52,7 +52,7 @@ struct SettingsView: View {
                 Spacer()
             }
             .padding(.horizontal, Theme.Spacing.lg)
-            .padding(.top, Theme.Spacing.lg)
+            .padding(.top, Theme.Spacing.md)
             .padding(.bottom, Theme.Spacing.sm)
             .background(WindowDragArea())
 

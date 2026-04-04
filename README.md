@@ -24,7 +24,7 @@ InDraft lives in your menu bar and rewrites, fixes, shortens, or translates your
 
 ## 😩 The Problem
 
-You're writing an email. You select a paragraph, open a new tab, paste it into ChatGPT, type "fix the grammar", wait, copy the result, switch back, paste it over the original text.
+You're writing an email or a slack message. You select a paragraph, open a new tab, paste it into ChatGPT, type "fix the grammar", wait, copy the result, switch back, paste it over the original text.
 
 That's **~30 seconds** for one fix.
 

@@ -1,0 +1,63 @@
+name: InDraft
+options:
+  bundleIdPrefix: com.indraft
+  deploymentTarget:
+    macOS: "14.0"
+  xcodeVersion: "16.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+
+targets:
+  InDraft:
+    type: application
+    platform: macOS
+    sources:
+      - path: InDraft
+        excludes:
+          - "**/*.entitlements"
+    info:
+      path: InDraft/App/Info.plist
+      properties:
+        LSUIElement: true
+        CFBundleDisplayName: InDraft
+        CFBundleName: InDraft
+    entitlements:
+      path: InDraft/App/InDraft.entitlements
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.indraft.app
+        PRODUCT_NAME: InDraft
+        CODE_SIGN_ENTITLEMENTS: InDraft/App/InDraft.entitlements
+        INFOPLIST_FILE: InDraft/App/Info.plist
+        ENABLE_HARDENED_RUNTIME: false
+
+  InDraftTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - InDraftTests
+    dependencies:
+      - target: InDraft
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.indraft.tests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/InDraft.app/Contents/MacOS/InDraft"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+
+  InDraftUITests:
+    type: bundle.ui-testing
+    platform: macOS
+    sources:
+      - InDraftUITests
+    dependencies:
+      - target: InDraft
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.indraft.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: InDraft

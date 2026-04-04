@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "pixel-art": {
+      "source": "wanshuiyin/Auto-claude-code-research-in-sleep",
+      "sourceType": "github",
+      "computedHash": "3a2960bf4167251fa9c705242bfd771d1ae3474f8ae3b8248d83d3458b3d8d91"
+    }
+  }
+}

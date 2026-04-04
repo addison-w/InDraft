@@ -15,6 +15,7 @@
 		1A90E7703FAF91BB824D218E /* MenuBarDropdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC032112CBBEC6672B1C48A4 /* MenuBarDropdownView.swift */; };
 		1BBC56B42747373B0713F4F6 /* GeneralSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00AF6E9265AEE9634DA481D2 /* GeneralSettingsView.swift */; };
 		1D97C47A58B794809E079BFE /* AccessibilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F803D0DC62861CB9DB98DA6A /* AccessibilityService.swift */; };
+		AC744B0F25B0CF4E7C4882B5 /* LaunchAtLoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A21A2F3A6D9A3F2B23512E /* LaunchAtLoginService.swift */; };
 		27F58BB6A4E2DD1FB1AC8B4B /* AddProviderStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D489C2E2D38DC3BC4588EEDF /* AddProviderStepView.swift */; };
 		32DDC146CB32BE829CCDA911 /* ToastOverlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B18ED4BFC033338CA3B459E9 /* ToastOverlayController.swift */; };
 		358C864256884CFB944E6FE1 /* PreviewPanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F6C75BBD9CC8B3E9482909 /* PreviewPanelController.swift */; };
@@ -28,6 +29,7 @@
 		4C71532DCB387A745A449BA4 /* WindowChromeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE018A86FC862C9E947440AE /* WindowChromeView.swift */; };
 		567369A472319961FAE9F6EC /* ProvidersSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959986EC6611CF708BDA6049 /* ProvidersSettingsView.swift */; };
 		5E5F05C96B164E2D4DEF4D1B /* HotkeyServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE79924666AFE5B563AD792 /* HotkeyServiceTests.swift */; };
+		2CD85DE536D0283EAD5BC85D /* LaunchAtLoginServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB9421088C461552201FA6DC /* LaunchAtLoginServiceTests.swift */; };
 		5F55C77657D586AA3AA20B6A /* ToastManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16AA0E7B98DECA14BDCA8C5A /* ToastManagerTests.swift */; };
 		61810B480E3685B7936C9E1D /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8A6EFE5E4D9CC95C3F118F /* Constants.swift */; };
 		6463DA0FFE8C330B1AA6FA41 /* TransformFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E9233FD365CB7E3E028712A /* TransformFlowTests.swift */; };
@@ -116,6 +118,7 @@
 		6ACDB600DA7F30A86C2D05FE /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		6ECCD8407B6B3DA04B97E53E /* ActionsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsSettingsView.swift; sourceTree = "<group>"; };
 		6FE79924666AFE5B563AD792 /* HotkeyServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyServiceTests.swift; sourceTree = "<group>"; };
+		CB9421088C461552201FA6DC /* LaunchAtLoginServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginServiceTests.swift; sourceTree = "<group>"; };
 		716F042D3B76D619672F766E /* TestConnectionStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestConnectionStepView.swift; sourceTree = "<group>"; };
 		76A181C46445C16428B6ADA4 /* HistoryWindowControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryWindowControllerTests.swift; sourceTree = "<group>"; };
 		7701606BD50555F18AAB81AD /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
@@ -161,6 +164,7 @@
 		F320C27D89353F727E8C4125 /* TransformService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransformService.swift; sourceTree = "<group>"; };
 		F7FAFF7127423FF1C879D550 /* InDraftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InDraftTests.swift; sourceTree = "<group>"; };
 		F803D0DC62861CB9DB98DA6A /* AccessibilityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityService.swift; sourceTree = "<group>"; };
+		B1A21A2F3A6D9A3F2B23512E /* LaunchAtLoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginService.swift; sourceTree = "<group>"; };
 		F8A230394BAC333A9EC07E1E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		FB1E051DE08D6A76424E15B4 /* InDraftUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InDraftUITests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -262,6 +266,7 @@
 			isa = PBXGroup;
 			children = (
 				F803D0DC62861CB9DB98DA6A /* AccessibilityService.swift */,
+				B1A21A2F3A6D9A3F2B23512E /* LaunchAtLoginService.swift */,
 				5DB68A34046C652551649168 /* HistoryService.swift */,
 				9085633E8FD5CA24A85BBF55 /* HotkeyService.swift */,
 				91703125E5239838D9CAFF54 /* KeychainService.swift */,
@@ -279,6 +284,7 @@
 				8BBF22178C96EAF59E05BA72 /* AppStateTests.swift */,
 				A72E5B74041604D1C9281892 /* HistoryServiceTests.swift */,
 				6FE79924666AFE5B563AD792 /* HotkeyServiceTests.swift */,
+				CB9421088C461552201FA6DC /* LaunchAtLoginServiceTests.swift */,
 				0EB60D4D36B03F3A2FC6F574 /* KeychainServiceTests.swift */,
 				9269EBDBA2E4C0C49C80602C /* ProviderEditorKeychainTests.swift */,
 				EBFC9E355D7079645A362B52 /* ProviderServiceTests.swift */,
@@ -496,6 +502,7 @@
 				852AA4FDC82D2E915163074E /* HistoryServiceTests.swift in Sources */,
 				F13F177D8F214F10C3BAD7C9 /* HistoryWindowControllerTests.swift in Sources */,
 				5E5F05C96B164E2D4DEF4D1B /* HotkeyServiceTests.swift in Sources */,
+				2CD85DE536D0283EAD5BC85D /* LaunchAtLoginServiceTests.swift in Sources */,
 				F448B44D6F5677C6DEF9EB74 /* InDraftTests.swift in Sources */,
 				ACCD47D723D96DFFFF3911CB /* KeychainServiceTests.swift in Sources */,
 				D0340C5634AF3F260B21BC88 /* MenuBarAnimationTests.swift in Sources */,
@@ -524,6 +531,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1D97C47A58B794809E079BFE /* AccessibilityService.swift in Sources */,
+				AC744B0F25B0CF4E7C4882B5 /* LaunchAtLoginService.swift in Sources */,
 				F29084625C8C05F891E5EEB2 /* AccessibilityStepView.swift in Sources */,
 				091A46906C1A289BE9A810C5 /* Action.swift in Sources */,
 				98E0FCC59063B4D41C0FD389 /* ActionsSettingsView.swift in Sources */,

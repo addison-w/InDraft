@@ -9,6 +9,12 @@ struct GeneralSettingsView: View {
     @State private var accessibilityGranted = false
     @State private var accessibilityPollTimer: Timer?
 
+    private let launchAtLoginService: LaunchAtLoginServiceProtocol
+
+    init(launchAtLoginService: LaunchAtLoginServiceProtocol = LiveLaunchAtLoginService()) {
+        self.launchAtLoginService = launchAtLoginService
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: Theme.Spacing.xl) {
@@ -26,6 +32,14 @@ struct GeneralSettingsView: View {
                     .padding(Theme.Spacing.xl)
                 }
                 .cardStyle()
+                .onChange(of: launchAtLogin) { _, newValue in
+                    do {
+                        try launchAtLoginService.setEnabled(newValue)
+                    } catch {
+                        // Revert toggle on failure
+                        launchAtLogin = !newValue
+                    }
+                }
 
                 // Diagnostics section
                 Text("DIAGNOSTICS")
@@ -155,6 +169,8 @@ struct GeneralSettingsView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Theme.Colors.background)
         .onAppear {
+            // Sync toggle with actual system login item status
+            launchAtLogin = launchAtLoginService.isEnabled
             checkAccessibility()
             accessibilityPollTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { _ in
                 DispatchQueue.main.async {

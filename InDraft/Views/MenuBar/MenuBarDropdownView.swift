@@ -39,30 +39,34 @@ struct MenuBarDropdownView: View {
     // MARK: - Header
 
     private var headerSection: some View {
-        HStack(alignment: .center) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text("InDraft")
-                    .font(Theme.Typography.brand(13))
-                    .foregroundColor(Theme.Colors.textPrimary)
-                    .tracking(0.5)
+        VStack(alignment: .leading, spacing: 6) {
+            Text("InDraft")
+                .font(Theme.Typography.pageTitle(15))
+                .foregroundColor(Theme.Colors.textPrimary)
+                .tracking(1.2)
 
+            HStack(spacing: 0) {
                 Text(providerDisplayName)
                     .font(Theme.Typography.caption(11))
                     .foregroundColor(Theme.Colors.textTertiary)
 
                 if let model = activeProviders.first?.defaultModel, !model.isEmpty {
+                    Text(" \u{00B7} ")
+                        .font(Theme.Typography.caption(11))
+                        .foregroundColor(Theme.Colors.divider)
                     Text(model)
-                        .font(Theme.Typography.mono(10))
+                        .font(Theme.Typography.mono(9.5))
                         .foregroundColor(Theme.Colors.textTertiary)
                 }
+
+                Spacer()
+
+                compactStatusBadge
             }
-
-            Spacer()
-
-            compactStatusBadge
         }
         .padding(.horizontal, Theme.Spacing.lg)
-        .padding(.vertical, Theme.Spacing.sm + 2)
+        .padding(.top, Theme.Spacing.md)
+        .padding(.bottom, Theme.Spacing.sm + 2)
     }
 
     // MARK: - Permission Banner

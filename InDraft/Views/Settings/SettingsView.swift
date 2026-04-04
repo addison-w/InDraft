@@ -58,10 +58,10 @@ struct SettingsView: View {
 
             VStack(alignment: .leading, spacing: 3) {
                 Text("InDraft")
-                    .font(Theme.Typography.brand(15))
+                    .font(Theme.Typography.pageTitle(15))
                     .foregroundColor(Theme.Colors.textPrimary)
-                    .tracking(0.5)
-                Text("PREFERENCES")
+                    .tracking(1.2)
+                Text("SETTINGS")
                     .font(Theme.Typography.allCaps(9))
                     .foregroundColor(Theme.Colors.textTertiary)
                     .tracking(1)

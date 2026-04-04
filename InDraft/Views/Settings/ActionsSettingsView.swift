@@ -7,7 +7,7 @@ struct ActionsSettingsView: View {
     @Query(sort: \Action.sortOrder) private var actions: [Action]
     @State private var expandedActionID: UUID?
     @State private var isReordering = false
-    @State private var showRestoreConfirmation = false
+    @State private var confirmingRestore = false
 
     // Inline new action state
     @State private var isCreatingNew = false
@@ -34,13 +34,12 @@ struct ActionsSettingsView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Theme.Colors.background)
-        .alert("Restore Defaults", isPresented: $showRestoreConfirmation) {
-            Button("Cancel", role: .cancel) {}
-            Button("Restore", role: .destructive) {
-                restoreDefaults()
+        .onChange(of: confirmingRestore) { _, confirming in
+            if confirming {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    withAnimation(Theme.Motion.quick) { confirmingRestore = false }
+                }
             }
-        } message: {
-            Text("This will remove all custom actions and restore the default set. This cannot be undone.")
         }
     }
 
@@ -294,11 +293,16 @@ struct ActionsSettingsView: View {
             Spacer()
 
             Button {
-                showRestoreConfirmation = true
+                if confirmingRestore {
+                    confirmingRestore = false
+                    restoreDefaults()
+                } else {
+                    withAnimation(Theme.Motion.quick) { confirmingRestore = true }
+                }
             } label: {
-                Text("Restore Defaults")
+                Text(confirmingRestore ? "Confirm restore?" : "Restore Defaults")
                     .font(Theme.Typography.caption(11))
-                    .foregroundColor(Theme.Colors.textTertiary)
+                    .foregroundColor(confirmingRestore ? Theme.Colors.error : Theme.Colors.textTertiary)
             }
             .buttonStyle(.plain)
         }
@@ -418,6 +422,7 @@ struct ActionInlineEditor: View {
 
     @State private var editingName: String = ""
     @State private var editingPrompt: String = ""
+    @State private var confirmingDelete = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.lg) {
@@ -498,9 +503,17 @@ struct ActionInlineEditor: View {
                 Spacer()
 
                 Button {
-                    onDelete()
+                    if confirmingDelete {
+                        confirmingDelete = false
+                        onDelete()
+                    } else {
+                        withAnimation(Theme.Motion.quick) { confirmingDelete = true }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            withAnimation(Theme.Motion.quick) { confirmingDelete = false }
+                        }
+                    }
                 } label: {
-                    Text("Delete Action")
+                    Text(confirmingDelete ? "Confirm delete?" : "Delete Action")
                         .font(Theme.Typography.label(11))
                         .foregroundColor(Theme.Colors.error)
                         .underline()

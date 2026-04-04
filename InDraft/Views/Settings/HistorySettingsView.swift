@@ -3,7 +3,7 @@ import SwiftUI
 struct HistorySettingsView: View {
     @AppStorage(Constants.UserDefaultsKeys.historyRetentionDays) private var retentionDays = Constants.Defaults.historyRetentionDays
     @AppStorage(Constants.UserDefaultsKeys.historyRecordingEnabled) private var recordingEnabled = true
-    @State private var showClearConfirmation = false
+    @State private var confirmingClear = false
 
     private let retentionOptions: [(label: String, value: Int)] = [
         ("7 days", 7),
@@ -77,9 +77,17 @@ struct HistorySettingsView: View {
                         }
                         Spacer()
                         Button {
-                            showClearConfirmation = true
+                            if confirmingClear {
+                                confirmingClear = false
+                                clearAllHistory()
+                            } else {
+                                withAnimation(Theme.Motion.quick) { confirmingClear = true }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                    withAnimation(Theme.Motion.quick) { confirmingClear = false }
+                                }
+                            }
                         } label: {
-                            Text("Clear All")
+                            Text(confirmingClear ? "Confirm clear?" : "Clear All")
                                 .font(Theme.Typography.label(11))
                                 .foregroundColor(Theme.Colors.error)
                                 .underline()
@@ -110,14 +118,6 @@ struct HistorySettingsView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Theme.Colors.background)
-        .alert("Clear All History", isPresented: $showClearConfirmation) {
-            Button("Cancel", role: .cancel) {}
-            Button("Clear All", role: .destructive) {
-                clearAllHistory()
-            }
-        } message: {
-            Text("This will permanently delete all history entries. This action cannot be undone.")
-        }
     }
 
     private func clearAllHistory() {

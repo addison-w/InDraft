@@ -384,7 +384,7 @@ struct ProviderInlineEditor: View {
     @State private var isTesting = false
     @State private var testResultMessage: String?
     @State private var testSucceeded: Bool?
-    @State private var showDeleteConfirmation = false
+    @State private var confirmingDelete = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.lg) {
@@ -518,9 +518,17 @@ struct ProviderInlineEditor: View {
                 Spacer()
 
                 Button {
-                    showDeleteConfirmation = true
+                    if confirmingDelete {
+                        confirmingDelete = false
+                        onDelete()
+                    } else {
+                        withAnimation(Theme.Motion.quick) { confirmingDelete = true }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            withAnimation(Theme.Motion.quick) { confirmingDelete = false }
+                        }
+                    }
                 } label: {
-                    Text("Delete")
+                    Text(confirmingDelete ? "Confirm delete?" : "Delete")
                         .font(Theme.Typography.label(11))
                         .foregroundColor(Theme.Colors.error)
                         .underline()
@@ -532,14 +540,6 @@ struct ProviderInlineEditor: View {
         .padding(.bottom, Theme.Spacing.lg)
         .onAppear {
             loadAPIKey()
-        }
-        .alert("Delete Provider", isPresented: $showDeleteConfirmation) {
-            Button("Cancel", role: .cancel) {}
-            Button("Delete", role: .destructive) {
-                onDelete()
-            }
-        } message: {
-            Text("This will permanently remove this provider and its API key.")
         }
     }
 

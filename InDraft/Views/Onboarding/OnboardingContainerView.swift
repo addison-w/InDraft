@@ -10,7 +10,7 @@ struct OnboardingContainerView: View {
     @State private var providerDisplayName = "OpenAI"
     @State private var providerBaseURL = ""
     @State private var providerAPIKey = ""
-    @State private var providerModel = "gpt-4o"
+    @State private var providerModel = "gpt-4o-mini"
     @State private var canContinue = false
     @State private var providerConfigured = false
     @State private var providerTestSucceeded = false
@@ -154,9 +154,8 @@ struct OnboardingContainerView: View {
     }
 
     private func goForward() {
-        // Save provider if fields are filled
+        // Mark provider as configured if fields are filled
         if currentStep == 2 && providerFieldsFilled {
-            saveProvider()
             providerConfigured = true
         }
 
@@ -173,49 +172,53 @@ struct OnboardingContainerView: View {
         }
     }
 
-    private func saveProvider() {
-        // Deactivate all existing providers first
-        let descriptor = FetchDescriptor<Provider>()
-        if let existing = try? modelContext.fetch(descriptor) {
-            for p in existing {
-                p.isActive = false
+    private func finishOnboarding() {
+        if providerConfigured {
+            // Deactivate all existing providers first
+            let descriptor = FetchDescriptor<Provider>()
+            if let existing = try? modelContext.fetch(descriptor) {
+                for p in existing {
+                    p.isActive = false
+                }
+            }
+
+            let provider = Provider(
+                displayName: providerDisplayName,
+                baseURL: providerBaseURL,
+                apiKeyReference: "provider-\(UUID().uuidString)",
+                defaultModel: providerModel,
+                isActive: true,
+                lastTestStatus: providerTestSucceeded ? .success : .untested,
+                lastTestedAt: providerTestSucceeded ? Date() : nil
+            )
+            modelContext.insert(provider)
+
+            let keychain = LiveKeychainService()
+            try? keychain.store(apiKey: providerAPIKey, forReference: provider.apiKeyReference)
+        }
+
+        // Create default actions if none exist
+        let existingActions = (try? modelContext.fetch(FetchDescriptor<Action>())) ?? []
+        if existingActions.isEmpty {
+            let actions = [
+                Constants.DefaultActions.grammarFix,
+                Constants.DefaultActions.rewriteForClarity,
+                Constants.DefaultActions.shorten
+            ]
+            for (index, def) in actions.enumerated() {
+                let action = Action(
+                    name: def.name,
+                    prompt: def.prompt,
+                    hotkeyKeyCode: def.keyCode,
+                    hotkeyModifiers: def.modifiers,
+                    sortOrder: index
+                )
+                modelContext.insert(action)
             }
         }
 
-        let provider = Provider(
-            displayName: providerDisplayName,
-            baseURL: providerBaseURL,
-            apiKeyReference: "provider-\(UUID().uuidString)",
-            defaultModel: providerModel,
-            isActive: true,
-            lastTestStatus: providerTestSucceeded ? .success : .untested,
-            lastTestedAt: providerTestSucceeded ? Date() : nil
-        )
-        modelContext.insert(provider)
-
-        let keychain = LiveKeychainService()
-        try? keychain.store(apiKey: providerAPIKey, forReference: provider.apiKeyReference)
-
-        let actions = [
-            Constants.DefaultActions.grammarFix,
-            Constants.DefaultActions.rewriteForClarity,
-            Constants.DefaultActions.shorten
-        ]
-        for (index, def) in actions.enumerated() {
-            let action = Action(
-                name: def.name,
-                prompt: def.prompt,
-                hotkeyKeyCode: def.keyCode,
-                hotkeyModifiers: def.modifiers,
-                sortOrder: index
-            )
-            modelContext.insert(action)
-        }
-
         try? modelContext.save()
-    }
 
-    private func finishOnboarding() {
         onboardingComplete = true
         currentStep = totalSteps + 1
         OnboardingWindowController.shared.close()

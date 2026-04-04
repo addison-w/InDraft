@@ -217,7 +217,7 @@ struct ProvidersSettingsView: View {
             }
 
             fieldSection("MODEL") {
-                TextField("e.g. gpt-4o", text: $newDefaultModel)
+                TextField("e.g. gpt-4o-mini", text: $newDefaultModel)
                     .inputFieldStyle()
             }
 
@@ -450,7 +450,7 @@ struct ProviderInlineEditor: View {
 
             // Default model
             fieldSection("MODEL") {
-                TextField("e.g. gpt-4o", text: $provider.defaultModel)
+                TextField("e.g. gpt-4o-mini", text: $provider.defaultModel)
                     .inputFieldStyle()
                     .onChange(of: provider.defaultModel) { _, _ in
                         provider.updatedAt = Date()

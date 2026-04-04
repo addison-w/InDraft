@@ -75,8 +75,8 @@ struct AddProviderStepView: View {
                     }
                 }
 
-                fieldGroup(label: "DEFAULT MODEL") {
-                    TextField("gpt-4o", text: $model)
+                fieldGroup(label: "MODEL") {
+                    TextField("gpt-4o-mini", text: $model)
                         .inputFieldStyle()
                 }
             }

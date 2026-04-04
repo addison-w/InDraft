@@ -1,4 +1,5 @@
 import SwiftUI
+import Hugeicons
 
 struct HistorySettingsView: View {
     @Environment(\.modelContext) private var modelContext
@@ -126,8 +127,10 @@ struct HistorySettingsView: View {
 
                 // Privacy note
                 HStack(alignment: .top, spacing: Theme.Spacing.sm) {
-                    Image(systemName: "lock.shield")
-                        .font(.system(size: 11))
+                    AppIcon.shieldKey.image()
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 13, height: 13)
                         .foregroundColor(Theme.Colors.textTertiary.opacity(0.7))
                         .padding(.top, 2)
                     Text("History data is stored locally on your Mac and is never sent to any server. Clearing history is permanent and cannot be undone.")

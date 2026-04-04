@@ -1,4 +1,5 @@
 import SwiftUI
+import Hugeicons
 
 struct TestConnectionStepView: View {
     let baseURL: String
@@ -47,9 +48,11 @@ struct TestConnectionStepView: View {
 
                 case .success:
                     HStack(spacing: Theme.Spacing.sm) {
-                        Image(systemName: "checkmark.circle.fill")
+                        AppIcon.successCircle.image()
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 20, height: 20)
                             .foregroundColor(Theme.Colors.statusGreen)
-                            .font(.system(size: 18))
                         VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
                             Text("Connected — model responded")
                                 .font(Theme.Typography.body())
@@ -64,9 +67,11 @@ struct TestConnectionStepView: View {
 
                 case .failure:
                     HStack(spacing: Theme.Spacing.sm) {
-                        Image(systemName: "xmark.circle.fill")
+                        AppIcon.errorCircle.image()
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 20, height: 20)
                             .foregroundColor(Theme.Colors.statusRed)
-                            .font(.system(size: 18))
                         Text(errorMessage ?? "Connection failed")
                             .font(Theme.Typography.body())
                             .foregroundColor(Theme.Colors.statusRed)

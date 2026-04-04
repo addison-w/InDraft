@@ -1,4 +1,5 @@
 import SwiftUI
+import Hugeicons
 
 private struct BouncingBallIcon: View {
     @State private var phase: CGFloat = 0
@@ -54,18 +55,16 @@ struct MenuBarIconView: View {
     var body: some View {
         switch state {
         case .idle:
-            Image(systemName: "pencil.line")
+            AppIcon.edit.image()
         case .processing:
             BouncingBallIcon()
         case .success:
-            Image(systemName: "checkmark")
+            AppIcon.success.image()
         case .error:
-            Image(systemName: "exclamationmark.circle")
-                .symbolRenderingMode(.palette)
+            AppIcon.error.image()
                 .foregroundStyle(.red)
         case .permissionRequired:
-            Image(systemName: "exclamationmark.triangle")
-                .symbolRenderingMode(.palette)
+            AppIcon.warning.image()
                 .foregroundStyle(.yellow)
         }
     }

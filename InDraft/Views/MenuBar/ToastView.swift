@@ -1,4 +1,5 @@
 import SwiftUI
+import Hugeicons
 
 enum ToastType {
     case success(String, actionName: String? = nil)
@@ -25,11 +26,11 @@ enum ToastType {
         }
     }
 
-    var icon: String {
+    var icon: AppIcon {
         switch self {
-        case .success: return "checkmark"
-        case .error: return "exclamationmark"
-        case .info: return "minus"
+        case .success: return .success
+        case .error: return .error
+        case .info: return .info
         }
     }
 
@@ -84,9 +85,11 @@ struct ToastView: View {
                 .padding(.vertical, Theme.Spacing.sm)
 
             HStack(spacing: Theme.Spacing.md) {
-                Image(systemName: toast.icon)
+                toast.icon.image()
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 12, height: 12)
                     .foregroundColor(toast.iconColor.opacity(0.7))
-                    .font(.system(size: 10, weight: .medium))
 
                 VStack(alignment: .leading, spacing: 2) {
                     if let actionName = toast.actionName {

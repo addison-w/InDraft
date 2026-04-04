@@ -1,4 +1,5 @@
 import SwiftUI
+import Hugeicons
 
 struct HistoryRecordDetailView: View {
     let record: HistoryRecord
@@ -28,8 +29,10 @@ struct HistoryRecordDetailView: View {
                                 withAnimation(Theme.Motion.quick) { copiedOriginal = false }
                             }
                         } label: {
-                            Image(systemName: copiedOriginal ? "checkmark" : "doc.on.doc")
-                                .font(.system(size: 10))
+                            (copiedOriginal ? AppIcon.success : AppIcon.copy).image()
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 12, height: 12)
                                 .foregroundColor(copiedOriginal ? Theme.Colors.statusGreen : Theme.Colors.textTertiary)
                         }
                         .buttonStyle(.plain)
@@ -64,8 +67,10 @@ struct HistoryRecordDetailView: View {
                                     }
                                 }
                             } label: {
-                                Image(systemName: copiedTransformed ? "checkmark" : "doc.on.doc")
-                                    .font(.system(size: 10))
+                                (copiedTransformed ? AppIcon.success : AppIcon.copy).image()
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 12, height: 12)
                                     .foregroundColor(copiedTransformed ? Theme.Colors.statusGreen : Theme.Colors.textTertiary)
                             }
                             .buttonStyle(.plain)

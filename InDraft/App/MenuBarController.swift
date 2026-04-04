@@ -28,7 +28,7 @@ final class MenuBarController: NSObject {
         // Create status item
         let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
-            button.image = NSImage(systemSymbolName: "pencil.line", accessibilityDescription: "InDraft")
+            button.image = AppIcon.edit.nsImage()
             button.action = #selector(togglePopover)
             button.target = self
         }
@@ -108,15 +108,15 @@ final class MenuBarController: NSObject {
 
         switch status {
         case .idle:
-            button.image = NSImage(systemSymbolName: "pencil.line", accessibilityDescription: "InDraft")
+            button.image = AppIcon.edit.nsImage()
         case .processing:
             startProcessingAnimation()
         case .success:
-            button.image = NSImage(systemSymbolName: "checkmark", accessibilityDescription: "Success")
+            button.image = AppIcon.success.nsImage()
         case .error:
-            button.image = NSImage(systemSymbolName: "exclamationmark.circle", accessibilityDescription: "Error")
+            button.image = AppIcon.error.nsImage()
         case .permissionRequired:
-            button.image = NSImage(systemSymbolName: "exclamationmark.triangle", accessibilityDescription: "Permission Required")
+            button.image = AppIcon.warning.nsImage()
         }
     }
 

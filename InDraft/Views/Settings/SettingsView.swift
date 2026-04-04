@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import Hugeicons
 
 enum SettingsTab: String, CaseIterable, Identifiable {
     case general = "General"
@@ -9,12 +10,12 @@ enum SettingsTab: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
-    var icon: String {
+    var icon: AppIcon {
         switch self {
-        case .general: return "gearshape"
-        case .actions: return "bolt.fill"
-        case .providers: return "puzzlepiece.fill"
-        case .history: return "clock"
+        case .general: return .settings
+        case .actions: return .actions
+        case .providers: return .providers
+        case .history: return .history
         }
     }
 }
@@ -86,8 +87,10 @@ struct SettingsView: View {
             selectedTab = tab
         } label: {
             HStack(spacing: Theme.Spacing.md) {
-                Image(systemName: tab.icon)
-                    .font(.system(size: 11))
+                tab.icon.image()
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 13, height: 13)
                     .foregroundColor(selectedTab == tab ? Theme.Colors.textPrimary : Theme.Colors.textTertiary)
                     .frame(width: 16)
                 Text(tab.rawValue)

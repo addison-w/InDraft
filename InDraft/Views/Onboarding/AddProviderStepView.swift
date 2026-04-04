@@ -1,4 +1,5 @@
 import SwiftUI
+import Hugeicons
 
 struct AddProviderStepView: View {
     @Binding var displayName: String
@@ -104,9 +105,11 @@ struct AddProviderStepView: View {
                     }
                 case .success:
                     HStack(spacing: Theme.Spacing.xs) {
-                        Image(systemName: "checkmark.circle.fill")
+                        AppIcon.successCircle.image()
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 16, height: 16)
                             .foregroundColor(Theme.Colors.statusGreen)
-                            .font(.system(size: 14))
                         VStack(alignment: .leading, spacing: 0) {
                             Text("Connected")
                                 .font(Theme.Typography.caption())
@@ -120,9 +123,11 @@ struct AddProviderStepView: View {
                     }
                 case .failure:
                     HStack(spacing: Theme.Spacing.xs) {
-                        Image(systemName: "xmark.circle.fill")
+                        AppIcon.errorCircle.image()
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 16, height: 16)
                             .foregroundColor(Theme.Colors.statusRed)
-                            .font(.system(size: 14))
                         Text(testErrorMessage ?? "Failed")
                             .font(Theme.Typography.caption())
                             .foregroundColor(Theme.Colors.statusRed)

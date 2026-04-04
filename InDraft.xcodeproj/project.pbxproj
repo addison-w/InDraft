@@ -39,6 +39,7 @@
 		66D355AB0BBDD26AADCC8244 /* TextReplaceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F55094F87474B2FFD78BF3C /* TextReplaceService.swift */; };
 		693EF38C9454A732F4970A17 /* TextReplaceServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A66103AB1370D1211D08BF0 /* TextReplaceServiceTests.swift */; };
 		6D44C2049342A7B5717615C1 /* ProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554AEC16643576D2B0FCBF1A /* ProviderTests.swift */; };
+		70DA5F4E13C97A607B793C66 /* Hugeicons in Frameworks */ = {isa = PBXBuildFile; productRef = A4E1018F38150C05189EBD49 /* Hugeicons */; };
 		71B652B181410F07018A0A3A /* MenuBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD2070D2F5BBF86B9AD00D3 /* MenuBarController.swift */; };
 		73D96F814E3F5CEA50745D6C /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7701606BD50555F18AAB81AD /* AppState.swift */; };
 		776E2F6A27893F9F69FBDE1B /* WabiSabiSparkIllustration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7025FB814CF414A0221D70 /* WabiSabiSparkIllustration.swift */; };
@@ -53,6 +54,7 @@
 		978377F123D3C44BAA573700 /* TextCaptureService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E5351C81277FA1006098BF7 /* TextCaptureService.swift */; };
 		98E0FCC59063B4D41C0FD389 /* ActionsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECCD8407B6B3DA04B97E53E /* ActionsSettingsView.swift */; };
 		9B6FDC64B6AE13DEC495AFFD /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91E39C9B157C16FA686D5179 /* ToastView.swift */; };
+		9ED3B07B713F1B6153A4CA05 /* IconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8945B72E084EAE094F8BEC2A /* IconProvider.swift */; };
 		9F51EAC5547951C6E4EBDC78 /* OnboardingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A24646114B42E15D9278CB /* OnboardingWindowController.swift */; };
 		A0080C4F224FBF43BAE0CD59 /* MenuBarIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0A1B4F99F4BEBE268D74A9E /* MenuBarIconView.swift */; };
 		A173A50D50528EACB31C6676 /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30C9D9461394FF578159BCD0 /* SettingsWindowController.swift */; };
@@ -137,6 +139,7 @@
 		7701606BD50555F18AAB81AD /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		82D8DD142631B6168328AE71 /* HotkeyRecorderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyRecorderView.swift; sourceTree = "<group>"; };
 		8585A88FCB562EAE547F5EC3 /* TransformServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransformServiceTests.swift; sourceTree = "<group>"; };
+		8945B72E084EAE094F8BEC2A /* IconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconProvider.swift; sourceTree = "<group>"; };
 		8B1B4D5CF949FB6327E0D28C /* TextCaptureServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextCaptureServiceTests.swift; sourceTree = "<group>"; };
 		8BBF22178C96EAF59E05BA72 /* AppStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateTests.swift; sourceTree = "<group>"; };
 		8F8468CC507367D9A8DD31E0 /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
@@ -185,6 +188,17 @@
 		FB1E051DE08D6A76424E15B4 /* InDraftUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InDraftUITests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFrameworksBuildPhase section */
+		0CE58A378B5A502E71E3812A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70DA5F4E13C97A607B793C66 /* Hugeicons in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
 /* Begin PBXGroup section */
 		03761CF09AAD5FEED5FA801A /* Preview */ = {
 			isa = PBXGroup;
@@ -199,6 +213,7 @@
 			isa = PBXGroup;
 			children = (
 				BD8A6EFE5E4D9CC95C3F118F /* Constants.swift */,
+				8945B72E084EAE094F8BEC2A /* IconProvider.swift */,
 				6ACDB600DA7F30A86C2D05FE /* Theme.swift */,
 			);
 			path = Utilities;
@@ -450,6 +465,7 @@
 			buildConfigurationList = 50C6D73FA92B13E2899D0713 /* Build configuration list for PBXNativeTarget "InDraft" */;
 			buildPhases = (
 				D90A1766892AEC50FF44B25C /* Sources */,
+				0CE58A378B5A502E71E3812A /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -457,6 +473,7 @@
 			);
 			name = InDraft;
 			packageProductDependencies = (
+				A4E1018F38150C05189EBD49 /* Hugeicons */,
 			);
 			productName = InDraft;
 			productReference = B6192191339100AD51A2F039 /* InDraft.app */;
@@ -503,6 +520,9 @@
 			);
 			mainGroup = 46207120277FE49718548AB0;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				BBADF534F2F8299B29B03721 /* XCRemoteSwiftPackageReference "hugeicons-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7124B76BD2FF7942AE4A2FDC /* Products */;
 			projectDirPath = "";
@@ -575,6 +595,7 @@
 				BF83781B896A18286F4A3692 /* HistoryWindowView.swift in Sources */,
 				44563A115F2A5CF09F3AA2B7 /* HotkeyRecorderView.swift in Sources */,
 				FDEBC9D57B3C3FED5CCE732B /* HotkeyService.swift in Sources */,
+				9ED3B07B713F1B6153A4CA05 /* IconProvider.swift in Sources */,
 				DE43921F499E2B54F9A792D9 /* InDraftApp.swift in Sources */,
 				C9BD95BF027756B7CADEB41E /* KeychainService.swift in Sources */,
 				17B9409432670CEA5E3AE72F /* LaunchAtLoginService.swift in Sources */,
@@ -892,6 +913,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		BBADF534F2F8299B29B03721 /* XCRemoteSwiftPackageReference "hugeicons-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/iSapozhnik/hugeicons-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A4E1018F38150C05189EBD49 /* Hugeicons */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BBADF534F2F8299B29B03721 /* XCRemoteSwiftPackageReference "hugeicons-swift" */;
+			productName = Hugeicons;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = FB332D1862DD04BB13123660 /* Project object */;
 }

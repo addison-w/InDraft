@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import Hugeicons
 
 struct ActionsSettingsView: View {
     @Environment(\.modelContext) private var modelContext
@@ -85,8 +86,10 @@ struct ActionsSettingsView: View {
             // Header row — always visible
             HStack(spacing: 0) {
                 // Drag handle
-                Image(systemName: "line.3.horizontal")
-                    .font(.system(size: 9, weight: .medium))
+                AppIcon.dragHandle.image()
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 11, height: 11)
                     .foregroundColor(Theme.Colors.textTertiary.opacity(0.5))
                     .frame(width: 24, height: 44)
                     .contentShape(Rectangle())
@@ -152,8 +155,10 @@ struct ActionsSettingsView: View {
                         .toggleStyle(WabiSabiToggleStyle())
                         .labelsHidden()
 
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 10, weight: .medium))
+                        AppIcon.chevronRight.image()
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 12, height: 12)
                             .foregroundColor(Theme.Colors.textTertiary)
                             .rotationEffect(.degrees(isExpanded ? 90 : 0))
                     }
@@ -270,8 +275,10 @@ struct ActionsSettingsView: View {
                 }
             } label: {
                 HStack(spacing: Theme.Spacing.xs) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 11, weight: .medium))
+                    AppIcon.add.image()
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 13, height: 13)
                     Text("New Action")
                         .font(Theme.Typography.label(12))
                 }

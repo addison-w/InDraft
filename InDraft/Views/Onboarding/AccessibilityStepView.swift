@@ -1,5 +1,6 @@
 import SwiftUI
 import ApplicationServices
+import Hugeicons
 
 struct AccessibilityStepView: View {
     @Binding var canContinue: Bool
@@ -27,24 +28,30 @@ struct AccessibilityStepView: View {
             // Instructions card
             VStack(alignment: .leading, spacing: Theme.Spacing.md) {
                 HStack(spacing: Theme.Spacing.sm) {
-                    Image(systemName: "gear")
-                        .font(.system(size: 14))
+                    AppIcon.settings.image()
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 16, height: 16)
                         .foregroundColor(Theme.Colors.textSecondary)
 
                     Text("System Settings")
                         .font(Theme.Typography.caption())
                         .foregroundColor(Theme.Colors.textTertiary)
 
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 8))
+                    AppIcon.chevronRight.image()
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 8, height: 8)
                         .foregroundColor(Theme.Colors.textTertiary)
 
                     Text("Privacy & Security")
                         .font(Theme.Typography.caption())
                         .foregroundColor(Theme.Colors.textTertiary)
 
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 8))
+                    AppIcon.chevronRight.image()
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 8, height: 8)
                         .foregroundColor(Theme.Colors.textTertiary)
 
                     Text("Accessibility")

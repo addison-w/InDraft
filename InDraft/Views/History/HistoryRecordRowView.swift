@@ -1,4 +1,5 @@
 import SwiftUI
+import Hugeicons
 
 struct HistoryRecordRowView: View {
     let record: HistoryRecord
@@ -67,8 +68,10 @@ struct HistoryRecordRowView: View {
                     )
 
                     // Expand chevron
-                    Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
-                        .font(.system(size: 10, weight: .medium))
+                    (isExpanded ? AppIcon.chevronDown : AppIcon.chevronRight).image()
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 12, height: 12)
                         .foregroundColor(Theme.Colors.textTertiary)
                 }
                 .padding(.horizontal, Theme.Spacing.lg)

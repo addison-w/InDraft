@@ -5,11 +5,11 @@ struct HistoryWindowView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \HistoryRecord.timestamp, order: .reverse) private var records: [HistoryRecord]
 
+    @AppStorage(Constants.UserDefaultsKeys.historyRetentionDays) private var retentionDays = Constants.Defaults.historyRetentionDays
+
     @State private var searchText = ""
     @State private var expandedRecordID: UUID?
     @State private var confirmingClearAll = false
-
-    private let retentionDays = 30
 
     private var filteredRecords: [HistoryRecord] {
         if searchText.isEmpty {
@@ -121,7 +121,7 @@ struct HistoryWindowView: View {
 
             Spacer()
 
-            StatusPill(text: "\(retentionDays) days", color: Theme.Colors.accent)
+            StatusPill(text: retentionDays > 0 ? "\(retentionDays) days" : "Unlimited", color: Theme.Colors.accent)
 
             // Clear all — inline confirmation (matches delete action/provider pattern)
             Button {

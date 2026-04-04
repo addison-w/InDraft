@@ -1,9 +1,12 @@
 import SwiftUI
 
 struct HistorySettingsView: View {
+    @Environment(\.modelContext) private var modelContext
     @AppStorage(Constants.UserDefaultsKeys.historyRetentionDays) private var retentionDays = Constants.Defaults.historyRetentionDays
     @AppStorage(Constants.UserDefaultsKeys.historyRecordingEnabled) private var recordingEnabled = true
     @State private var confirmingClear = false
+    @State private var pendingRetention: Int?
+    @State private var showRetentionAlert = false
 
     private let retentionOptions: [(label: String, value: Int)] = [
         ("7 days", 7),
@@ -55,7 +58,18 @@ struct HistorySettingsView: View {
 
                         InkSegmentPicker(
                             options: retentionOptions,
-                            selection: $retentionDays
+                            selection: Binding(
+                                get: { retentionDays },
+                                set: { newValue in
+                                    // If reducing retention (newValue > 0 and less than current, or current is unlimited)
+                                    if newValue > 0 && (retentionDays == 0 || newValue < retentionDays) {
+                                        pendingRetention = newValue
+                                        showRetentionAlert = true
+                                    } else {
+                                        retentionDays = newValue
+                                    }
+                                }
+                            )
                         )
                     }
                     .padding(Theme.Spacing.xl)
@@ -118,9 +132,27 @@ struct HistorySettingsView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Theme.Colors.background)
+        .alert("Reduce retention period?", isPresented: $showRetentionAlert) {
+            Button("Delete Old Data", role: .destructive) {
+                if let newDays = pendingRetention {
+                    retentionDays = newDays
+                    let service = LiveHistoryService(modelContext: modelContext)
+                    service.pruneOldRecords(retentionDays: newDays)
+                }
+                pendingRetention = nil
+            }
+            Button("Cancel", role: .cancel) {
+                pendingRetention = nil
+            }
+        } message: {
+            if let days = pendingRetention {
+                Text("This will permanently delete all history entries older than \(days) days. This cannot be undone.")
+            }
+        }
     }
 
     private func clearAllHistory() {
-        // Placeholder: real implementation would delete all HistoryEntry records from SwiftData
+        let service = LiveHistoryService(modelContext: modelContext)
+        service.clearAll()
     }
 }

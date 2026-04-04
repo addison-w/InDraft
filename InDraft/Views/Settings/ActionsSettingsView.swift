@@ -257,15 +257,8 @@ struct ActionsSettingsView: View {
                 } label: {
                     Text("Create Action")
                         .font(Theme.Typography.label(12))
-                        .foregroundColor(Theme.Colors.textSecondary)
-                        .padding(.horizontal, Theme.Spacing.lg)
-                        .padding(.vertical, Theme.Spacing.sm)
-                        .background(Theme.Colors.surfaceContainerLow)
-                        .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: Theme.Radius.sm)
-                                .stroke(Theme.Colors.cardBorder, lineWidth: 1)
-                        )
+                        .foregroundColor(Theme.Colors.textPrimary)
+                        .underline()
                 }
                 .buttonStyle(.plain)
                 .disabled(newName.trimmingCharacters(in: .whitespaces).isEmpty)
@@ -491,13 +484,14 @@ struct ActionInlineEditor: View {
             }
 
             // Actions row
-            HStack(spacing: Theme.Spacing.lg) {
+            HStack {
                 Button {
                     onDuplicate()
                 } label: {
                     Text("Duplicate")
-                        .font(Theme.Typography.caption(11))
-                        .foregroundColor(Theme.Colors.textTertiary)
+                        .font(Theme.Typography.label(11))
+                        .foregroundColor(Theme.Colors.textSecondary)
+                        .underline()
                 }
                 .buttonStyle(.plain)
 
@@ -507,8 +501,9 @@ struct ActionInlineEditor: View {
                     onDelete()
                 } label: {
                     Text("Delete Action")
-                        .font(Theme.Typography.caption(11))
+                        .font(Theme.Typography.label(11))
                         .foregroundColor(Theme.Colors.error)
+                        .underline()
                 }
                 .buttonStyle(.plain)
             }

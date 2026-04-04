@@ -233,15 +233,8 @@ struct ProvidersSettingsView: View {
                 } label: {
                     Text("Add Provider")
                         .font(Theme.Typography.label(12))
-                        .foregroundColor(Theme.Colors.textSecondary)
-                        .padding(.horizontal, Theme.Spacing.lg)
-                        .padding(.vertical, Theme.Spacing.sm)
-                        .background(Theme.Colors.surfaceContainerLow)
-                        .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: Theme.Radius.sm)
-                                .stroke(Theme.Colors.cardBorder, lineWidth: 1)
-                        )
+                        .foregroundColor(Theme.Colors.textPrimary)
+                        .underline()
                 }
                 .buttonStyle(.plain)
                 .disabled(newDisplayName.trimmingCharacters(in: .whitespaces).isEmpty || newBaseURL.isEmpty)
@@ -479,11 +472,8 @@ struct ProviderInlineEditor: View {
                 }
             }
 
-            Spacer()
-                .frame(height: Theme.Spacing.xs)
-
             // Action buttons
-            HStack(spacing: Theme.Spacing.sm) {
+            HStack {
                 if !provider.isActive {
                     Button {
                         onSetActive()
@@ -491,14 +481,7 @@ struct ProviderInlineEditor: View {
                         Text("Set Active")
                             .font(Theme.Typography.label(11))
                             .foregroundColor(Theme.Colors.textPrimary)
-                            .padding(.horizontal, Theme.Spacing.md)
-                            .padding(.vertical, Theme.Spacing.xs + 1)
-                            .background(Theme.Colors.surfaceContainerLow)
-                            .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: Theme.Radius.sm)
-                                    .stroke(Theme.Colors.cardBorder, lineWidth: 1)
-                            )
+                            .underline()
                     }
                     .buttonStyle(.plain)
                 }
@@ -514,15 +497,8 @@ struct ProviderInlineEditor: View {
                         Text("Test Connection")
                             .font(Theme.Typography.label(11))
                             .foregroundColor(Theme.Colors.textSecondary)
+                            .underline()
                     }
-                    .padding(.horizontal, Theme.Spacing.md)
-                    .padding(.vertical, Theme.Spacing.xs + 1)
-                    .background(Theme.Colors.surfaceContainerLow)
-                    .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: Theme.Radius.sm)
-                            .stroke(Theme.Colors.cardBorder, lineWidth: 1)
-                    )
                 }
                 .buttonStyle(.plain)
                 .disabled(isTesting || apiKey.isEmpty)
@@ -547,14 +523,7 @@ struct ProviderInlineEditor: View {
                     Text("Delete")
                         .font(Theme.Typography.label(11))
                         .foregroundColor(Theme.Colors.error)
-                        .padding(.horizontal, Theme.Spacing.md)
-                        .padding(.vertical, Theme.Spacing.xs + 1)
-                        .background(Theme.Colors.statusRedBg)
-                        .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: Theme.Radius.sm)
-                                .stroke(Theme.Colors.error.opacity(0.15), lineWidth: 1)
-                        )
+                        .underline()
                 }
                 .buttonStyle(.plain)
             }

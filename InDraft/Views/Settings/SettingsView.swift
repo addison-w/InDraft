@@ -51,8 +51,8 @@ struct SettingsView: View {
                 WindowCloseButton()
                 Spacer()
             }
-            .padding(.horizontal, Theme.Spacing.xl)
-            .padding(.top, Theme.Spacing.lg)
+            .padding(.leading, Theme.Spacing.md)
+            .padding(.top, Theme.Spacing.md)
             .padding(.bottom, Theme.Spacing.sm)
             .background(WindowDragArea())
 

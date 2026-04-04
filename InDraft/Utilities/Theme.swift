@@ -76,31 +76,31 @@ enum Theme {
         static let windowControlIcon = Color(hex: "3A3A38").opacity(0.85)
     }
 
-    // MARK: - Typography (Geometric Sans — Japanese minimalist aesthetic)
+    // MARK: - Typography (SF Rounded — Japanese modern minimalist)
     //
-    // All text uses SF Pro (system default) — clean, geometric, zero ornamentation.
-    // Titles use light weight for airy, architectural feeling.
-    // Body uses regular weight for readability. Labels use medium for quiet emphasis.
+    // All text uses SF Rounded — soft terminals, warm yet geometric.
+    // Evokes the feel of modern Japanese product design (MUJI, LINE).
+    // Titles use light weight for airy quality. Body regular. Labels medium.
 
     enum Typography {
         /// Page title — light weight, generous size, architectural calm
         static func pageTitle(_ size: CGFloat = 22) -> Font {
-            .system(size: size).weight(.light)
+            .system(size: size, design: .rounded).weight(.light)
         }
 
         /// Section title — light weight, restrained scale
         static func sectionTitle(_ size: CGFloat = 16) -> Font {
-            .system(size: size).weight(.light)
+            .system(size: size, design: .rounded).weight(.light)
         }
 
         /// Body text — regular weight for clean readability
         static func body(_ size: CGFloat = 13) -> Font {
-            .system(size: size)
+            .system(size: size, design: .rounded)
         }
 
         /// Label text — medium weight for quiet emphasis
         static func label(_ size: CGFloat = 11) -> Font {
-            .system(size: size).weight(.medium)
+            .system(size: size, design: .rounded).weight(.medium)
         }
 
         /// Monospaced — SF Mono for keyboard shortcuts and technical data
@@ -110,12 +110,17 @@ enum Theme {
 
         /// Caption — light weight, delicate
         static func caption(_ size: CGFloat = 10) -> Font {
-            .system(size: size).weight(.light)
+            .system(size: size, design: .rounded).weight(.light)
         }
 
         /// All caps label — medium weight for tracking
         static func allCaps(_ size: CGFloat = 10) -> Font {
-            .system(size: size).weight(.medium)
+            .system(size: size, design: .rounded).weight(.medium)
+        }
+
+        /// Brand name — semibold with wide tracking for quiet prominence
+        static func brand(_ size: CGFloat = 15) -> Font {
+            .system(size: size, design: .rounded).weight(.semibold)
         }
     }
 

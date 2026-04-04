@@ -78,15 +78,17 @@ To achieve a premium feel, **1px solid borders are prohibited for sectioning.** 
 
 ## 3. Typography
 
-The typography system uses **SF Pro** (system geometric sans-serif) exclusively — clean, modern, and unadorned, in the spirit of Japanese minimalism. Hierarchy is achieved through **weight contrast**: light for display, regular for body, medium for emphasis. No serifs, no decoration, no ornamentation.
+The typography system uses **SF Rounded** (system rounded sans-serif) exclusively — soft terminals with geometric structure, evoking modern Japanese product design (MUJI, LINE). Hierarchy is achieved through **weight contrast**: light for display, regular for body, medium for emphasis. The rounded forms add warmth without sacrificing minimalism.
 
-*   **All Text (SF Pro):** A single geometric sans-serif unifies the entire interface. Titles use light weight for an airy, architectural quality. Body uses regular weight for effortless readability. Labels use medium weight for quiet emphasis.
+*   **All Text (SF Rounded):** A single rounded sans-serif unifies the entire interface. Soft terminal shapes create a warm, approachable quality while remaining geometric and clean. Titles use light weight for airiness. Body uses regular for readability. Labels use medium for quiet emphasis.
+*   **Brand (SF Rounded):** App name uses semibold weight with subtle letter-spacing (0.5px) for quiet prominence without breaking minimalist restraint.
 *   **Kbd (Monospace / SF Mono):** Keyboard shortcuts and technical data use monospace for utilitarian precision.
 
 **Key Scales:**
 *   **Page Title:** 22px (light) — Airy and restrained. Space around the text matters as much as the text itself.
 *   **Section Title:** 16px (light) — Quiet hierarchy through weight, not decoration.
-*   **Body:** 13px (regular) — Clean, geometric, effortlessly readable.
+*   **Brand:** 15px (semibold, tracking 0.5) — Subtle prominence for app identity.
+*   **Body:** 13px (regular) — Soft, geometric, effortlessly readable.
 *   **Label:** 11px (medium) — Subtle emphasis for interactive controls.
 *   **Caption:** 10px (light) — Delicate metadata that recedes gracefully.
 

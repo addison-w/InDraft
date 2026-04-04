@@ -51,30 +51,33 @@ struct SettingsView: View {
                 WindowCloseButton()
                 Spacer()
             }
-            .padding(.horizontal, Theme.Spacing.lg)
-            .padding(.top, Theme.Spacing.md)
+            .padding(.horizontal, Theme.Spacing.xl)
+            .padding(.top, Theme.Spacing.lg)
             .padding(.bottom, Theme.Spacing.sm)
             .background(WindowDragArea())
 
             VStack(alignment: .leading, spacing: 3) {
                 Text("InDraft")
-                    .font(Theme.Typography.label(14))
+                    .font(Theme.Typography.brand(15))
                     .foregroundColor(Theme.Colors.textPrimary)
+                    .tracking(0.5)
                 Text("PREFERENCES")
                     .font(Theme.Typography.allCaps(9))
                     .foregroundColor(Theme.Colors.textTertiary)
                     .tracking(1)
             }
-            .padding(.horizontal, Theme.Spacing.lg)
-            .padding(.bottom, Theme.Spacing.lg)
+            .padding(.horizontal, Theme.Spacing.xl)
+            .padding(.bottom, Theme.Spacing.xl)
 
-            ForEach(SettingsTab.allCases) { tab in
-                sidebarItem(tab)
+            VStack(spacing: 2) {
+                ForEach(SettingsTab.allCases) { tab in
+                    sidebarItem(tab)
+                }
             }
 
             Spacer()
         }
-        .frame(width: 170)
+        .frame(width: 200)
         .background(Theme.Colors.background)
     }
 
@@ -82,7 +85,7 @@ struct SettingsView: View {
         Button {
             selectedTab = tab
         } label: {
-            HStack(spacing: Theme.Spacing.sm) {
+            HStack(spacing: Theme.Spacing.md) {
                 Image(systemName: tab.icon)
                     .font(.system(size: 11))
                     .foregroundColor(selectedTab == tab ? Theme.Colors.textPrimary : Theme.Colors.textTertiary)
@@ -92,7 +95,7 @@ struct SettingsView: View {
             }
             .foregroundColor(selectedTab == tab ? Theme.Colors.textPrimary : Theme.Colors.textSecondary)
             .fontWeight(selectedTab == tab ? .medium : .regular)
-            .padding(.horizontal, Theme.Spacing.md)
+            .padding(.horizontal, Theme.Spacing.lg)
             .padding(.vertical, Theme.Spacing.sm + 2)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
@@ -110,7 +113,7 @@ struct SettingsView: View {
                 hoveredTab = isHovered ? tab : nil
             }
         }
-        .padding(.horizontal, Theme.Spacing.sm)
+        .padding(.horizontal, Theme.Spacing.md)
     }
 
     // MARK: - Detail

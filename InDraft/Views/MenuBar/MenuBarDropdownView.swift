@@ -41,11 +41,10 @@ struct MenuBarDropdownView: View {
     private var headerSection: some View {
         HStack(alignment: .center) {
             VStack(alignment: .leading, spacing: 2) {
-                Text("INDRAFT")
-                    .font(Theme.Typography.allCaps(10))
-                    .fontWeight(.semibold)
+                Text("InDraft")
+                    .font(Theme.Typography.brand(13))
                     .foregroundColor(Theme.Colors.textPrimary)
-                    .tracking(1.5)
+                    .tracking(0.5)
 
                 Text(providerDisplayName)
                     .font(Theme.Typography.caption(11))

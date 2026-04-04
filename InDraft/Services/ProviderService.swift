@@ -136,6 +136,15 @@ final class LiveProviderService: ProviderServiceProtocol {
 
     // MARK: - Private Helpers
 
+    private static let baseSystemPrompt = """
+        STRICT OUTPUT RULES (always enforced, overrides all other instructions):
+        1. Output ONLY the transformed text. Nothing else.
+        2. Strip all ** markers from output.
+        3. Replace all — (em dash) with - (hyphen).
+        4. Add no formatting beyond what the input contained.
+        5. Preserve all emojis from the original input as-is.
+        """
+
     private func buildRequest(baseURL: String, apiKey: String, model: String, systemPrompt: String, userContent: String, timeout: TimeInterval = 30) throws -> URLRequest {
         let urlString = baseURL.hasSuffix("/")
             ? "\(baseURL)chat/completions"
@@ -151,10 +160,12 @@ final class LiveProviderService: ProviderServiceProtocol {
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         request.timeoutInterval = timeout
 
+        let fullSystemPrompt = Self.baseSystemPrompt + "\n\n" + systemPrompt
+
         let body = ChatCompletionRequest(
             model: model,
             messages: [
-                .init(role: "system", content: systemPrompt),
+                .init(role: "system", content: fullSystemPrompt),
                 .init(role: "user", content: userContent)
             ]
         )

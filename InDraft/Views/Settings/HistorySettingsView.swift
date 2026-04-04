@@ -5,6 +5,7 @@ struct HistorySettingsView: View {
     @AppStorage(Constants.UserDefaultsKeys.historyRetentionDays) private var retentionDays = Constants.Defaults.historyRetentionDays
     @AppStorage(Constants.UserDefaultsKeys.historyRecordingEnabled) private var recordingEnabled = true
     @State private var confirmingClear = false
+    @State private var cleared = false
     @State private var pendingRetention: Int?
     @State private var showRetentionAlert = false
 
@@ -90,23 +91,34 @@ struct HistorySettingsView: View {
                                 .foregroundColor(Theme.Colors.textSecondary)
                         }
                         Spacer()
-                        Button {
-                            if confirmingClear {
-                                confirmingClear = false
-                                clearAllHistory()
-                            } else {
-                                withAnimation(Theme.Motion.quick) { confirmingClear = true }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                                    withAnimation(Theme.Motion.quick) { confirmingClear = false }
-                                }
-                            }
-                        } label: {
-                            Text(confirmingClear ? "Confirm clear?" : "Clear All")
+                        if cleared {
+                            Text("Cleared")
                                 .font(Theme.Typography.label(11))
-                                .foregroundColor(Theme.Colors.error)
-                                .underline()
+                                .foregroundColor(Theme.Colors.statusGreen)
+                                .transition(.opacity)
+                        } else {
+                            Button {
+                                if confirmingClear {
+                                    confirmingClear = false
+                                    clearAllHistory()
+                                    withAnimation(Theme.Motion.quick) { cleared = true }
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                        withAnimation(Theme.Motion.quick) { cleared = false }
+                                    }
+                                } else {
+                                    withAnimation(Theme.Motion.quick) { confirmingClear = true }
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                        withAnimation(Theme.Motion.quick) { confirmingClear = false }
+                                    }
+                                }
+                            } label: {
+                                Text(confirmingClear ? "Confirm clear?" : "Clear All")
+                                    .font(Theme.Typography.label(11))
+                                    .foregroundColor(Theme.Colors.error)
+                                    .underline()
+                            }
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
                     }
                     .padding(Theme.Spacing.xl)
                 }

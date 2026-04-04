@@ -1,13 +1,20 @@
 import SwiftUI
 
 enum ToastType {
-    case success(String)
+    case success(String, actionName: String? = nil)
     case error(String)
     case info(String)
 
     var message: String {
         switch self {
-        case .success(let msg), .error(let msg), .info(let msg): return msg
+        case .success(let msg, _), .error(let msg), .info(let msg): return msg
+        }
+    }
+
+    var actionName: String? {
+        switch self {
+        case .success(_, let name): return name
+        default: return nil
         }
     }
 
@@ -20,17 +27,26 @@ enum ToastType {
 
     var icon: String {
         switch self {
-        case .success: return "checkmark.circle.fill"
-        case .error: return "exclamationmark.circle.fill"
-        case .info: return "info.circle.fill"
+        case .success: return "checkmark"
+        case .error: return "exclamationmark"
+        case .info: return "minus"
         }
     }
 
     var iconColor: Color {
         switch self {
-        case .success: return Theme.Colors.accent
-        case .error: return Theme.Colors.error
-        case .info: return Theme.Colors.textSecondary
+        case .success: return Theme.Colors.statusGreen
+        case .error: return Theme.Colors.statusRed
+        case .info: return Theme.Colors.textTertiary
+        }
+    }
+
+    /// Leading accent bar color — asymmetric wabi-sabi mark
+    var accentColor: Color {
+        switch self {
+        case .success: return Theme.Colors.statusGreen
+        case .error: return Theme.Colors.statusRed
+        case .info: return Theme.Colors.textTertiary
         }
     }
 }
@@ -60,23 +76,41 @@ struct ToastView: View {
     let toast: ToastType
 
     var body: some View {
-        HStack(spacing: Theme.Spacing.sm) {
-            Image(systemName: toast.icon)
-                .foregroundColor(toast.iconColor)
-                .font(.system(size: 14))
+        HStack(spacing: 0) {
+            // Leading ink accent — an asymmetric mark, beauty in imperfection
+            RoundedRectangle(cornerRadius: 1)
+                .fill(toast.accentColor.opacity(0.6))
+                .frame(width: 2)
+                .padding(.vertical, Theme.Spacing.sm)
 
-            Text(toast.message)
-                .font(Theme.Typography.body(12))
-                .foregroundColor(Theme.Colors.textPrimary)
+            HStack(spacing: Theme.Spacing.md) {
+                Image(systemName: toast.icon)
+                    .foregroundColor(toast.iconColor.opacity(0.7))
+                    .font(.system(size: 10, weight: .medium))
+
+                VStack(alignment: .leading, spacing: 2) {
+                    if let actionName = toast.actionName {
+                        Text(actionName)
+                            .font(Theme.Typography.label(10))
+                            .foregroundColor(Theme.Colors.textTertiary)
+                            .lineLimit(1)
+                    }
+
+                    Text(toast.message)
+                        .font(Theme.Typography.body(11.5))
+                        .foregroundColor(Theme.Colors.textPrimary)
+                        .lineLimit(1)
+                }
+            }
+            .padding(.horizontal, Theme.Spacing.md)
+            .padding(.vertical, Theme.Spacing.sm + 2)
         }
-        .padding(.horizontal, Theme.Spacing.lg)
-        .padding(.vertical, Theme.Spacing.sm)
-        .background(Theme.Colors.cardBackground)
+        .background(Theme.Colors.background)
         .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.md))
         .overlay(
             RoundedRectangle(cornerRadius: Theme.Radius.md)
                 .stroke(Theme.Colors.cardBorder, lineWidth: 1)
         )
-        .shadow(color: Theme.Colors.textPrimary.opacity(0.08), radius: 8, y: 4)
+        .shadow(color: Color(hex: "2F3430").opacity(0.04), radius: 12, y: 3)
     }
 }

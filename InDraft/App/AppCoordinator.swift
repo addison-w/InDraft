@@ -101,7 +101,7 @@ final class AppCoordinator: ObservableObject {
     private func handleHotkeyPress(actionID: UUID, context: ModelContext) {
         // Check accessibility
         guard AccessibilityService.isAccessibilityGranted else {
-            toastManager.show(.error("Accessibility permission required — use the menu bar to open Settings"))
+            toastManager.show(.error("Accessibility required — open Settings to grant"))
             return
         }
 
@@ -118,13 +118,13 @@ final class AppCoordinator: ObservableObject {
         let provider = try? context.fetch(FetchDescriptor<Provider>(predicate: activePredicate)).first
 
         guard let provider = provider else {
-            toastManager.show(.error("No active provider — configure one in Settings > Providers"))
+            toastManager.show(.error("No provider configured — check Settings"))
             return
         }
 
         // Get API key from Keychain
         guard let apiKey = keychainService.retrieve(forReference: provider.apiKeyReference), !apiKey.isEmpty else {
-            toastManager.show(.error("API key not found — check Settings > Providers"))
+            toastManager.show(.error("API key missing — check Settings"))
             return
         }
 
@@ -136,7 +136,7 @@ final class AppCoordinator: ObservableObject {
             if let error = error {
                 switch error {
                 case .noTextSelected:
-                    toastManager.show(.info("No text selected"))
+                    toastManager.show(.info("Nothing selected"))
                 case .captureFailed(let msg):
                     toastManager.show(.error(msg))
                 case .providerFailed(let msg):
@@ -144,20 +144,18 @@ final class AppCoordinator: ObservableObject {
                 case .replaceFailed(let msg):
                     toastManager.show(.error(msg))
                 case .noActiveProvider:
-                    toastManager.show(.error("No active provider — configure one in Settings > Providers"))
+                    toastManager.show(.error("No provider configured — check Settings"))
                 case .actionDisabled:
                     break
                 }
             } else if let result = result {
                 switch result {
-                case .replaced:
-                    toastManager.show(.success("Text replaced"))
-                case .fallbackClipboard:
-                    toastManager.show(.info("Result copied to clipboard — paste manually"))
+                case .replaced, .fallbackClipboard:
+                    toastManager.show(.success("Replaced", actionName: action.name))
                 case .copiedToClipboard:
-                    toastManager.show(.success("Result copied to clipboard"))
+                    toastManager.show(.success("Copied — paste manually", actionName: action.name))
                 case .previewing(let original, let transformed):
-                    showPreview(original: original, transformed: transformed)
+                    showPreview(original: original, transformed: transformed, actionName: action.name)
                 }
             }
         }
@@ -195,7 +193,7 @@ final class AppCoordinator: ObservableObject {
 
     // MARK: - Preview
 
-    private func showPreview(original: String, transformed: String) {
+    private func showPreview(original: String, transformed: String, actionName: String) {
         if previewController == nil {
             previewController = PreviewPanelController()
         }
@@ -208,10 +206,11 @@ final class AppCoordinator: ObservableObject {
                     let replaceService = LiveTextReplaceService()
                     let result = try? await replaceService.replaceSelectedText(with: transformed)
                     await MainActor.run {
-                        if case .copiedToClipboard = result {
-                            self?.toastManager.show(.info("Result copied to clipboard — paste manually"))
-                        } else {
-                            self?.toastManager.show(.success("Text replaced"))
+                        switch result {
+                        case .copiedToClipboard:
+                            self?.toastManager.show(.success("Copied — paste manually", actionName: actionName))
+                        default:
+                            self?.toastManager.show(.success("Replaced", actionName: actionName))
                         }
                     }
                 }
@@ -220,7 +219,7 @@ final class AppCoordinator: ObservableObject {
             onCopy: { [weak self] in
                 NSPasteboard.general.clearContents()
                 NSPasteboard.general.setString(transformed, forType: .string)
-                self?.toastManager.show(.success("Copied to clipboard"))
+                self?.toastManager.show(.success("Copied", actionName: actionName))
             }
         )
     }

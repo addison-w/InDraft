@@ -4,6 +4,9 @@ struct HistoryRecordDetailView: View {
     let record: HistoryRecord
 
     @Environment(\.modelContext) private var modelContext
+    @State private var copiedOriginal = false
+    @State private var copiedTransformed = false
+    @State private var confirmingDelete = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.md) {
@@ -11,10 +14,26 @@ struct HistoryRecordDetailView: View {
             HStack(alignment: .top, spacing: Theme.Spacing.md) {
                 // Original column — warm bone background
                 VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-                    Text("ORIGINAL")
-                        .font(Theme.Typography.allCaps())
-                        .tracking(1.2)
-                        .foregroundColor(Theme.Colors.textTertiary)
+                    HStack {
+                        Text("ORIGINAL")
+                            .font(Theme.Typography.allCaps())
+                            .tracking(1.2)
+                            .foregroundColor(Theme.Colors.textTertiary)
+                        Spacer()
+                        Button {
+                            NSPasteboard.general.clearContents()
+                            NSPasteboard.general.setString(record.originalText, forType: .string)
+                            withAnimation(Theme.Motion.quick) { copiedOriginal = true }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                withAnimation(Theme.Motion.quick) { copiedOriginal = false }
+                            }
+                        } label: {
+                            Image(systemName: copiedOriginal ? "checkmark" : "doc.on.doc")
+                                .font(.system(size: 10))
+                                .foregroundColor(copiedOriginal ? Theme.Colors.statusGreen : Theme.Colors.textTertiary)
+                        }
+                        .buttonStyle(.plain)
+                    }
 
                     Text(record.originalText)
                         .font(Theme.Typography.body())
@@ -28,10 +47,30 @@ struct HistoryRecordDetailView: View {
 
                 // Transformed column — white card
                 VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-                    Text("TRANSFORMED")
-                        .font(Theme.Typography.allCaps())
-                        .tracking(1.2)
-                        .foregroundColor(Theme.Colors.textTertiary)
+                    HStack {
+                        Text("TRANSFORMED")
+                            .font(Theme.Typography.allCaps())
+                            .tracking(1.2)
+                            .foregroundColor(Theme.Colors.textTertiary)
+                        Spacer()
+                        if record.transformedText != nil {
+                            Button {
+                                if let transformed = record.transformedText {
+                                    NSPasteboard.general.clearContents()
+                                    NSPasteboard.general.setString(transformed, forType: .string)
+                                    withAnimation(Theme.Motion.quick) { copiedTransformed = true }
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                        withAnimation(Theme.Motion.quick) { copiedTransformed = false }
+                                    }
+                                }
+                            } label: {
+                                Image(systemName: copiedTransformed ? "checkmark" : "doc.on.doc")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(copiedTransformed ? Theme.Colors.statusGreen : Theme.Colors.textTertiary)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
 
                     if let transformed = record.transformedText {
                         Text(transformed)
@@ -58,50 +97,23 @@ struct HistoryRecordDetailView: View {
                 .frame(maxWidth: .infinity)
             }
 
-            // Action buttons — small text links
-            HStack(spacing: Theme.Spacing.lg) {
-                Button {
-                    NSPasteboard.general.clearContents()
-                    NSPasteboard.general.setString(record.originalText, forType: .string)
-                } label: {
-                    Text("Copy Original")
-                        .font(Theme.Typography.caption())
-                        .underline()
-                }
-                .buttonStyle(.plain)
-                .foregroundColor(Theme.Colors.textSecondary)
-
-                Button {
-                    if let transformed = record.transformedText {
-                        NSPasteboard.general.clearContents()
-                        NSPasteboard.general.setString(transformed, forType: .string)
-                    }
-                } label: {
-                    Text("Copy Result")
-                        .font(Theme.Typography.caption())
-                        .underline()
-                }
-                .buttonStyle(.plain)
-                .foregroundColor(Theme.Colors.textSecondary)
-                .disabled(record.transformedText == nil)
-
-                Button {
-                    // Retry action - placeholder for retry logic
-                } label: {
-                    Text("Retry")
-                        .font(Theme.Typography.caption())
-                        .underline()
-                }
-                .buttonStyle(.plain)
-                .foregroundColor(Theme.Colors.textSecondary)
-
+            // Delete button — inline confirmation
+            HStack {
                 Spacer()
 
                 Button {
-                    let service = LiveHistoryService(modelContext: modelContext)
-                    service.deleteRecord(record.id)
+                    if confirmingDelete {
+                        confirmingDelete = false
+                        let service = LiveHistoryService(modelContext: modelContext)
+                        service.deleteRecord(record.id)
+                    } else {
+                        withAnimation(Theme.Motion.quick) { confirmingDelete = true }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            withAnimation(Theme.Motion.quick) { confirmingDelete = false }
+                        }
+                    }
                 } label: {
-                    Text("Delete")
+                    Text(confirmingDelete ? "Confirm delete?" : "Delete")
                         .font(Theme.Typography.caption())
                 }
                 .buttonStyle(.plain)

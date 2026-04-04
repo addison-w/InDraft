@@ -7,7 +7,7 @@ struct HistoryWindowView: View {
 
     @State private var searchText = ""
     @State private var expandedRecordID: UUID?
-    @State private var showClearConfirmation = false
+    @State private var confirmingClearAll = false
 
     private let retentionDays = 30
 
@@ -123,24 +123,24 @@ struct HistoryWindowView: View {
 
             StatusPill(text: "\(retentionDays) days", color: Theme.Colors.accent)
 
-            // Clear all
+            // Clear all — inline confirmation (matches delete action/provider pattern)
             Button {
-                showClearConfirmation = true
+                if confirmingClearAll {
+                    confirmingClearAll = false
+                    let service = LiveHistoryService(modelContext: modelContext)
+                    service.clearAll()
+                } else {
+                    withAnimation(Theme.Motion.quick) { confirmingClearAll = true }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                        withAnimation(Theme.Motion.quick) { confirmingClearAll = false }
+                    }
+                }
             } label: {
-                Text("Clear All")
+                Text(confirmingClearAll ? "Confirm clear?" : "Clear All")
                     .font(Theme.Typography.caption())
                     .foregroundColor(Theme.Colors.error)
             }
             .buttonStyle(.plain)
-            .alert("Clear All History", isPresented: $showClearConfirmation) {
-                Button("Cancel", role: .cancel) {}
-                Button("Clear All", role: .destructive) {
-                    let service = LiveHistoryService(modelContext: modelContext)
-                    service.clearAll()
-                }
-            } message: {
-                Text("This will permanently delete all transformation history. This action cannot be undone.")
-            }
 
             // Filter button
             Button {

@@ -116,16 +116,24 @@ struct ActionsSettingsView: View {
                             .foregroundColor(Theme.Colors.textPrimary)
 
                         HStack(spacing: Theme.Spacing.sm) {
-                            if action.hasHotkey {
-                                Text(action.hotkeyDisplayString)
-                                    .font(Theme.Typography.mono(10))
-                                    .foregroundColor(Theme.Colors.textTertiary)
+                            if action.hasHotkey,
+                               let kc = action.hotkeyKeyCode,
+                               let mods = action.hotkeyModifiers {
+                                KeycapRow(keyCode: kc, modifiers: mods, size: 9)
                             }
 
                             Text(action.outputBehavior.rawValue.uppercased())
                                 .font(Theme.Typography.allCaps(9))
                                 .foregroundColor(Theme.Colors.textTertiary)
                                 .tracking(0.5)
+                                .padding(.horizontal, Theme.Spacing.sm)
+                                .padding(.vertical, 2)
+                                .background(Theme.Colors.surfaceContainerLow)
+                                .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: Theme.Radius.sm)
+                                        .stroke(Theme.Colors.cardBorder, lineWidth: 1)
+                                )
                         }
                     }
 

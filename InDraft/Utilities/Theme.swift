@@ -316,6 +316,55 @@ struct InkSegmentPicker<T: Hashable>: View {
     }
 }
 
+// MARK: - Keycap Views
+
+/// Individual keycap — bordered box with monospace text, like a physical key
+struct Keycap: View {
+    let label: String
+    var size: CGFloat = 11
+
+    var body: some View {
+        Text(label)
+            .font(Theme.Typography.mono(size))
+            .foregroundColor(Theme.Colors.textPrimary)
+            .frame(minWidth: size * 1.8)
+            .padding(.horizontal, 5)
+            .padding(.vertical, 2)
+            .background(Theme.Colors.cardBackground)
+            .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.Radius.sm)
+                    .stroke(Theme.Colors.cardBorder, lineWidth: 1)
+            )
+            .shadow(color: Color.black.opacity(0.04), radius: 0, y: 1)
+    }
+}
+
+/// Renders a hotkey as a row of individual keycaps
+struct KeycapRow: View {
+    let keyCode: UInt32
+    let modifiers: UInt32
+    var size: CGFloat = 11
+
+    var body: some View {
+        HStack(spacing: 4) {
+            if modifiers & UInt32(NSEvent.ModifierFlags.control.rawValue) != 0 {
+                Keycap(label: "\u{2303}", size: size)
+            }
+            if modifiers & UInt32(NSEvent.ModifierFlags.option.rawValue) != 0 {
+                Keycap(label: "\u{2325}", size: size)
+            }
+            if modifiers & UInt32(NSEvent.ModifierFlags.shift.rawValue) != 0 {
+                Keycap(label: "\u{21E7}", size: size)
+            }
+            if modifiers & UInt32(NSEvent.ModifierFlags.command.rawValue) != 0 {
+                Keycap(label: "\u{2318}", size: size)
+            }
+            Keycap(label: KeyCodeMapping.stringForKeyCode(keyCode), size: size)
+        }
+    }
+}
+
 // MARK: - Reusable Status Badge
 
 struct StatusPill: View {

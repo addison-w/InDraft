@@ -9,64 +9,57 @@ struct HotkeyRecorderView: View {
 
     var body: some View {
         HStack(spacing: Theme.Spacing.sm) {
-            Text(displayString)
-                .font(Theme.Typography.mono(11))
-                .foregroundColor(isRecording ? Theme.Colors.textTertiary : Theme.Colors.textPrimary)
-                .frame(minWidth: 80)
+            // Clickable hotkey display — click to record
+            Button {
+                if isRecording {
+                    stopRecording()
+                } else {
+                    startRecording()
+                }
+            } label: {
+                Group {
+                    if isRecording {
+                        Text("Press a key...")
+                            .font(Theme.Typography.caption(11))
+                            .foregroundColor(Theme.Colors.textTertiary)
+                            .frame(minWidth: 80)
+                    } else if let kc = keyCode, let mods = modifiers {
+                        KeycapRow(keyCode: kc, modifiers: mods)
+                    } else {
+                        Text("Click to set")
+                            .font(Theme.Typography.caption(11))
+                            .foregroundColor(Theme.Colors.textTertiary)
+                            .frame(minWidth: 80)
+                    }
+                }
                 .padding(.horizontal, Theme.Spacing.sm)
                 .padding(.vertical, Theme.Spacing.xs + 1)
-                .background(Theme.Colors.surfaceContainerLow)
+                .background(isRecording ? Theme.Colors.surfaceContainerHigh : Theme.Colors.surfaceContainerLow)
                 .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
                 .overlay(
                     RoundedRectangle(cornerRadius: Theme.Radius.sm)
                         .stroke(isRecording ? Theme.Colors.textTertiary : Theme.Colors.divider, lineWidth: 1)
                 )
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
 
-            if isRecording {
+            // Clear button — only when hotkey is set and not recording
+            if keyCode != nil && !isRecording {
                 Button {
-                    stopRecording()
+                    keyCode = nil
+                    modifiers = nil
                 } label: {
-                    Text("Cancel")
+                    Text("Clear")
                         .font(Theme.Typography.caption(11))
                         .foregroundColor(Theme.Colors.textTertiary)
                 }
                 .buttonStyle(.plain)
-            } else {
-                Button {
-                    startRecording()
-                } label: {
-                    Text("Record")
-                        .font(Theme.Typography.caption(11))
-                        .foregroundColor(Theme.Colors.textSecondary)
-                }
-                .buttonStyle(.plain)
-
-                if keyCode != nil {
-                    Button {
-                        keyCode = nil
-                        modifiers = nil
-                    } label: {
-                        Text("Clear")
-                            .font(Theme.Typography.caption(11))
-                            .foregroundColor(Theme.Colors.textTertiary)
-                    }
-                    .buttonStyle(.plain)
-                }
             }
         }
     }
 
-    // MARK: - Display
-
-    private var displayString: String {
-        if isRecording {
-            return "Press a key..."
-        }
-        guard let kc = keyCode, let mods = modifiers else {
-            return "Not Set"
-        }
-        return Self.formatHotkey(keyCode: kc, modifiers: mods)
-    }
+    // MARK: - Format (kept for external callers)
 
     static func formatHotkey(keyCode: UInt32, modifiers: UInt32) -> String {
         var parts: [String] = []
@@ -92,9 +85,7 @@ struct HotkeyRecorderView: View {
         isRecording = true
         localMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
             let mods = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
-            // Require at least one modifier key
             guard !mods.isEmpty else {
-                // Escape cancels recording
                 if event.keyCode == 53 {
                     stopRecording()
                 }

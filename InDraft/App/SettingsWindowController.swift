@@ -66,6 +66,7 @@ final class SettingsWindowController {
         window.contentViewController = hostingController
         window.center()
         window.isReleasedWhenClosed = false
+        window.hidesOnDeactivate = false
         window.setFrameAutosaveName("InDraftSettings")
 
         self.window = window

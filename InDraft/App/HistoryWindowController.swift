@@ -61,6 +61,7 @@ final class HistoryWindowController {
         newWindow.contentViewController = hostingController
         newWindow.center()
         newWindow.isReleasedWhenClosed = false
+        newWindow.hidesOnDeactivate = false
         newWindow.setFrameAutosaveName("InDraftHistory")
 
         self.window = newWindow

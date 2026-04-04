@@ -31,7 +31,6 @@
 		5F55C77657D586AA3AA20B6A /* ToastManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16AA0E7B98DECA14BDCA8C5A /* ToastManagerTests.swift */; };
 		61810B480E3685B7936C9E1D /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8A6EFE5E4D9CC95C3F118F /* Constants.swift */; };
 		6463DA0FFE8C330B1AA6FA41 /* TransformFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E9233FD365CB7E3E028712A /* TransformFlowTests.swift */; };
-		65FD157298864FEB78506052 /* ProviderEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B54C8108E14C28ABDAE50 /* ProviderEditorView.swift */; };
 		664053BC02E4DB489835907A /* ProviderServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBFC9E355D7079645A362B52 /* ProviderServiceTests.swift */; };
 		66D355AB0BBDD26AADCC8244 /* TextReplaceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F55094F87474B2FFD78BF3C /* TextReplaceService.swift */; };
 		693EF38C9454A732F4970A17 /* TextReplaceServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A66103AB1370D1211D08BF0 /* TextReplaceServiceTests.swift */; };
@@ -122,7 +121,6 @@
 		769F6801D653E10453685DDA /* DiagnosticsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticsSettingsView.swift; sourceTree = "<group>"; };
 		76A181C46445C16428B6ADA4 /* HistoryWindowControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryWindowControllerTests.swift; sourceTree = "<group>"; };
 		7701606BD50555F18AAB81AD /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
-		7E2B54C8108E14C28ABDAE50 /* ProviderEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderEditorView.swift; sourceTree = "<group>"; };
 		82D8DD142631B6168328AE71 /* HotkeyRecorderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyRecorderView.swift; sourceTree = "<group>"; };
 		8585A88FCB562EAE547F5EC3 /* TransformServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransformServiceTests.swift; sourceTree = "<group>"; };
 		8B1B4D5CF949FB6327E0D28C /* TextCaptureServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextCaptureServiceTests.swift; sourceTree = "<group>"; };
@@ -223,7 +221,6 @@
 				00AF6E9265AEE9634DA481D2 /* GeneralSettingsView.swift */,
 				DDD4B14A15BC6FD793F0F2EA /* HistorySettingsView.swift */,
 				82D8DD142631B6168328AE71 /* HotkeyRecorderView.swift */,
-				7E2B54C8108E14C28ABDAE50 /* ProviderEditorView.swift */,
 				959986EC6611CF708BDA6049 /* ProvidersSettingsView.swift */,
 				B31F4C126D062F7D30C8772A /* SettingsTabBar.swift */,
 				23D1BADE0D6750320AA56F5D /* SettingsView.swift */,
@@ -561,7 +558,6 @@
 				358C864256884CFB944E6FE1 /* PreviewPanelController.swift in Sources */,
 				A1D046E24FB29B5A712AB4D0 /* PreviewPanelView.swift in Sources */,
 				4C49E1F59C11D71D89799469 /* Provider.swift in Sources */,
-				65FD157298864FEB78506052 /* ProviderEditorView.swift in Sources */,
 				04481DB42F6E953B805554B7 /* ProviderService.swift in Sources */,
 				567369A472319961FAE9F6EC /* ProvidersSettingsView.swift in Sources */,
 				B7864036C9D72703486AE915 /* SampleTransformStepView.swift in Sources */,

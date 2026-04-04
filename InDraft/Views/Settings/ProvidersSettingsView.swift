@@ -81,47 +81,53 @@ struct ProvidersSettingsView: View {
                     expandedProviderID = isExpanded ? nil : provider.id
                 }
             } label: {
-                HStack(spacing: Theme.Spacing.md) {
-                    Circle()
-                        .fill(providerDotColor(provider))
-                        .frame(width: 7, height: 7)
+                HStack(spacing: 0) {
+                    // Active indicator — subtle left accent bar
+                    RoundedRectangle(cornerRadius: 1)
+                        .fill(provider.isActive ? Theme.Colors.textPrimary : Color.clear)
+                        .frame(width: 2)
+                        .padding(.vertical, Theme.Spacing.sm)
 
-                    VStack(alignment: .leading, spacing: 3) {
-                        HStack(spacing: Theme.Spacing.sm) {
-                            Text(provider.displayName)
-                                .font(Theme.Typography.body(14))
-                                .fontWeight(.medium)
-                                .foregroundColor(Theme.Colors.textPrimary)
+                    HStack(spacing: Theme.Spacing.md) {
+                        Circle()
+                            .fill(providerDotColor(provider))
+                            .frame(width: 6, height: 6)
 
-                            if provider.isActive {
-                                StatusPill(text: "ACTIVE", color: Theme.Colors.statusGreen)
+                        VStack(alignment: .leading, spacing: 3) {
+                            HStack(spacing: Theme.Spacing.sm) {
+                                Text(provider.displayName)
+                                    .font(Theme.Typography.body(14))
+                                    .fontWeight(provider.isActive ? .semibold : .medium)
+                                    .foregroundColor(Theme.Colors.textPrimary)
+
+                                if provider.isActive {
+                                    Text("active")
+                                        .font(Theme.Typography.allCaps(9))
+                                        .foregroundColor(Theme.Colors.textTertiary)
+                                        .tracking(0.5)
+                                }
                             }
 
-                            statusBadge(provider)
-                        }
-
-                        HStack(spacing: Theme.Spacing.sm) {
-                            Text(provider.defaultModel)
-                                .font(Theme.Typography.mono(11))
-                                .foregroundColor(Theme.Colors.textTertiary)
-
-                            if provider.lastTestStatus == .success, let testedAt = provider.lastTestedAt {
-                                Text("tested \(timeAgo(testedAt))")
-                                    .font(Theme.Typography.caption(10))
+                            HStack(spacing: Theme.Spacing.sm) {
+                                Text(provider.defaultModel)
+                                    .font(Theme.Typography.mono(10))
                                     .foregroundColor(Theme.Colors.textTertiary)
+
+                                statusText(provider)
                             }
                         }
+
+                        Spacer()
+
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundColor(Theme.Colors.textTertiary)
+                            .rotationEffect(.degrees(isExpanded ? 90 : 0))
                     }
-
-                    Spacer()
-
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 10, weight: .medium))
-                        .foregroundColor(Theme.Colors.textTertiary)
-                        .rotationEffect(.degrees(isExpanded ? 90 : 0))
+                    .padding(.horizontal, Theme.Spacing.lg)
+                    .padding(.vertical, Theme.Spacing.lg)
                 }
-                .padding(.horizontal, Theme.Spacing.xl)
-                .padding(.vertical, Theme.Spacing.lg)
+                .padding(.leading, Theme.Spacing.sm)
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
@@ -211,6 +217,7 @@ struct ProvidersSettingsView: View {
             fieldSection("TIMEOUT") {
                 HStack(spacing: Theme.Spacing.md) {
                     Slider(value: $newTimeoutSeconds, in: 10...180, step: 5)
+                        .tint(Theme.Colors.textTertiary)
 
                     Text("\(Int(newTimeoutSeconds))s")
                         .font(Theme.Typography.mono(12))
@@ -225,10 +232,20 @@ struct ProvidersSettingsView: View {
                     createProvider()
                 } label: {
                     Text("Add Provider")
+                        .font(Theme.Typography.label(12))
+                        .foregroundColor(Theme.Colors.textSecondary)
+                        .padding(.horizontal, Theme.Spacing.lg)
+                        .padding(.vertical, Theme.Spacing.sm)
+                        .background(Theme.Colors.surfaceContainerLow)
+                        .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: Theme.Radius.sm)
+                                .stroke(Theme.Colors.cardBorder, lineWidth: 1)
+                        )
                 }
-                .buttonStyle(PrimaryButtonStyle())
+                .buttonStyle(.plain)
                 .disabled(newDisplayName.trimmingCharacters(in: .whitespaces).isEmpty || newBaseURL.isEmpty)
-                .opacity(newDisplayName.trimmingCharacters(in: .whitespaces).isEmpty || newBaseURL.isEmpty ? 0.5 : 1.0)
+                .opacity(newDisplayName.trimmingCharacters(in: .whitespaces).isEmpty || newBaseURL.isEmpty ? 0.4 : 1.0)
             }
         }
         .padding(Theme.Spacing.xl)
@@ -285,14 +302,22 @@ struct ProvidersSettingsView: View {
     }
 
     @ViewBuilder
-    private func statusBadge(_ provider: Provider) -> some View {
+    private func statusText(_ provider: Provider) -> some View {
         switch provider.lastTestStatus {
         case .success:
-            StatusPill(text: "CONNECTED", color: Theme.Colors.statusBlue)
+            if let testedAt = provider.lastTestedAt {
+                Text("tested \(timeAgo(testedAt))")
+                    .font(Theme.Typography.caption(10))
+                    .foregroundColor(Theme.Colors.textTertiary)
+            }
         case .failed:
-            StatusPill(text: "FAILED", color: Theme.Colors.error)
+            Text("connection failed")
+                .font(Theme.Typography.caption(10))
+                .foregroundColor(Theme.Colors.error)
         case .untested:
-            StatusPill(text: "UNTESTED", color: Theme.Colors.statusAmber)
+            Text("untested")
+                .font(Theme.Typography.caption(10))
+                .foregroundColor(Theme.Colors.statusAmberText)
         }
     }
 
@@ -445,6 +470,7 @@ struct ProviderInlineEditor: View {
                         in: 10...180,
                         step: 5
                     )
+                    .tint(Theme.Colors.textTertiary)
 
                     Text("\(provider.timeoutSeconds)s")
                         .font(Theme.Typography.mono(12))

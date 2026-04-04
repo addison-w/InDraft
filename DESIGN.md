@@ -78,16 +78,17 @@ To achieve a premium feel, **1px solid borders are prohibited for sectioning.** 
 
 ## 3. Typography
 
-The typography system pairs **Manrope** (Display/Headlines) for a modern, architectural feel with **Inter** (Body/Labels) for maximum legibility.
+The typography system uses **SF Pro** (system geometric sans-serif) exclusively — clean, modern, and unadorned, in the spirit of Japanese minimalism. Hierarchy is achieved through **weight contrast**: light for display, regular for body, medium for emphasis. No serifs, no decoration, no ornamentation.
 
-*   **Display & Headlines (Manrope):** Use these for titles and large editorial moments. The slightly wider tracking in Manrope conveys a sense of technical precision.
-*   **Body & Labels (Inter):** Reserved for functional UI, input fields, and long-form reading.
-*   **Kbd (Monospace):** Use a system mono (e.g., SF Mono) for keyboard shortcuts. This reinforces the "utilitarian" nature of the tool.
+*   **All Text (SF Pro):** A single geometric sans-serif unifies the entire interface. Titles use light weight for an airy, architectural quality. Body uses regular weight for effortless readability. Labels use medium weight for quiet emphasis.
+*   **Kbd (Monospace / SF Mono):** Keyboard shortcuts and technical data use monospace for utilitarian precision.
 
 **Key Scales:**
-*   **Display-MD:** 2.75rem (Manrope) — Use for empty state headers or primary navigation titles.
-*   **Title-SM:** 1rem (Inter) — The standard for sidebar items and section headers.
-*   **Label-SM:** 0.6875rem (Inter) — For keyboard shortcuts and micro-metadata.
+*   **Page Title:** 22px (light) — Airy and restrained. Space around the text matters as much as the text itself.
+*   **Section Title:** 16px (light) — Quiet hierarchy through weight, not decoration.
+*   **Body:** 13px (regular) — Clean, geometric, effortlessly readable.
+*   **Label:** 11px (medium) — Subtle emphasis for interactive controls.
+*   **Caption:** 10px (light) — Delicate metadata that recedes gracefully.
 
 ---
 

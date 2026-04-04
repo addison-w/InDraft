@@ -76,37 +76,41 @@ enum Theme {
         static let windowControlIcon = Color(hex: "3A3A38").opacity(0.85)
     }
 
-    // MARK: - Typography (Manrope for Display/Headlines, Inter for Body/Labels)
+    // MARK: - Typography (Geometric Sans — Japanese minimalist aesthetic)
+    //
+    // All text uses SF Pro (system default) — clean, geometric, zero ornamentation.
+    // Titles use light weight for airy, architectural feeling.
+    // Body uses regular weight for readability. Labels use medium for quiet emphasis.
 
     enum Typography {
-        /// Page title — system serif for editorial warmth
-        static func pageTitle(_ size: CGFloat = 24) -> Font {
-            .system(size: size, design: .serif).weight(.medium)
+        /// Page title — light weight, generous size, architectural calm
+        static func pageTitle(_ size: CGFloat = 22) -> Font {
+            .system(size: size).weight(.light)
         }
 
-        /// Section title — system serif, smaller
-        static func sectionTitle(_ size: CGFloat = 18) -> Font {
-            .system(size: size, design: .serif).weight(.medium)
+        /// Section title — light weight, restrained scale
+        static func sectionTitle(_ size: CGFloat = 16) -> Font {
+            .system(size: size).weight(.light)
         }
 
-        /// Body text — system default for crisp rendering
+        /// Body text — regular weight for clean readability
         static func body(_ size: CGFloat = 13) -> Font {
             .system(size: size)
         }
 
-        /// Label text — medium weight
+        /// Label text — medium weight for quiet emphasis
         static func label(_ size: CGFloat = 11) -> Font {
             .system(size: size).weight(.medium)
         }
 
-        /// Monospaced — SF Mono for keyboard shortcuts
+        /// Monospaced — SF Mono for keyboard shortcuts and technical data
         static func mono(_ size: CGFloat = 11) -> Font {
             .system(size: size, design: .monospaced)
         }
 
-        /// Caption — small
+        /// Caption — light weight, delicate
         static func caption(_ size: CGFloat = 10) -> Font {
-            .system(size: size)
+            .system(size: size).weight(.light)
         }
 
         /// All caps label — medium weight for tracking

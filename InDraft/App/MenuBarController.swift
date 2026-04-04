@@ -120,14 +120,17 @@ final class MenuBarController: NSObject {
         }
     }
 
-    // MARK: - Processing Animation
+    // MARK: - Processing Animation (Bouncing Ball)
+
+    private static let totalFrames = 17
+    private static let frameDuration: TimeInterval = 0.05
 
     private func startProcessingAnimation() {
         guard processingAnimationTimer == nil else { return }
         processingAnimationFrame = 0
         updateProcessingFrame()
 
-        processingAnimationTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in
+        processingAnimationTimer = Timer.scheduledTimer(withTimeInterval: Self.frameDuration, repeats: true) { [weak self] _ in
             Task { @MainActor in
                 self?.updateProcessingFrame()
             }
@@ -142,35 +145,56 @@ final class MenuBarController: NSObject {
 
     private func updateProcessingFrame() {
         guard let button = statusItem?.button else { return }
-        let angles: [CGFloat] = [0, 120, 240]
-        let angle = angles[processingAnimationFrame % angles.count]
-        button.image = Self.rotatedSymbol(
-            name: "arrow.trianglehead.2.counterclockwise",
-            degrees: angle,
-            accessibilityDescription: "Processing"
-        )
-        processingAnimationFrame += 1
+        button.image = Self.bouncingBallFrame(index: processingAnimationFrame)
+        processingAnimationFrame = (processingAnimationFrame + 1) % Self.totalFrames
     }
 
-    static func rotatedSymbol(name: String, degrees: CGFloat, accessibilityDescription: String) -> NSImage? {
-        guard let original = NSImage(systemSymbolName: name, accessibilityDescription: accessibilityDescription) else {
-            return nil
+    /// Generates a single frame of the bouncing ball animation as an NSImage.
+    /// The animation mirrors the SVG: drop (0.375s), squish (0.05s), bounce up (0.4s).
+    private static func bouncingBallFrame(index: Int) -> NSImage {
+        // Timeline: 8 frames drop (0.375s), 1 frame squish (0.05s), 8 frames up (0.4s)
+        let t = CGFloat(index) / CGFloat(totalFrames)
+
+        let topY: CGFloat = 4.0
+        let bottomY: CGFloat = 14.0
+        let dropEnd: CGFloat = 8.0 / 17.0   // ~0.47
+        let squishEnd: CGFloat = 9.0 / 17.0  // ~0.53
+
+        var cy: CGFloat
+        var rx: CGFloat = 3.0
+        var ry: CGFloat = 3.0
+
+        if t < dropEnd {
+            // Drop phase: ease-in
+            let p = t / dropEnd
+            let eased = p * p
+            cy = topY + (bottomY - topY) * eased
+        } else if t < squishEnd {
+            // Squish at bottom
+            cy = bottomY + 0.5
+            rx = 3.6
+            ry = 2.25
+        } else {
+            // Bounce up: ease-out
+            let p = (t - squishEnd) / (1.0 - squishEnd)
+            let eased = 1.0 - (1.0 - p) * (1.0 - p)
+            cy = bottomY - (bottomY - topY) * eased
         }
 
-        let size = original.size
-        let radians = degrees * .pi / 180
-
-        let newImage = NSImage(size: size)
-        newImage.lockFocus()
-        let transform = NSAffineTransform()
-        transform.translateX(by: size.width / 2, yBy: size.height / 2)
-        transform.rotate(byRadians: radians)
-        transform.translateX(by: -size.width / 2, yBy: -size.height / 2)
-        transform.concat()
-        original.draw(in: NSRect(origin: .zero, size: size))
-        newImage.unlockFocus()
-        newImage.isTemplate = true
-
-        return newImage
+        let size = NSSize(width: 18, height: 18)
+        let image = NSImage(size: size, flipped: false) { rect in
+            guard let ctx = NSGraphicsContext.current?.cgContext else { return false }
+            ctx.setFillColor(NSColor.black.cgColor)
+            let ellipseRect = CGRect(
+                x: rect.midX - rx,
+                y: rect.midY - (cy - 9) - ry,
+                width: rx * 2,
+                height: ry * 2
+            )
+            ctx.fillEllipse(in: ellipseRect)
+            return true
+        }
+        image.isTemplate = true
+        return image
     }
 }

@@ -36,9 +36,8 @@ final class PreviewPanelController {
         hostingView.frame = NSRect(x: 0, y: 0, width: 450, height: 300)
 
         let styleMask: NSWindow.StyleMask = [
-            .titled,
-            .closable,
-            .nonactivatingPanel
+            .nonactivatingPanel,
+            .fullSizeContentView
         ]
 
         let newPanel = NSPanel(
@@ -52,8 +51,6 @@ final class PreviewPanelController {
         newPanel.level = .floating
         newPanel.isFloatingPanel = true
         newPanel.hidesOnDeactivate = false
-        newPanel.titleVisibility = .hidden
-        newPanel.titlebarAppearsTransparent = true
         newPanel.isMovableByWindowBackground = true
         newPanel.backgroundColor = .clear
         newPanel.isOpaque = false

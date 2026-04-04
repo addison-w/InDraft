@@ -479,15 +479,26 @@ struct ProviderInlineEditor: View {
                 }
             }
 
+            Spacer()
+                .frame(height: Theme.Spacing.xs)
+
             // Action buttons
-            HStack(spacing: Theme.Spacing.lg) {
+            HStack(spacing: Theme.Spacing.sm) {
                 if !provider.isActive {
                     Button {
                         onSetActive()
                     } label: {
                         Text("Set Active")
-                            .font(Theme.Typography.caption(11))
-                            .foregroundColor(Theme.Colors.accent)
+                            .font(Theme.Typography.label(11))
+                            .foregroundColor(Theme.Colors.textPrimary)
+                            .padding(.horizontal, Theme.Spacing.md)
+                            .padding(.vertical, Theme.Spacing.xs + 1)
+                            .background(Theme.Colors.surfaceContainerLow)
+                            .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: Theme.Radius.sm)
+                                    .stroke(Theme.Colors.cardBorder, lineWidth: 1)
+                            )
                     }
                     .buttonStyle(.plain)
                 }
@@ -501,12 +512,21 @@ struct ProviderInlineEditor: View {
                                 .controlSize(.mini)
                         }
                         Text("Test Connection")
-                            .font(Theme.Typography.caption(11))
+                            .font(Theme.Typography.label(11))
                             .foregroundColor(Theme.Colors.textSecondary)
                     }
+                    .padding(.horizontal, Theme.Spacing.md)
+                    .padding(.vertical, Theme.Spacing.xs + 1)
+                    .background(Theme.Colors.surfaceContainerLow)
+                    .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: Theme.Radius.sm)
+                            .stroke(Theme.Colors.cardBorder, lineWidth: 1)
+                    )
                 }
                 .buttonStyle(.plain)
                 .disabled(isTesting || apiKey.isEmpty)
+                .opacity(isTesting || apiKey.isEmpty ? 0.4 : 1.0)
 
                 if let succeeded = testSucceeded, let message = testResultMessage {
                     HStack(spacing: Theme.Spacing.xs) {
@@ -525,8 +545,16 @@ struct ProviderInlineEditor: View {
                     showDeleteConfirmation = true
                 } label: {
                     Text("Delete")
-                        .font(Theme.Typography.caption(11))
+                        .font(Theme.Typography.label(11))
                         .foregroundColor(Theme.Colors.error)
+                        .padding(.horizontal, Theme.Spacing.md)
+                        .padding(.vertical, Theme.Spacing.xs + 1)
+                        .background(Theme.Colors.statusRedBg)
+                        .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: Theme.Radius.sm)
+                                .stroke(Theme.Colors.error.opacity(0.15), lineWidth: 1)
+                        )
                 }
                 .buttonStyle(.plain)
             }

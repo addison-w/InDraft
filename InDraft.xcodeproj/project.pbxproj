@@ -54,7 +54,6 @@
 		B542B1492FDED387583161BF /* HistoryRecordRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6411420AFF476B0C9C33FC5 /* HistoryRecordRowView.swift */; };
 		B6B65CF074D323C95E40E545 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8EF3E666139D1AA3F829619 /* AppDelegate.swift */; };
 		B7864036C9D72703486AE915 /* SampleTransformStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C9D80021F8607C703B0D567 /* SampleTransformStepView.swift */; };
-		BD58A33F350CF71B986911B2 /* DiagnosticsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 769F6801D653E10453685DDA /* DiagnosticsSettingsView.swift */; };
 		BDE497D6BBF8A32F5AB2842A /* AppStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BBF22178C96EAF59E05BA72 /* AppStateTests.swift */; };
 		BF83781B896A18286F4A3692 /* HistoryWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9413415DE970640999240332 /* HistoryWindowView.swift */; };
 		C0C569E5BC7770FA96FE2EB5 /* MenuBarMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBBE36445C93120B2BFB533 /* MenuBarMenuView.swift */; };
@@ -118,7 +117,6 @@
 		6ECCD8407B6B3DA04B97E53E /* ActionsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsSettingsView.swift; sourceTree = "<group>"; };
 		6FE79924666AFE5B563AD792 /* HotkeyServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyServiceTests.swift; sourceTree = "<group>"; };
 		716F042D3B76D619672F766E /* TestConnectionStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestConnectionStepView.swift; sourceTree = "<group>"; };
-		769F6801D653E10453685DDA /* DiagnosticsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticsSettingsView.swift; sourceTree = "<group>"; };
 		76A181C46445C16428B6ADA4 /* HistoryWindowControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryWindowControllerTests.swift; sourceTree = "<group>"; };
 		7701606BD50555F18AAB81AD /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		82D8DD142631B6168328AE71 /* HotkeyRecorderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyRecorderView.swift; sourceTree = "<group>"; };
@@ -217,7 +215,6 @@
 			isa = PBXGroup;
 			children = (
 				6ECCD8407B6B3DA04B97E53E /* ActionsSettingsView.swift */,
-				769F6801D653E10453685DDA /* DiagnosticsSettingsView.swift */,
 				00AF6E9265AEE9634DA481D2 /* GeneralSettingsView.swift */,
 				DDD4B14A15BC6FD793F0F2EA /* HistorySettingsView.swift */,
 				82D8DD142631B6168328AE71 /* HotkeyRecorderView.swift */,
@@ -537,7 +534,6 @@
 				422F27CB71F8DD7CC06ADCA4 /* CompleteStepView.swift in Sources */,
 				61810B480E3685B7936C9E1D /* Constants.swift in Sources */,
 				FD2CC01ADD7181C0621FCA71 /* DefaultActionsStepView.swift in Sources */,
-				BD58A33F350CF71B986911B2 /* DiagnosticsSettingsView.swift in Sources */,
 				1BBC56B42747373B0713F4F6 /* GeneralSettingsView.swift in Sources */,
 				DA356FB9548D19BBB5E87863 /* HistoryRecord.swift in Sources */,
 				7D25844E53AC5F427D63EE2E /* HistoryRecordDetailView.swift in Sources */,

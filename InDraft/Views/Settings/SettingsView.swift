@@ -6,7 +6,6 @@ enum SettingsTab: String, CaseIterable, Identifiable {
     case actions = "Actions"
     case providers = "Providers"
     case history = "History"
-    case diagnostics = "Diagnostics"
 
     var id: String { rawValue }
 
@@ -16,7 +15,6 @@ enum SettingsTab: String, CaseIterable, Identifiable {
         case .actions: return "bolt.fill"
         case .providers: return "puzzlepiece.fill"
         case .history: return "clock"
-        case .diagnostics: return "stethoscope"
         }
     }
 }
@@ -128,8 +126,6 @@ struct SettingsView: View {
             ProvidersSettingsView()
         case .history:
             HistorySettingsView()
-        case .diagnostics:
-            DiagnosticsSettingsView()
         }
     }
 }

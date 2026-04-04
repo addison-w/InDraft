@@ -63,6 +63,7 @@ final class HistoryWindowController {
         newWindow.isReleasedWhenClosed = false
         newWindow.hidesOnDeactivate = false
         newWindow.setFrameAutosaveName("InDraftHistory")
+        newWindow.level = .floating
 
         self.window = newWindow
 

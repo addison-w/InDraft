@@ -2,15 +2,27 @@ import SwiftUI
 
 struct DefaultActionsStepView: View {
     private let actions = [
-        (name: Constants.DefaultActions.rewriteForClarity.name, hotkey: "\u{2303}\u{2325}1"),
-        (name: Constants.DefaultActions.grammarFix.name, hotkey: "\u{2303}\u{2325}2"),
-        (name: Constants.DefaultActions.paraphrase.name, hotkey: "\u{2303}\u{2325}3"),
+        (
+            name: Constants.DefaultActions.rewriteForClarity.name,
+            keyCode: Constants.DefaultActions.rewriteForClarity.keyCode,
+            modifiers: Constants.DefaultActions.rewriteForClarity.modifiers
+        ),
+        (
+            name: Constants.DefaultActions.grammarFix.name,
+            keyCode: Constants.DefaultActions.grammarFix.keyCode,
+            modifiers: Constants.DefaultActions.grammarFix.modifiers
+        ),
+        (
+            name: Constants.DefaultActions.paraphrase.name,
+            keyCode: Constants.DefaultActions.paraphrase.keyCode,
+            modifiers: Constants.DefaultActions.paraphrase.modifiers
+        ),
     ]
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.lg) {
             Text("Your default actions")
-                .font(Theme.Typography.sectionTitle(22))
+                .font(Theme.Typography.pageTitle(22))
                 .foregroundColor(Theme.Colors.textPrimary)
 
             Text("InDraft comes with three built-in actions. You can customize these later in Settings.")
@@ -32,7 +44,11 @@ struct DefaultActionsStepView: View {
 
                         Spacer()
 
-                        hotkeyBadge(action.hotkey)
+                        KeycapRow(
+                            keyCode: action.keyCode,
+                            modifiers: action.modifiers,
+                            size: 11
+                        )
                     }
                     .padding(.horizontal, Theme.Spacing.lg)
                     .padding(.vertical, Theme.Spacing.md)
@@ -44,19 +60,5 @@ struct DefaultActionsStepView: View {
         }
         .padding(.horizontal, Theme.Spacing.xl)
         .padding(.top, Theme.Spacing.lg)
-    }
-
-    @ViewBuilder
-    private func hotkeyBadge(_ hotkey: String) -> some View {
-        HStack(spacing: 4) {
-            ForEach(Array(hotkey), id: \.self) { char in
-                Text(String(char))
-                    .font(Theme.Typography.mono(12))
-                    .foregroundColor(Theme.Colors.textPrimary)
-                    .frame(width: 24, height: 24)
-                    .background(Theme.Colors.badgeBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
-            }
-        }
     }
 }

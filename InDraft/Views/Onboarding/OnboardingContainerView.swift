@@ -12,27 +12,50 @@ struct OnboardingContainerView: View {
     @State private var providerAPIKey = ""
     @State private var providerModel = "gpt-4o"
     @State private var canContinue = false
+    @State private var providerConfigured = false
+    @State private var navigationDirection: NavigationDirection = .forward
 
-    private let totalSteps = 6
+    private let totalSteps = 5
+    private let skippableSteps: Set<Int> = [2, 3, 4]
+
+    private enum NavigationDirection {
+        case forward, backward
+    }
+
+    private var providerFieldsFilled: Bool {
+        !providerDisplayName.trimmingCharacters(in: .whitespaces).isEmpty
+            && !providerBaseURL.trimmingCharacters(in: .whitespaces).isEmpty
+            && !providerAPIKey.trimmingCharacters(in: .whitespaces).isEmpty
+            && !providerModel.trimmingCharacters(in: .whitespaces).isEmpty
+    }
 
     var body: some View {
         VStack(spacing: 0) {
-            // Step indicator (hidden on welcome and complete)
-            if currentStep > 0 && currentStep < totalSteps {
-                Text("STEP \(currentStep) OF \(totalSteps)")
-                    .font(Theme.Typography.allCaps())
-                    .foregroundColor(Theme.Colors.textTertiary)
-                    .tracking(1.5)
-                    .padding(.top, Theme.Spacing.xl)
+            // Header: step indicator dots + step counter
+            if currentStep > 0 && currentStep <= totalSteps {
+                VStack(spacing: Theme.Spacing.sm) {
+                    StepIndicatorView(currentStep: currentStep, totalSteps: totalSteps + 1)
+
+                    Text("STEP \(currentStep) OF \(totalSteps)")
+                        .font(Theme.Typography.allCaps())
+                        .foregroundColor(Theme.Colors.textTertiary)
+                        .tracking(1.5)
+                }
+                .padding(.top, Theme.Spacing.xl)
             } else {
                 Spacer().frame(height: Theme.Spacing.xl)
             }
 
-            // Content
-            stepContent
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            // Content with animated transitions
+            ZStack {
+                stepContent
+                    .id(currentStep)
+                    .transition(stepTransition)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .animation(Theme.Motion.gentle, value: currentStep)
 
-            // Navigation buttons (hidden on welcome)
+            // Navigation bar
             if currentStep > 0 && currentStep <= totalSteps {
                 HStack {
                     Button("BACK") {
@@ -44,9 +67,9 @@ struct OnboardingContainerView: View {
 
                     Spacer()
 
-                    if currentStep == 4 || currentStep == 5 {
+                    if skippableSteps.contains(currentStep) {
                         Button("SKIP") {
-                            goForward()
+                            goForward(isSkip: true)
                         }
                         .buttonStyle(PlainButtonStyle())
                         .font(Theme.Typography.allCaps())
@@ -55,7 +78,7 @@ struct OnboardingContainerView: View {
                     }
 
                     Button(currentStep == totalSteps ? "FINISH" : "CONTINUE") {
-                        goForward()
+                        goForward(isSkip: false)
                     }
                     .buttonStyle(PlainButtonStyle())
                     .font(Theme.Typography.allCaps())
@@ -70,7 +93,7 @@ struct OnboardingContainerView: View {
         .background(Theme.Colors.background)
         .onChange(of: currentStep) { _, newValue in
             switch newValue {
-            case 1, 2, 3:
+            case 1:
                 canContinue = false
             default:
                 canContinue = true
@@ -78,11 +101,26 @@ struct OnboardingContainerView: View {
         }
     }
 
+    private var stepTransition: AnyTransition {
+        switch navigationDirection {
+        case .forward:
+            return .asymmetric(
+                insertion: .move(edge: .trailing).combined(with: .opacity),
+                removal: .move(edge: .leading).combined(with: .opacity)
+            )
+        case .backward:
+            return .asymmetric(
+                insertion: .move(edge: .leading).combined(with: .opacity),
+                removal: .move(edge: .trailing).combined(with: .opacity)
+            )
+        }
+    }
+
     @ViewBuilder
     private var stepContent: some View {
         switch currentStep {
         case 0:
-            WelcomeStepView(onGetStarted: { currentStep = 1 })
+            WelcomeStepView(onGetStarted: { goForwardFromWelcome() })
         case 1:
             AccessibilityStepView(canContinue: $canContinue)
         case 2:
@@ -90,39 +128,44 @@ struct OnboardingContainerView: View {
                 displayName: $providerDisplayName,
                 baseURL: $providerBaseURL,
                 apiKey: $providerAPIKey,
-                model: $providerModel,
-                canContinue: $canContinue
+                model: $providerModel
             )
         case 3:
-            TestConnectionStepView(
-                baseURL: providerBaseURL,
-                apiKey: providerAPIKey,
-                model: providerModel,
-                canContinue: $canContinue
-            )
-        case 4:
             DefaultActionsStepView()
-        case 5:
+        case 4:
             SampleTransformStepView(
                 baseURL: providerBaseURL,
                 apiKey: providerAPIKey,
                 model: providerModel
             )
         default:
-            CompleteStepView(onFinish: { finishOnboarding() })
+            CompleteStepView(
+                onFinish: { finishOnboarding() },
+                providerConfigured: providerConfigured
+            )
         }
+    }
+
+    private func goForwardFromWelcome() {
+        navigationDirection = .forward
+        currentStep = 1
     }
 
     private func goBack() {
         if currentStep > 1 {
+            navigationDirection = .backward
             currentStep -= 1
         }
     }
 
-    private func goForward() {
-        if currentStep == 2 {
+    private func goForward(isSkip: Bool) {
+        // Save provider only on Continue with filled fields (not on Skip)
+        if currentStep == 2 && !isSkip && providerFieldsFilled {
             saveProvider()
+            providerConfigured = true
         }
+
+        navigationDirection = .forward
         if currentStep < totalSteps {
             currentStep += 1
         } else {
@@ -165,11 +208,6 @@ struct OnboardingContainerView: View {
     private func finishOnboarding() {
         onboardingComplete = true
         currentStep = totalSteps + 1
-
-        if let window = NSApplication.shared.windows.first(where: {
-            $0.contentView?.subviews.first != nil
-        }) {
-            window.close()
-        }
+        OnboardingWindowController.shared.close()
     }
 }

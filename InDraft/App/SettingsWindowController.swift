@@ -68,6 +68,7 @@ final class SettingsWindowController {
         window.isReleasedWhenClosed = false
         window.hidesOnDeactivate = false
         window.setFrameAutosaveName("InDraftSettings")
+        window.level = .floating
 
         self.window = window
 

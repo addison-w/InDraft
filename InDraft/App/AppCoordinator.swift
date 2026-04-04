@@ -228,6 +228,6 @@ final class AppCoordinator: ObservableObject {
     // MARK: - Onboarding
 
     private func showOnboarding() {
-        // Onboarding window will be presented by the SwiftUI scene
+        OnboardingWindowController.shared.showOnboarding()
     }
 }

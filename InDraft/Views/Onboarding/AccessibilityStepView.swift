@@ -9,7 +9,7 @@ struct AccessibilityStepView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.lg) {
             Text("InDraft needs Accessibility access")
-                .font(Theme.Typography.sectionTitle(22))
+                .font(Theme.Typography.pageTitle(22))
                 .foregroundColor(Theme.Colors.textPrimary)
 
             Text("This permission lets InDraft read your selected text and replace it with the transformed result. Your text never leaves your device except to your chosen AI provider.")
@@ -25,45 +25,43 @@ struct AccessibilityStepView: View {
                     .foregroundColor(Theme.Colors.textTertiary)
                     .tracking(1.2)
 
+                // Breadcrumb navigation path
                 HStack(spacing: Theme.Spacing.sm) {
                     Image(systemName: "gear")
                         .font(.system(size: 14))
                         .foregroundColor(Theme.Colors.textSecondary)
 
                     Text("System Settings")
-                        .font(Theme.Typography.body())
-                        .foregroundColor(Theme.Colors.textPrimary)
+                        .font(Theme.Typography.caption())
+                        .foregroundColor(Theme.Colors.textTertiary)
 
                     Image(systemName: "chevron.right")
-                        .font(.system(size: 10))
+                        .font(.system(size: 8))
                         .foregroundColor(Theme.Colors.textTertiary)
 
                     Text("Privacy & Security")
-                        .font(Theme.Typography.body())
-                        .foregroundColor(Theme.Colors.textPrimary)
+                        .font(Theme.Typography.caption())
+                        .foregroundColor(Theme.Colors.textTertiary)
 
                     Image(systemName: "chevron.right")
-                        .font(.system(size: 10))
+                        .font(.system(size: 8))
                         .foregroundColor(Theme.Colors.textTertiary)
 
                     Text("Accessibility")
-                        .font(Theme.Typography.body())
-                        .foregroundColor(Theme.Colors.textPrimary)
+                        .font(Theme.Typography.caption())
+                        .foregroundColor(Theme.Colors.textTertiary)
                 }
 
-                HStack(spacing: Theme.Spacing.xl) {
-                    statusBadge(label: "STATUS", isActive: true)
+                // Permission status
+                HStack(spacing: Theme.Spacing.sm) {
+                    Circle()
+                        .fill(isGranted ? Theme.Colors.statusGreen : Theme.Colors.statusRed)
+                        .frame(width: 8, height: 8)
 
-                    HStack(spacing: Theme.Spacing.sm) {
-                        Circle()
-                            .fill(isGranted ? Theme.Colors.accent : Theme.Colors.error)
-                            .frame(width: 8, height: 8)
-
-                        Text(isGranted ? "GRANTED" : "NOT GRANTED")
-                            .font(Theme.Typography.allCaps())
-                            .foregroundColor(isGranted ? Theme.Colors.accent : Theme.Colors.error)
-                            .tracking(1.0)
-                    }
+                    Text(isGranted ? "GRANTED" : "NOT GRANTED")
+                        .font(Theme.Typography.allCaps())
+                        .foregroundColor(isGranted ? Theme.Colors.statusGreen : Theme.Colors.statusRed)
+                        .tracking(1.0)
                 }
                 .padding(.top, Theme.Spacing.sm)
             }
@@ -89,14 +87,6 @@ struct AccessibilityStepView: View {
             timer?.invalidate()
             timer = nil
         }
-    }
-
-    @ViewBuilder
-    private func statusBadge(label: String, isActive: Bool) -> some View {
-        Text(label)
-            .font(Theme.Typography.allCaps())
-            .foregroundColor(Theme.Colors.textTertiary)
-            .tracking(1.0)
     }
 
     private func checkPermission() {

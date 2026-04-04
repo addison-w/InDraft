@@ -5,82 +5,137 @@ struct AddProviderStepView: View {
     @Binding var baseURL: String
     @Binding var apiKey: String
     @Binding var model: String
-    @Binding var canContinue: Bool
 
     @State private var showAPIKey = false
 
+    // Inline test connection state
+    @State private var testState: TestState = .idle
+    @State private var testErrorMessage: String?
+    @State private var testLatencyMs: Int?
+
+    private enum TestState {
+        case idle, testing, success, failure
+    }
+
+    private var allFieldsFilled: Bool {
+        !displayName.trimmingCharacters(in: .whitespaces).isEmpty
+            && !baseURL.trimmingCharacters(in: .whitespaces).isEmpty
+            && !apiKey.trimmingCharacters(in: .whitespaces).isEmpty
+            && !model.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.lg) {
-            Text("Connect your AI provider")
-                .font(Theme.Typography.sectionTitle(22))
-                .foregroundColor(Theme.Colors.textPrimary)
+            VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+                Text("Connect your AI provider")
+                    .font(Theme.Typography.pageTitle(22))
+                    .foregroundColor(Theme.Colors.textPrimary)
 
-            Text("InDraft works with any OpenAI-compatible API. Bring your own key.")
-                .font(Theme.Typography.body())
-                .foregroundColor(Theme.Colors.textSecondary)
+                Text("InDraft works with any OpenAI-compatible API. Bring your own key.")
+                    .font(Theme.Typography.body())
+                    .foregroundColor(Theme.Colors.textSecondary)
+            }
 
-            // Form
-            VStack(spacing: 0) {
-                formField(label: "DISPLAY NAME") {
+            // Form fields
+            VStack(alignment: .leading, spacing: Theme.Spacing.md) {
+                fieldGroup(label: "DISPLAY NAME") {
                     TextField("OpenAI", text: $displayName)
-                        .textFieldStyle(.plain)
-                        .font(Theme.Typography.body())
+                        .inputFieldStyle()
                 }
 
-                Divider().foregroundColor(Theme.Colors.divider)
-
-                formField(label: "BASE URL") {
+                fieldGroup(label: "BASE URL") {
                     TextField("https://api.openai.com/v1", text: $baseURL)
-                        .textFieldStyle(.plain)
-                        .font(Theme.Typography.body())
+                        .inputFieldStyle()
                 }
 
-                Divider().foregroundColor(Theme.Colors.divider)
-
-                formField(label: "API KEY") {
-                    HStack {
-                        if showAPIKey {
-                            TextField("sk-...", text: $apiKey)
-                                .textFieldStyle(.plain)
-                                .font(Theme.Typography.body())
-                        } else {
-                            SecureField("sk-...", text: $apiKey)
-                                .textFieldStyle(.plain)
-                                .font(Theme.Typography.body())
+                fieldGroup(label: "API KEY") {
+                    HStack(spacing: Theme.Spacing.sm) {
+                        Group {
+                            if showAPIKey {
+                                TextField("sk-...", text: $apiKey)
+                            } else {
+                                SecureField("sk-...", text: $apiKey)
+                            }
                         }
+                        .inputFieldStyle()
 
                         Button(showAPIKey ? "HIDE" : "SHOW") {
                             showAPIKey.toggle()
                         }
                         .buttonStyle(PlainButtonStyle())
-                        .font(Theme.Typography.allCaps())
+                        .font(Theme.Typography.label())
                         .foregroundColor(Theme.Colors.textTertiary)
                     }
                 }
 
-                Divider().foregroundColor(Theme.Colors.divider)
-
-                formField(label: "DEFAULT MODEL") {
+                fieldGroup(label: "DEFAULT MODEL") {
                     TextField("gpt-4o", text: $model)
-                        .textFieldStyle(.plain)
-                        .font(Theme.Typography.body())
+                        .inputFieldStyle()
                 }
             }
-            .cardStyle()
+
+            // Inline test connection (visible only when all fields filled)
+            if allFieldsFilled {
+                VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+                    HStack(spacing: Theme.Spacing.md) {
+                        Button("TEST CONNECTION") {
+                            runTest()
+                        }
+                        .buttonStyle(SecondaryButtonStyle())
+                        .disabled(testState == .testing)
+
+                        // Inline result
+                        switch testState {
+                        case .idle:
+                            EmptyView()
+                        case .testing:
+                            HStack(spacing: Theme.Spacing.xs) {
+                                ProgressView()
+                                    .controlSize(.small)
+                                Text("Testing...")
+                                    .font(Theme.Typography.caption())
+                                    .foregroundColor(Theme.Colors.textSecondary)
+                            }
+                        case .success:
+                            HStack(spacing: Theme.Spacing.xs) {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(Theme.Colors.statusGreen)
+                                    .font(.system(size: 14))
+                                VStack(alignment: .leading, spacing: 0) {
+                                    Text("Connected")
+                                        .font(Theme.Typography.caption())
+                                        .foregroundColor(Theme.Colors.statusGreen)
+                                    if let ms = testLatencyMs {
+                                        Text("\(ms)ms")
+                                            .font(Theme.Typography.caption())
+                                            .foregroundColor(Theme.Colors.textTertiary)
+                                    }
+                                }
+                            }
+                        case .failure:
+                            HStack(spacing: Theme.Spacing.xs) {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundColor(Theme.Colors.statusRed)
+                                    .font(.system(size: 14))
+                                Text(testErrorMessage ?? "Failed")
+                                    .font(Theme.Typography.caption())
+                                    .foregroundColor(Theme.Colors.statusRed)
+                                    .lineLimit(1)
+                            }
+                        }
+                    }
+                }
+                .transition(.opacity.animation(Theme.Motion.quick))
+            }
 
             Spacer()
         }
         .padding(.horizontal, Theme.Spacing.xl)
         .padding(.top, Theme.Spacing.lg)
-        .onChange(of: displayName) { _, _ in validateFields() }
-        .onChange(of: baseURL) { _, _ in validateFields() }
-        .onChange(of: apiKey) { _, _ in validateFields() }
-        .onChange(of: model) { _, _ in validateFields() }
-        .onAppear { validateFields() }
     }
 
     @ViewBuilder
-    private func formField(label: String, @ViewBuilder content: () -> some View) -> some View {
+    private func fieldGroup(label: String, @ViewBuilder content: () -> some View) -> some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
             Text(label)
                 .font(Theme.Typography.allCaps())
@@ -89,14 +144,30 @@ struct AddProviderStepView: View {
 
             content()
         }
-        .padding(.horizontal, Theme.Spacing.lg)
-        .padding(.vertical, Theme.Spacing.md)
     }
 
-    private func validateFields() {
-        canContinue = !displayName.trimmingCharacters(in: .whitespaces).isEmpty
-            && !baseURL.trimmingCharacters(in: .whitespaces).isEmpty
-            && !apiKey.trimmingCharacters(in: .whitespaces).isEmpty
-            && !model.trimmingCharacters(in: .whitespaces).isEmpty
+    private func runTest() {
+        testState = .testing
+        testErrorMessage = nil
+
+        Task {
+            let service = LiveProviderService()
+            let result = await service.testConnection(
+                baseURL: baseURL,
+                apiKey: apiKey,
+                model: model
+            )
+
+            await MainActor.run {
+                switch result {
+                case .success(_, let ms):
+                    testState = .success
+                    testLatencyMs = ms
+                case .failure(let message):
+                    testState = .failure
+                    testErrorMessage = message
+                }
+            }
+        }
     }
 }

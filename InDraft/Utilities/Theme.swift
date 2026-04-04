@@ -144,6 +144,28 @@ enum Theme {
         static let full: CGFloat = 999
     }
 
+    // MARK: - Illustrations (wabi-sabi ink-line art)
+
+    enum Illustrations {
+        /// Ink stroke color — textPrimary at 80% opacity for soft, hand-drawn feel
+        static let inkStroke = Theme.Colors.textPrimary.opacity(0.8)
+        /// Minimum stroke width for variation
+        static let strokeWidthMin: CGFloat = 1.0
+        /// Maximum stroke width for variation
+        static let strokeWidthMax: CGFloat = 2.0
+        /// Standard illustration height
+        static let illustrationHeight: CGFloat = 80
+    }
+
+    // MARK: - Onboarding Layout
+
+    enum OnboardingLayout {
+        /// Maximum content width for centered onboarding screens
+        static let contentMaxWidth: CGFloat = 360
+        /// Step indicator dot diameter
+        static let dotSize: CGFloat = 6
+    }
+
     // MARK: - Animation
 
     enum Motion {

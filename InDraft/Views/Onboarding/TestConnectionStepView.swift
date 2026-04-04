@@ -22,7 +22,7 @@ struct TestConnectionStepView: View {
             Spacer()
 
             Text("Test your connection")
-                .font(Theme.Typography.sectionTitle(22))
+                .font(Theme.Typography.pageTitle(22))
                 .foregroundColor(Theme.Colors.textPrimary)
 
             Text("Verify that InDraft can reach your provider and the model responds.")
@@ -48,12 +48,12 @@ struct TestConnectionStepView: View {
                 case .success:
                     HStack(spacing: Theme.Spacing.sm) {
                         Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(Theme.Colors.accent)
+                            .foregroundColor(Theme.Colors.statusGreen)
                             .font(.system(size: 18))
-                        VStack(alignment: .leading, spacing: 2) {
+                        VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
                             Text("Connected — model responded")
                                 .font(Theme.Typography.body())
-                                .foregroundColor(Theme.Colors.accent)
+                                .foregroundColor(Theme.Colors.statusGreen)
                             if let ms = latencyMs {
                                 Text("\(ms)ms latency")
                                     .font(Theme.Typography.caption())
@@ -65,11 +65,11 @@ struct TestConnectionStepView: View {
                 case .failure:
                     HStack(spacing: Theme.Spacing.sm) {
                         Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(Theme.Colors.error)
+                            .foregroundColor(Theme.Colors.statusRed)
                             .font(.system(size: 18))
                         Text(errorMessage ?? "Connection failed")
                             .font(Theme.Typography.body())
-                            .foregroundColor(Theme.Colors.error)
+                            .foregroundColor(Theme.Colors.statusRed)
                     }
                 }
             }
@@ -78,11 +78,13 @@ struct TestConnectionStepView: View {
             Button("TEST CONNECTION") {
                 runTest()
             }
-            .buttonStyle(PrimaryButtonStyle())
+            .buttonStyle(SecondaryButtonStyle())
             .disabled(testState == .testing)
 
             Spacer()
         }
+        .frame(maxWidth: Theme.OnboardingLayout.contentMaxWidth)
+        .frame(maxWidth: .infinity)
         .padding(.horizontal, Theme.Spacing.xl)
     }
 

@@ -20,15 +20,22 @@ struct DefaultActionsStepView: View {
     ]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.lg) {
-            Text("Your default actions")
-                .font(Theme.Typography.pageTitle(22))
-                .foregroundColor(Theme.Colors.textPrimary)
+        VStack(spacing: Theme.Spacing.lg) {
+            Spacer()
 
-            Text("InDraft comes with three built-in actions. You can customize these later in Settings.")
-                .font(Theme.Typography.body())
-                .foregroundColor(Theme.Colors.textSecondary)
-                .lineSpacing(4)
+            WabiSabiPenIllustration()
+
+            VStack(spacing: Theme.Spacing.md) {
+                Text("Your default actions")
+                    .font(Theme.Typography.pageTitle(22))
+                    .foregroundColor(Theme.Colors.textPrimary)
+
+                Text("InDraft comes with three built-in actions.\nYou can customize these later in Settings.")
+                    .font(Theme.Typography.body())
+                    .foregroundColor(Theme.Colors.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(4)
+            }
 
             VStack(spacing: 0) {
                 ForEach(Array(actions.enumerated()), id: \.offset) { index, action in
@@ -55,10 +62,11 @@ struct DefaultActionsStepView: View {
                 }
             }
             .cardStyle()
+            .frame(maxWidth: Theme.OnboardingLayout.contentMaxWidth)
 
             Spacer()
         }
+        .frame(maxWidth: .infinity)
         .padding(.horizontal, Theme.Spacing.xl)
-        .padding(.top, Theme.Spacing.lg)
     }
 }

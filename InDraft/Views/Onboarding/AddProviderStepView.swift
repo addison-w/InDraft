@@ -25,19 +25,25 @@ struct AddProviderStepView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.lg) {
-            VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+        VStack(spacing: Theme.Spacing.md) {
+            Spacer()
+
+            WabiSabiKeyIllustration()
+
+            VStack(spacing: Theme.Spacing.sm) {
                 Text("Connect your AI provider")
                     .font(Theme.Typography.pageTitle(22))
                     .foregroundColor(Theme.Colors.textPrimary)
 
-                Text("InDraft works with any OpenAI-compatible API. Bring your own key.")
+                Text("InDraft works with any OpenAI-compatible API.\nBring your own key.")
                     .font(Theme.Typography.body())
                     .foregroundColor(Theme.Colors.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(4)
             }
 
             // Form fields
-            VStack(alignment: .leading, spacing: Theme.Spacing.md) {
+            VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
                 fieldGroup(label: "DISPLAY NAME") {
                     TextField("OpenAI", text: $displayName)
                         .inputFieldStyle()
@@ -73,65 +79,61 @@ struct AddProviderStepView: View {
                         .inputFieldStyle()
                 }
             }
+            .frame(maxWidth: Theme.OnboardingLayout.contentMaxWidth)
 
-            // Inline test connection (visible only when all fields filled)
-            if allFieldsFilled {
-                VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-                    HStack(spacing: Theme.Spacing.md) {
-                        Button("TEST CONNECTION") {
-                            runTest()
-                        }
-                        .buttonStyle(SecondaryButtonStyle())
-                        .disabled(testState == .testing)
+            // Test connection — always visible, disabled when fields incomplete
+            HStack(spacing: Theme.Spacing.md) {
+                Button("TEST CONNECTION") {
+                    runTest()
+                }
+                .buttonStyle(SecondaryButtonStyle())
+                .disabled(!allFieldsFilled || testState == .testing)
+                .opacity(allFieldsFilled ? 1.0 : 0.5)
 
-                        // Inline result
-                        switch testState {
-                        case .idle:
-                            EmptyView()
-                        case .testing:
-                            HStack(spacing: Theme.Spacing.xs) {
-                                ProgressView()
-                                    .controlSize(.small)
-                                Text("Testing...")
+                switch testState {
+                case .idle:
+                    EmptyView()
+                case .testing:
+                    HStack(spacing: Theme.Spacing.xs) {
+                        ProgressView()
+                            .controlSize(.small)
+                        Text("Testing...")
+                            .font(Theme.Typography.caption())
+                            .foregroundColor(Theme.Colors.textSecondary)
+                    }
+                case .success:
+                    HStack(spacing: Theme.Spacing.xs) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(Theme.Colors.statusGreen)
+                            .font(.system(size: 14))
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text("Connected")
+                                .font(Theme.Typography.caption())
+                                .foregroundColor(Theme.Colors.statusGreen)
+                            if let ms = testLatencyMs {
+                                Text("\(ms)ms")
                                     .font(Theme.Typography.caption())
-                                    .foregroundColor(Theme.Colors.textSecondary)
-                            }
-                        case .success:
-                            HStack(spacing: Theme.Spacing.xs) {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .foregroundColor(Theme.Colors.statusGreen)
-                                    .font(.system(size: 14))
-                                VStack(alignment: .leading, spacing: 0) {
-                                    Text("Connected")
-                                        .font(Theme.Typography.caption())
-                                        .foregroundColor(Theme.Colors.statusGreen)
-                                    if let ms = testLatencyMs {
-                                        Text("\(ms)ms")
-                                            .font(Theme.Typography.caption())
-                                            .foregroundColor(Theme.Colors.textTertiary)
-                                    }
-                                }
-                            }
-                        case .failure:
-                            HStack(spacing: Theme.Spacing.xs) {
-                                Image(systemName: "xmark.circle.fill")
-                                    .foregroundColor(Theme.Colors.statusRed)
-                                    .font(.system(size: 14))
-                                Text(testErrorMessage ?? "Failed")
-                                    .font(Theme.Typography.caption())
-                                    .foregroundColor(Theme.Colors.statusRed)
-                                    .lineLimit(1)
+                                    .foregroundColor(Theme.Colors.textTertiary)
                             }
                         }
                     }
+                case .failure:
+                    HStack(spacing: Theme.Spacing.xs) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(Theme.Colors.statusRed)
+                            .font(.system(size: 14))
+                        Text(testErrorMessage ?? "Failed")
+                            .font(Theme.Typography.caption())
+                            .foregroundColor(Theme.Colors.statusRed)
+                            .lineLimit(1)
+                    }
                 }
-                .transition(.opacity.animation(Theme.Motion.quick))
             }
 
             Spacer()
         }
+        .frame(maxWidth: .infinity)
         .padding(.horizontal, Theme.Spacing.xl)
-        .padding(.top, Theme.Spacing.lg)
     }
 
     @ViewBuilder

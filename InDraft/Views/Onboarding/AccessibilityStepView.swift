@@ -7,25 +7,25 @@ struct AccessibilityStepView: View {
     @State private var timer: Timer?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.lg) {
-            Text("InDraft needs Accessibility access")
-                .font(Theme.Typography.pageTitle(22))
-                .foregroundColor(Theme.Colors.textPrimary)
+        VStack(spacing: Theme.Spacing.lg) {
+            Spacer()
 
-            Text("This permission lets InDraft read your selected text and replace it with the transformed result. Your text never leaves your device except to your chosen AI provider.")
-                .font(Theme.Typography.body())
-                .foregroundColor(Theme.Colors.textSecondary)
-                .lineSpacing(4)
-                .fixedSize(horizontal: false, vertical: true)
+            WabiSabiShieldIllustration()
+
+            VStack(spacing: Theme.Spacing.md) {
+                Text("Accessibility access")
+                    .font(Theme.Typography.pageTitle(22))
+                    .foregroundColor(Theme.Colors.textPrimary)
+
+                Text("InDraft reads your selected text and replaces it\nwith the transformed result. Your text never leaves\nyour device except to your chosen AI provider.")
+                    .font(Theme.Typography.body())
+                    .foregroundColor(Theme.Colors.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(4)
+            }
 
             // Instructions card
             VStack(alignment: .leading, spacing: Theme.Spacing.md) {
-                Text("INSTRUCTIONS")
-                    .font(Theme.Typography.allCaps())
-                    .foregroundColor(Theme.Colors.textTertiary)
-                    .tracking(1.2)
-
-                // Breadcrumb navigation path
                 HStack(spacing: Theme.Spacing.sm) {
                     Image(systemName: "gear")
                         .font(.system(size: 14))
@@ -52,7 +52,6 @@ struct AccessibilityStepView: View {
                         .foregroundColor(Theme.Colors.textTertiary)
                 }
 
-                // Permission status
                 HStack(spacing: Theme.Spacing.sm) {
                     Circle()
                         .fill(isGranted ? Theme.Colors.statusGreen : Theme.Colors.statusRed)
@@ -63,7 +62,6 @@ struct AccessibilityStepView: View {
                         .foregroundColor(isGranted ? Theme.Colors.statusGreen : Theme.Colors.statusRed)
                         .tracking(1.0)
                 }
-                .padding(.top, Theme.Spacing.sm)
             }
             .padding(Theme.Spacing.lg)
             .cardStyle()
@@ -77,8 +75,9 @@ struct AccessibilityStepView: View {
 
             Spacer()
         }
+        .frame(maxWidth: Theme.OnboardingLayout.contentMaxWidth)
+        .frame(maxWidth: .infinity)
         .padding(.horizontal, Theme.Spacing.xl)
-        .padding(.top, Theme.Spacing.lg)
         .onAppear {
             checkPermission()
             startPolling()

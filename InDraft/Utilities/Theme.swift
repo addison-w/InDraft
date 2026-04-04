@@ -161,7 +161,7 @@ enum Theme {
 
     enum OnboardingLayout {
         /// Maximum content width for centered onboarding screens
-        static let contentMaxWidth: CGFloat = 360
+        static let contentMaxWidth: CGFloat = 420
         /// Step indicator dot diameter
         static let dotSize: CGFloat = 6
     }

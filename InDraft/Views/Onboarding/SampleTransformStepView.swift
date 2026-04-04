@@ -10,14 +10,22 @@ struct SampleTransformStepView: View {
     @State private var hasTransformed = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.lg) {
-            Text("Try a sample transformation")
-                .font(Theme.Typography.pageTitle(22))
-                .foregroundColor(Theme.Colors.textPrimary)
+        VStack(spacing: Theme.Spacing.lg) {
+            Spacer()
 
-            Text("See InDraft in action. Edit the text below, then transform it.")
-                .font(Theme.Typography.body())
-                .foregroundColor(Theme.Colors.textSecondary)
+            WabiSabiSparkIllustration()
+
+            VStack(spacing: Theme.Spacing.md) {
+                Text("Try a transformation")
+                    .font(Theme.Typography.pageTitle(22))
+                    .foregroundColor(Theme.Colors.textPrimary)
+
+                Text("See InDraft in action. Edit the text below,\nthen transform it.")
+                    .font(Theme.Typography.body())
+                    .foregroundColor(Theme.Colors.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(4)
+            }
 
             VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
                 Text("SAMPLE TEXT")
@@ -30,10 +38,11 @@ struct SampleTransformStepView: View {
                     .foregroundColor(Theme.Colors.textPrimary)
                     .scrollContentBackground(.hidden)
                     .padding(Theme.Spacing.md)
-                    .frame(minHeight: 100)
+                    .frame(minHeight: 80)
                     .background(Theme.Colors.surfaceContainerLow)
                     .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.md))
             }
+            .frame(maxWidth: Theme.OnboardingLayout.contentMaxWidth)
 
             HStack {
                 Button(action: runTransform) {
@@ -57,8 +66,8 @@ struct SampleTransformStepView: View {
 
             Spacer()
         }
+        .frame(maxWidth: .infinity)
         .padding(.horizontal, Theme.Spacing.xl)
-        .padding(.top, Theme.Spacing.lg)
     }
 
     private func runTransform() {

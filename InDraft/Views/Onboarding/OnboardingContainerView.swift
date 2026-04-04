@@ -16,8 +16,6 @@ struct OnboardingContainerView: View {
     @State private var navigationDirection: NavigationDirection = .forward
 
     private let totalSteps = 5
-    private let skippableSteps: Set<Int> = [2, 3, 4]
-
     private enum NavigationDirection {
         case forward, backward
     }
@@ -67,18 +65,8 @@ struct OnboardingContainerView: View {
 
                     Spacer()
 
-                    if skippableSteps.contains(currentStep) {
-                        Button("SKIP") {
-                            goForward(isSkip: true)
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                        .font(Theme.Typography.allCaps())
-                        .foregroundColor(Theme.Colors.textSecondary)
-                        .padding(.trailing, Theme.Spacing.md)
-                    }
-
                     Button(currentStep == totalSteps ? "FINISH" : "CONTINUE") {
-                        goForward(isSkip: false)
+                        goForward()
                     }
                     .buttonStyle(PlainButtonStyle())
                     .font(Theme.Typography.allCaps())
@@ -89,7 +77,7 @@ struct OnboardingContainerView: View {
                 .padding(.bottom, Theme.Spacing.xl)
             }
         }
-        .frame(width: 500, height: 450)
+        .frame(width: 580, height: 540)
         .background(Theme.Colors.background)
         .onChange(of: currentStep) { _, newValue in
             switch newValue {
@@ -152,15 +140,15 @@ struct OnboardingContainerView: View {
     }
 
     private func goBack() {
-        if currentStep > 1 {
+        if currentStep > 0 {
             navigationDirection = .backward
             currentStep -= 1
         }
     }
 
-    private func goForward(isSkip: Bool) {
-        // Save provider only on Continue with filled fields (not on Skip)
-        if currentStep == 2 && !isSkip && providerFieldsFilled {
+    private func goForward() {
+        // Save provider if fields are filled
+        if currentStep == 2 && providerFieldsFilled {
             saveProvider()
             providerConfigured = true
         }

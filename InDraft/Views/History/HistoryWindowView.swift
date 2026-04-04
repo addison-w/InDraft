@@ -141,16 +141,6 @@ struct HistoryWindowView: View {
                     .foregroundColor(Theme.Colors.error)
             }
             .buttonStyle(.plain)
-
-            // Filter button
-            Button {
-                // Filter menu placeholder
-            } label: {
-                Image(systemName: "line.3.horizontal.decrease")
-                    .font(.system(size: 12))
-                    .foregroundColor(Theme.Colors.textSecondary)
-            }
-            .buttonStyle(.plain)
         }
         .padding(.horizontal, Theme.Spacing.lg)
         .padding(.vertical, Theme.Spacing.md)

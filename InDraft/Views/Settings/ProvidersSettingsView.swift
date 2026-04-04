@@ -9,7 +9,7 @@ struct ProvidersSettingsView: View {
     // Inline new provider state
     @State private var isCreatingNew = false
     @State private var newDisplayName = ""
-    @State private var newBaseURL = Constants.Defaults.defaultBaseURL
+    @State private var newBaseURL = ""
     @State private var newAPIKey = ""
     @State private var newShowAPIKey = false
     @State private var newDefaultModel = ""
@@ -362,7 +362,7 @@ struct ProvidersSettingsView: View {
     private func resetNewProvider() {
         isCreatingNew = false
         newDisplayName = ""
-        newBaseURL = Constants.Defaults.defaultBaseURL
+        newBaseURL = ""
         newAPIKey = ""
         newShowAPIKey = false
         newDefaultModel = ""

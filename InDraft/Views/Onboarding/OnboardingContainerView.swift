@@ -8,7 +8,7 @@ struct OnboardingContainerView: View {
     @Environment(\.modelContext) private var modelContext
 
     @State private var providerDisplayName = "OpenAI"
-    @State private var providerBaseURL = Constants.Defaults.defaultBaseURL
+    @State private var providerBaseURL = ""
     @State private var providerAPIKey = ""
     @State private var providerModel = "gpt-4o"
     @State private var canContinue = false

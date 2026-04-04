@@ -13,6 +13,7 @@ struct OnboardingContainerView: View {
     @State private var providerModel = "gpt-4o"
     @State private var canContinue = false
     @State private var providerConfigured = false
+    @State private var providerTestSucceeded = false
     @State private var navigationDirection: NavigationDirection = .forward
 
     private let totalSteps = 5
@@ -77,7 +78,7 @@ struct OnboardingContainerView: View {
                 .padding(.bottom, Theme.Spacing.xl)
             }
         }
-        .frame(width: 580, height: 540)
+        .frame(width: 620, height: 600)
         .background(Theme.Colors.background)
         .onChange(of: currentStep) { _, newValue in
             switch newValue {
@@ -116,7 +117,8 @@ struct OnboardingContainerView: View {
                 displayName: $providerDisplayName,
                 baseURL: $providerBaseURL,
                 apiKey: $providerAPIKey,
-                model: $providerModel
+                model: $providerModel,
+                testSucceeded: $providerTestSucceeded
             )
         case 3:
             DefaultActionsStepView()
@@ -142,7 +144,12 @@ struct OnboardingContainerView: View {
     private func goBack() {
         if currentStep > 0 {
             navigationDirection = .backward
-            currentStep -= 1
+            var prevStep = currentStep - 1
+            // Skip sample transform (step 4) going back if no provider configured
+            if prevStep == 4 && !providerConfigured {
+                prevStep = 3
+            }
+            currentStep = prevStep
         }
     }
 
@@ -155,19 +162,34 @@ struct OnboardingContainerView: View {
 
         navigationDirection = .forward
         if currentStep < totalSteps {
-            currentStep += 1
+            var nextStep = currentStep + 1
+            // Skip sample transform (step 4) if no provider configured
+            if nextStep == 4 && !providerConfigured {
+                nextStep = 5
+            }
+            currentStep = nextStep
         } else {
             finishOnboarding()
         }
     }
 
     private func saveProvider() {
+        // Deactivate all existing providers first
+        let descriptor = FetchDescriptor<Provider>()
+        if let existing = try? modelContext.fetch(descriptor) {
+            for p in existing {
+                p.isActive = false
+            }
+        }
+
         let provider = Provider(
             displayName: providerDisplayName,
             baseURL: providerBaseURL,
             apiKeyReference: "provider-\(UUID().uuidString)",
             defaultModel: providerModel,
-            isActive: true
+            isActive: true,
+            lastTestStatus: providerTestSucceeded ? .success : .untested,
+            lastTestedAt: providerTestSucceeded ? Date() : nil
         )
         modelContext.insert(provider)
 

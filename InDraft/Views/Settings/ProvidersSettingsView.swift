@@ -69,10 +69,16 @@ struct ProvidersSettingsView: View {
         .cardStyle()
     }
 
+    // The canonical active provider — only one, by UUID
+    private var activeProviderID: UUID? {
+        providers.first { $0.isActive }?.id
+    }
+
     // MARK: - Provider Row
 
     private func providerRow(_ provider: Provider) -> some View {
         let isExpanded = expandedProviderID == provider.id
+        let isActiveProvider = provider.id == activeProviderID
 
         return VStack(alignment: .leading, spacing: 0) {
             // Collapsed header
@@ -84,7 +90,7 @@ struct ProvidersSettingsView: View {
                 HStack(spacing: 0) {
                     // Active indicator — subtle left accent bar
                     RoundedRectangle(cornerRadius: 1)
-                        .fill(provider.isActive ? Theme.Colors.textPrimary : Color.clear)
+                        .fill(isActiveProvider ? Theme.Colors.statusGreen : Color.clear)
                         .frame(width: 2)
                         .padding(.vertical, Theme.Spacing.sm)
 
@@ -97,13 +103,13 @@ struct ProvidersSettingsView: View {
                             HStack(spacing: Theme.Spacing.sm) {
                                 Text(provider.displayName)
                                     .font(Theme.Typography.body(14))
-                                    .fontWeight(provider.isActive ? .semibold : .medium)
+                                    .fontWeight(isActiveProvider ? .semibold : .medium)
                                     .foregroundColor(Theme.Colors.textPrimary)
 
-                                if provider.isActive {
+                                if isActiveProvider {
                                     Text("active")
                                         .font(Theme.Typography.allCaps(9))
-                                        .foregroundColor(Theme.Colors.textTertiary)
+                                        .foregroundColor(Theme.Colors.statusGreenText)
                                         .tracking(0.5)
                                 }
                             }
@@ -136,6 +142,7 @@ struct ProvidersSettingsView: View {
             if isExpanded {
                 ProviderInlineEditor(
                     provider: provider,
+                    isActiveProvider: isActiveProvider,
                     keychainService: keychainService,
                     onSetActive: { setActive(provider) },
                     onTest: {},
@@ -374,6 +381,7 @@ struct ProvidersSettingsView: View {
 
 struct ProviderInlineEditor: View {
     @Bindable var provider: Provider
+    var isActiveProvider: Bool
     let keychainService: LiveKeychainService
     let onSetActive: () -> Void
     let onTest: () -> Void
@@ -474,7 +482,7 @@ struct ProviderInlineEditor: View {
 
             // Action buttons
             HStack {
-                if !provider.isActive {
+                if !isActiveProvider {
                     Button {
                         onSetActive()
                     } label: {

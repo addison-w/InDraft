@@ -5,6 +5,7 @@ struct AddProviderStepView: View {
     @Binding var baseURL: String
     @Binding var apiKey: String
     @Binding var model: String
+    @Binding var testSucceeded: Bool
 
     @State private var showAPIKey = false
 
@@ -165,6 +166,7 @@ struct AddProviderStepView: View {
                 case .success(_, let ms):
                     testState = .success
                     testLatencyMs = ms
+                    testSucceeded = true
                 case .failure(let message):
                     testState = .failure
                     testErrorMessage = message

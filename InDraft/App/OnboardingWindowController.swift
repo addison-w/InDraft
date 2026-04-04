@@ -37,7 +37,7 @@ final class OnboardingWindowController {
         let hostingController = NSHostingController(rootView: onboardingView)
 
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 580, height: 540),
+            contentRect: NSRect(x: 0, y: 0, width: 620, height: 600),
             styleMask: [.titled, .closable, .fullSizeContentView],
             backing: .buffered,
             defer: false
@@ -46,7 +46,6 @@ final class OnboardingWindowController {
         window.titlebarAppearsTransparent = true
         window.titleVisibility = .hidden
         window.contentViewController = hostingController
-        window.center()
         window.isReleasedWhenClosed = false
         window.hidesOnDeactivate = false
         window.backgroundColor = NSColor(Color(hex: "FAF9F6"))
@@ -54,8 +53,21 @@ final class OnboardingWindowController {
 
         self.window = window
 
+        // Prevent macOS from restoring a previous window position
+        window.setFrameAutosaveName("")
+
         window.orderFrontRegardless()
         NSApp.activate()
+
+        // Center after SwiftUI layout pass completes on the next run loop iteration
+        DispatchQueue.main.async {
+            guard let screen = NSScreen.screens.first else { return }
+            let screenFrame = screen.frame
+            let windowSize = window.frame.size
+            let x = screenFrame.origin.x + (screenFrame.width - windowSize.width) / 2
+            let y = screenFrame.origin.y + (screenFrame.height - windowSize.height) / 2
+            window.setFrameOrigin(NSPoint(x: x, y: y))
+        }
 
         // Watch for window close
         NotificationCenter.default.addObserver(

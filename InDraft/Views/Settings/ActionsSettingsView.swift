@@ -6,8 +6,8 @@ struct ActionsSettingsView: View {
     @EnvironmentObject private var appCoordinator: AppCoordinator
     @Query(sort: \Action.sortOrder) private var actions: [Action]
     @State private var expandedActionID: UUID?
-    @State private var isReordering = false
     @State private var confirmingRestore = false
+    @State private var draggingActionID: UUID?
 
     // Inline new action state
     @State private var isCreatingNew = false
@@ -52,21 +52,6 @@ struct ActionsSettingsView: View {
                 .foregroundColor(Theme.Colors.textPrimary)
 
             Spacer()
-
-            if !actions.isEmpty {
-                Button {
-                    withAnimation(Theme.Motion.standard) {
-                        isReordering.toggle()
-                        expandedActionID = nil
-                    }
-                } label: {
-                    Text(isReordering ? "DONE" : "REORDER")
-                        .font(Theme.Typography.allCaps(10))
-                        .foregroundColor(Theme.Colors.textSecondary)
-                        .tracking(0.5)
-                }
-                .buttonStyle(.plain)
-            }
         }
     }
 
@@ -85,57 +70,77 @@ struct ActionsSettingsView: View {
             }
         }
         .cardStyle()
+        .onDrop(of: [.text], isTargeted: nil) { _ in
+            draggingActionID = nil
+            return false
+        }
     }
 
     // MARK: - Collapsed Row
 
     private func actionRow(_ action: Action, index: Int) -> some View {
-        let isExpanded = expandedActionID == action.id && !isReordering
+        let isExpanded = expandedActionID == action.id
 
         return VStack(alignment: .leading, spacing: 0) {
             // Header row — always visible
-            Button {
-                withAnimation(Theme.Motion.standard) {
-                    if isReordering { return }
-                    expandedActionID = isExpanded ? nil : action.id
-                }
-            } label: {
-                HStack(spacing: Theme.Spacing.md) {
-                    if isReordering {
-                        reorderControls(action, index: index)
-                    }
-
-                    VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-                        Text(action.name)
-                            .font(Theme.Typography.body(14))
-                            .fontWeight(.medium)
-                            .foregroundColor(Theme.Colors.textPrimary)
-
-                        HStack(spacing: Theme.Spacing.sm) {
-                            if action.hasHotkey,
-                               let kc = action.hotkeyKeyCode,
-                               let mods = action.hotkeyModifiers {
-                                KeycapRow(keyCode: kc, modifiers: mods, size: 9)
-                            }
-
-                            Text(action.outputBehavior.rawValue.uppercased())
-                                .font(Theme.Typography.allCaps(9))
-                                .foregroundColor(Theme.Colors.textTertiary)
-                                .tracking(0.5)
-                                .padding(.horizontal, Theme.Spacing.sm)
-                                .padding(.vertical, 2)
-                                .background(Theme.Colors.surfaceContainerLow)
-                                .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: Theme.Radius.sm)
-                                        .stroke(Theme.Colors.cardBorder, lineWidth: 1)
-                                )
+            HStack(spacing: 0) {
+                // Drag handle
+                Image(systemName: "line.3.horizontal")
+                    .font(.system(size: 9, weight: .medium))
+                    .foregroundColor(Theme.Colors.textTertiary.opacity(0.5))
+                    .frame(width: 24, height: 44)
+                    .contentShape(Rectangle())
+                    .padding(.leading, Theme.Spacing.md)
+                    .onHover { hovering in
+                        if hovering {
+                            NSCursor.openHand.push()
+                        } else {
+                            NSCursor.pop()
                         }
                     }
+                    .onDrag {
+                        NSCursor.closedHand.set()
+                        draggingActionID = action.id
+                        return NSItemProvider(object: action.id.uuidString as NSString)
+                    }
 
-                    Spacer()
+                // Clickable row content
+                Button {
+                    withAnimation(Theme.Motion.standard) {
+                        expandedActionID = isExpanded ? nil : action.id
+                    }
+                } label: {
+                    HStack(spacing: Theme.Spacing.md) {
+                        VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
+                            Text(action.name)
+                                .font(Theme.Typography.body(14))
+                                .fontWeight(.medium)
+                                .foregroundColor(Theme.Colors.textPrimary)
 
-                    if !isReordering {
+                            HStack(spacing: Theme.Spacing.sm) {
+                                if action.hasHotkey,
+                                   let kc = action.hotkeyKeyCode,
+                                   let mods = action.hotkeyModifiers {
+                                    KeycapRow(keyCode: kc, modifiers: mods, size: 9)
+                                }
+
+                                Text(action.outputBehavior.rawValue.uppercased())
+                                    .font(Theme.Typography.allCaps(9))
+                                    .foregroundColor(Theme.Colors.textTertiary)
+                                    .tracking(0.5)
+                                    .padding(.horizontal, Theme.Spacing.sm)
+                                    .padding(.vertical, 2)
+                                    .background(Theme.Colors.surfaceContainerLow)
+                                    .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: Theme.Radius.sm)
+                                            .stroke(Theme.Colors.cardBorder, lineWidth: 1)
+                                    )
+                            }
+                        }
+
+                        Spacer()
+
                         Toggle("", isOn: Binding(
                             get: { action.enabled },
                             set: { newValue in
@@ -152,51 +157,36 @@ struct ActionsSettingsView: View {
                             .foregroundColor(Theme.Colors.textTertiary)
                             .rotationEffect(.degrees(isExpanded ? 90 : 0))
                     }
+                    .padding(.horizontal, Theme.Spacing.lg)
+                    .padding(.vertical, Theme.Spacing.lg)
+                    .contentShape(Rectangle())
                 }
-                .padding(.horizontal, Theme.Spacing.xl)
-                .padding(.vertical, Theme.Spacing.lg)
-                .contentShape(Rectangle())
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
+            .opacity(draggingActionID == action.id ? 0.4 : 1.0)
+            .onDrop(of: [.text], delegate: ActionDropDelegate(
+                targetAction: action,
+                actions: actions,
+                draggingActionID: $draggingActionID,
+                moveAction: moveAction
+            ))
 
             // Expanded inline editor
             if isExpanded {
-                ActionInlineEditor(action: action, onDelete: {
-                    withAnimation(Theme.Motion.standard) {
-                        expandedActionID = nil
-                        deleteAction(action)
+                ActionInlineEditor(
+                    action: action,
+                    onDelete: {
+                        withAnimation(Theme.Motion.standard) {
+                            expandedActionID = nil
+                            deleteAction(action)
+                        }
+                    },
+                    onDuplicate: {
+                        duplicateAction(action)
                     }
-                }, onDuplicate: {
-                    duplicateAction(action)
-                })
+                )
                 .transition(.opacity)
             }
-        }
-    }
-
-    // MARK: - Reorder Controls
-
-    private func reorderControls(_ action: Action, index: Int) -> some View {
-        VStack(spacing: 2) {
-            Button {
-                moveAction(action, direction: -1)
-            } label: {
-                Image(systemName: "chevron.up")
-                    .font(.system(size: 10))
-                    .foregroundColor(index == 0 ? Theme.Colors.textTertiary.opacity(0.4) : Theme.Colors.textSecondary)
-            }
-            .buttonStyle(.plain)
-            .disabled(index == 0)
-
-            Button {
-                moveAction(action, direction: 1)
-            } label: {
-                Image(systemName: "chevron.down")
-                    .font(.system(size: 10))
-                    .foregroundColor(index == actions.count - 1 ? Theme.Colors.textTertiary.opacity(0.4) : Theme.Colors.textSecondary)
-            }
-            .buttonStyle(.plain)
-            .disabled(index == actions.count - 1)
         }
     }
 
@@ -537,5 +527,39 @@ struct ActionInlineEditor: View {
                 .tracking(1)
             content()
         }
+    }
+}
+
+// MARK: - Drag & Drop Delegate
+
+struct ActionDropDelegate: DropDelegate {
+    let targetAction: Action
+    let actions: [Action]
+    @Binding var draggingActionID: UUID?
+    let moveAction: (Action, Int) -> Void
+
+    func performDrop(info: DropInfo) -> Bool {
+        draggingActionID = nil
+        return true
+    }
+
+    func dropEntered(info: DropInfo) {
+        guard let draggingID = draggingActionID,
+              draggingID != targetAction.id else { return }
+
+        let sorted = actions.sorted { $0.sortOrder < $1.sortOrder }
+        guard let fromIndex = sorted.firstIndex(where: { $0.id == draggingID }),
+              let toIndex = sorted.firstIndex(where: { $0.id == targetAction.id }) else { return }
+
+        if fromIndex != toIndex {
+            withAnimation(Theme.Motion.standard) {
+                let direction = fromIndex < toIndex ? 1 : -1
+                moveAction(sorted[fromIndex], direction)
+            }
+        }
+    }
+
+    func dropUpdated(info: DropInfo) -> DropProposal? {
+        DropProposal(operation: .move)
     }
 }

@@ -28,7 +28,7 @@ final class MenuBarController: NSObject {
         // Create status item
         let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
-            button.image = AppIcon.edit.nsImage()
+            button.image = AppIcon.logoNSImage()
             button.action = #selector(togglePopover)
             button.target = self
         }
@@ -108,7 +108,7 @@ final class MenuBarController: NSObject {
 
         switch status {
         case .idle:
-            button.image = AppIcon.edit.nsImage()
+            button.image = AppIcon.logoNSImage()
         case .processing:
             startProcessingAnimation()
         case .success:

@@ -97,4 +97,16 @@ enum AppIcon {
         img.size = NSSize(width: size, height: size)
         return img
     }
+
+    /// Custom app logo loaded from bundled SVG, sized for the menu bar.
+    static func logoNSImage(height: CGFloat = 18) -> NSImage? {
+        guard let url = Bundle.main.url(forResource: "quill-logo", withExtension: "svg"),
+              let image = NSImage(contentsOf: url) else { return nil }
+        // Scale proportionally based on original aspect ratio (202:248)
+        let aspectRatio = image.size.width / image.size.height
+        let width = height * aspectRatio
+        image.size = NSSize(width: width, height: height)
+        image.isTemplate = true
+        return image
+    }
 }

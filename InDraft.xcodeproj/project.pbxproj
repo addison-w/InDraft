@@ -75,6 +75,7 @@
 		DA356FB9548D19BBB5E87863 /* HistoryRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEB8FAA62527BA8999BFF082 /* HistoryRecord.swift */; };
 		DE43921F499E2B54F9A792D9 /* InDraftApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B8248D3096F2B50F28999D /* InDraftApp.swift */; };
 		E5293DD8F16E2D127FACCF29 /* HistoryRecordTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49803728E95C7F003708D56D /* HistoryRecordTests.swift */; };
+		E5713BFE05FFAD70617FF4E4 /* quill-logo.svg in Resources */ = {isa = PBXBuildFile; fileRef = B2FFB3F5EA8F0BEF879590F3 /* quill-logo.svg */; };
 		ECA55A2176F25729FD1C4482 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACDB600DA7F30A86C2D05FE /* Theme.swift */; };
 		EF7C80C556C74384F67F3719 /* InDraftUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB1E051DE08D6A76424E15B4 /* InDraftUITests.swift */; };
 		F13F177D8F214F10C3BAD7C9 /* HistoryWindowControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76A181C46445C16428B6ADA4 /* HistoryWindowControllerTests.swift */; };
@@ -163,6 +164,7 @@
 		B18ED4BFC033338CA3B459E9 /* ToastOverlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastOverlayController.swift; sourceTree = "<group>"; };
 		B28D555A1DC6C5D11A46BCD6 /* LaunchAtLoginServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginServiceTests.swift; sourceTree = "<group>"; };
 		B2E9485A589B91911CCE563A /* HistoryWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryWindowController.swift; sourceTree = "<group>"; };
+		B2FFB3F5EA8F0BEF879590F3 /* quill-logo.svg */ = {isa = PBXFileReference; path = "quill-logo.svg"; sourceTree = "<group>"; };
 		B31F4C126D062F7D30C8772A /* SettingsTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTabBar.swift; sourceTree = "<group>"; };
 		B6192191339100AD51A2F039 /* InDraft.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InDraft.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6411420AFF476B0C9C33FC5 /* HistoryRecordRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryRecordRowView.swift; sourceTree = "<group>"; };
@@ -207,6 +209,14 @@
 				4EA2B86DD94CD47A5D3D9183 /* PreviewPanelView.swift */,
 			);
 			path = Preview;
+			sourceTree = "<group>";
+		};
+		137691D931B037BACC275F45 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B2FFB3F5EA8F0BEF879590F3 /* quill-logo.svg */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		2D29777B47B6816343292759 /* Utilities */ = {
@@ -370,6 +380,7 @@
 			children = (
 				30258FB85650D981087421DC /* App */,
 				41AAF4BD79DED85A8C0EA285 /* Models */,
+				137691D931B037BACC275F45 /* Resources */,
 				555A59A935E8E04276584159 /* Services */,
 				2D29777B47B6816343292759 /* Utilities */,
 				F998B43A6B3DB76BCD6E2DDA /* Views */,
@@ -465,6 +476,7 @@
 			buildConfigurationList = 50C6D73FA92B13E2899D0713 /* Build configuration list for PBXNativeTarget "InDraft" */;
 			buildPhases = (
 				D90A1766892AEC50FF44B25C /* Sources */,
+				FEF9D93092ADEBB313FE325A /* Resources */,
 				0CE58A378B5A502E71E3812A /* Frameworks */,
 			);
 			buildRules = (
@@ -534,6 +546,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		FEF9D93092ADEBB313FE325A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E5713BFE05FFAD70617FF4E4 /* quill-logo.svg in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1D5C4867079D06A4BD041533 /* Sources */ = {

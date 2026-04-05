@@ -26,6 +26,7 @@ enum Constants {
         static let onboardingStep = "onboardingStep"
         static let historyRetentionDays = "historyRetentionDays"
         static let historyRecordingEnabled = "historyRecordingEnabled"
+        static let appearanceMode = "appearanceMode"
     }
 
     enum DefaultActions {

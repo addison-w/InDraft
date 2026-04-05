@@ -18,7 +18,7 @@ enum TransformResult {
 }
 
 protocol TransformServiceProtocol {
-    func execute(action: Action, provider: Provider, apiKey: String) async -> (TransformResult?, TransformError?)
+    func execute(action: Action, provider: Provider, apiKey: String, modelOverride: String?) async -> (TransformResult?, TransformError?)
 }
 
 actor LiveTransformService: TransformServiceProtocol {
@@ -42,7 +42,7 @@ actor LiveTransformService: TransformServiceProtocol {
         self.appState = appState
     }
 
-    func execute(action: Action, provider: Provider, apiKey: String) async -> (TransformResult?, TransformError?) {
+    func execute(action: Action, provider: Provider, apiKey: String, modelOverride: String? = nil) async -> (TransformResult?, TransformError?) {
         let startTime = DispatchTime.now()
 
         await MainActor.run { appState?.setProcessing() }
@@ -77,7 +77,7 @@ actor LiveTransformService: TransformServiceProtocol {
         // Step 2: Send to AI provider
         let transformedText: String
         do {
-            let model = provider.defaultModel
+            let model = modelOverride ?? provider.defaultModel
             transformedText = try await providerService.transform(
                 text: originalText,
                 prompt: action.prompt,

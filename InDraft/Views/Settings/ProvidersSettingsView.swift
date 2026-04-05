@@ -347,6 +347,17 @@ struct ProvidersSettingsView: View {
         if !provider.apiKeyReference.isEmpty {
             try? keychainService.delete(forReference: provider.apiKeyReference)
         }
+        // Reset any actions that had this provider as fixed
+        let providerID = provider.id
+        let predicate = #Predicate<Action> { $0.providerID == providerID }
+        if let actions = try? modelContext.fetch(FetchDescriptor<Action>(predicate: predicate)) {
+            for action in actions {
+                action.providerMode = .active
+                action.providerID = nil
+                action.modelOverride = nil
+                action.updatedAt = Date()
+            }
+        }
         modelContext.delete(provider)
     }
 

@@ -3,17 +3,21 @@ import Hugeicons
 
 struct HistoryRecordDetailView: View {
     let record: HistoryRecord
+    var onDelete: (() -> Void)?
 
     @Environment(\.modelContext) private var modelContext
     @State private var copiedOriginal = false
     @State private var copiedTransformed = false
     @State private var confirmingDelete = false
+    @State private var showDiff = true
+
+    private let diffService: DiffServiceProtocol = LiveDiffService()
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.md) {
             // Two-column text comparison
             HStack(alignment: .top, spacing: Theme.Spacing.md) {
-                // Original column — warm bone background
+                // Original column
                 VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
                     HStack {
                         Text("ORIGINAL")
@@ -38,17 +42,20 @@ struct HistoryRecordDetailView: View {
                         .buttonStyle(.plain)
                     }
 
-                    Text(record.originalText)
-                        .font(Theme.Typography.body())
-                        .foregroundColor(Theme.Colors.textPrimary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(Theme.Spacing.md)
-                        .background(Theme.Colors.background)
-                        .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
+                    ScrollView {
+                        Text(record.originalText)
+                            .font(Theme.Typography.body())
+                            .foregroundColor(Theme.Colors.textPrimary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(Theme.Spacing.md)
+                    }
+                    .frame(maxHeight: 300)
+                    .background(Theme.Colors.background)
+                    .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
                 }
                 .frame(maxWidth: .infinity)
 
-                // Transformed column — white card
+                // Transformed column
                 VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
                     HStack {
                         Text("TRANSFORMED")
@@ -56,6 +63,17 @@ struct HistoryRecordDetailView: View {
                             .tracking(1.2)
                             .foregroundColor(Theme.Colors.textTertiary)
                         Spacer()
+
+                        // Show Changes toggle (only for success records)
+                        if record.status == .success && record.transformedText != nil {
+                            Toggle(isOn: $showDiff) {
+                                Text("Changes")
+                                    .font(Theme.Typography.caption(9))
+                                    .foregroundColor(Theme.Colors.textTertiary)
+                            }
+                            .toggleStyle(WabiSabiToggleStyle())
+                        }
+
                         if record.transformedText != nil {
                             Button {
                                 if let transformed = record.transformedText {
@@ -78,14 +96,35 @@ struct HistoryRecordDetailView: View {
                     }
 
                     if let transformed = record.transformedText {
-                        Text(transformed)
-                            .font(Theme.Typography.body())
-                            .foregroundColor(Theme.Colors.textPrimary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(Theme.Spacing.md)
-                            .background(Theme.Colors.cardBackground)
-                            .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
-                            .overlay(
+                        ScrollView {
+                            if showDiff, let segments = diffService.computeWordDiff(original: record.originalText, transformed: transformed) {
+                                DiffTextView(segments: segments)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(Theme.Spacing.md)
+                            } else if showDiff && diffService.computeWordDiff(original: record.originalText, transformed: transformed) == nil {
+                                VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+                                    Text(transformed)
+                                        .font(Theme.Typography.body())
+                                        .foregroundColor(Theme.Colors.textPrimary)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                    Text("Text too long for diff comparison")
+                                        .font(Theme.Typography.caption())
+                                        .foregroundColor(Theme.Colors.textTertiary)
+                                        .italic()
+                                }
+                                .padding(Theme.Spacing.md)
+                            } else {
+                                Text(transformed)
+                                    .font(Theme.Typography.body())
+                                    .foregroundColor(Theme.Colors.textPrimary)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(Theme.Spacing.md)
+                            }
+                        }
+                        .frame(maxHeight: 300)
+                        .background(Theme.Colors.cardBackground)
+                        .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
+                        .overlay(
                             RoundedRectangle(cornerRadius: Theme.Radius.sm)
                                 .stroke(Theme.Colors.cardBorder, lineWidth: 1)
                         )
@@ -109,8 +148,7 @@ struct HistoryRecordDetailView: View {
                 Button {
                     if confirmingDelete {
                         confirmingDelete = false
-                        let service = LiveHistoryService(modelContext: modelContext)
-                        service.deleteRecord(record.id)
+                        onDelete?()
                     } else {
                         withAnimation(Theme.Motion.quick) { confirmingDelete = true }
                         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {

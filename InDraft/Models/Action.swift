@@ -7,6 +7,11 @@ enum OutputBehavior: String, Codable, CaseIterable {
     case clipboard
 }
 
+enum ProviderMode: String, Codable, CaseIterable {
+    case active
+    case fixed
+}
+
 @Model
 final class Action {
     @Attribute(.unique) var id: UUID
@@ -19,6 +24,15 @@ final class Action {
     var sortOrder: Int
     var createdAt: Date
     var updatedAt: Date
+    var providerModeRaw: String?
+    var providerID: UUID?
+    var modelOverride: String?
+
+    @Transient
+    var providerMode: ProviderMode {
+        get { ProviderMode(rawValue: providerModeRaw ?? "") ?? .active }
+        set { providerModeRaw = newValue.rawValue }
+    }
 
     init(
         id: UUID = UUID(),
@@ -30,7 +44,10 @@ final class Action {
         enabled: Bool = true,
         sortOrder: Int = 0,
         createdAt: Date = Date(),
-        updatedAt: Date = Date()
+        updatedAt: Date = Date(),
+        providerMode: ProviderMode = .active,
+        providerID: UUID? = nil,
+        modelOverride: String? = nil
     ) {
         self.id = id
         self.name = name
@@ -42,6 +59,9 @@ final class Action {
         self.sortOrder = sortOrder
         self.createdAt = createdAt
         self.updatedAt = updatedAt
+        self.providerModeRaw = providerMode.rawValue
+        self.providerID = providerID
+        self.modelOverride = modelOverride
     }
 
     var hasHotkey: Bool {

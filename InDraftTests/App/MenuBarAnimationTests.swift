@@ -4,43 +4,13 @@ import XCTest
 @MainActor
 final class MenuBarAnimationTests: XCTestCase {
 
-    func testRotatedSymbolReturnsImage() {
-        let image = MenuBarController.rotatedSymbol(
-            name: "arrow.trianglehead.2.counterclockwise",
-            degrees: 0,
-            accessibilityDescription: "Test"
-        )
-        XCTAssertNotNil(image)
-    }
-
-    func testRotatedSymbolIsTemplate() {
-        let image = MenuBarController.rotatedSymbol(
-            name: "arrow.trianglehead.2.counterclockwise",
-            degrees: 120,
-            accessibilityDescription: "Test"
-        )
-        XCTAssertTrue(image?.isTemplate ?? false)
-    }
-
-    func testRotatedSymbolDifferentAngles() {
-        // Verify different angles produce non-nil images
-        let angles: [CGFloat] = [0, 120, 240]
-        for angle in angles {
-            let image = MenuBarController.rotatedSymbol(
-                name: "arrow.trianglehead.2.counterclockwise",
-                degrees: angle,
-                accessibilityDescription: "Test"
-            )
-            XCTAssertNotNil(image, "rotatedSymbol returned nil for angle \(angle)")
+    func testBouncingBallFrameReturnsImage() {
+        // The bouncing ball animation generates frames procedurally
+        // Verify each frame in the cycle produces a valid template image
+        for i in 0..<17 {
+            let image = MenuBarController.bouncingBallFrame(index: i)
+            XCTAssertTrue(image.isTemplate, "Frame \(i) should be a template image")
+            XCTAssertEqual(image.size, NSSize(width: 18, height: 18), "Frame \(i) should be 18x18")
         }
-    }
-
-    func testRotatedSymbolInvalidNameReturnsNil() {
-        let image = MenuBarController.rotatedSymbol(
-            name: "nonexistent.symbol.name",
-            degrees: 0,
-            accessibilityDescription: "Test"
-        )
-        XCTAssertNil(image)
     }
 }

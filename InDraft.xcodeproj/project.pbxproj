@@ -19,6 +19,7 @@
 		279D42121014AA42403C5755 /* WabiSabiKeyIllustration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E8F306EAB95B24A6066692 /* WabiSabiKeyIllustration.swift */; };
 		27F58BB6A4E2DD1FB1AC8B4B /* AddProviderStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D489C2E2D38DC3BC4588EEDF /* AddProviderStepView.swift */; };
 		32DDC146CB32BE829CCDA911 /* ToastOverlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B18ED4BFC033338CA3B459E9 /* ToastOverlayController.swift */; };
+		33760DC424809C8FE75E70F1 /* DiffService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA133CB45C182DE85F8EA64 /* DiffService.swift */; };
 		34AD045BEC9889B78F34CC13 /* StepIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC9FD75ABDED42BDA7BE47F /* StepIndicatorView.swift */; };
 		358C864256884CFB944E6FE1 /* PreviewPanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F6C75BBD9CC8B3E9482909 /* PreviewPanelController.swift */; };
 		39005CEBC50CFFDF27466A41 /* OnboardingContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226B395D6B2A291F685EC7F1 /* OnboardingContainerView.swift */; };
@@ -74,6 +75,7 @@
 		CAF0395293956E4FCADAE604 /* HistoryWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E9485A589B91911CCE563A /* HistoryWindowController.swift */; };
 		D0340C5634AF3F260B21BC88 /* MenuBarAnimationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44BA2BB882AB925D2BAED7CF /* MenuBarAnimationTests.swift */; };
 		DA356FB9548D19BBB5E87863 /* HistoryRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEB8FAA62527BA8999BFF082 /* HistoryRecord.swift */; };
+		DBDBEB6BC7F3EB105EB4F466 /* DiffServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E8FDEEFF83339AC46FF4E3 /* DiffServiceTests.swift */; };
 		DE43921F499E2B54F9A792D9 /* InDraftApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B8248D3096F2B50F28999D /* InDraftApp.swift */; };
 		E5293DD8F16E2D127FACCF29 /* HistoryRecordTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49803728E95C7F003708D56D /* HistoryRecordTests.swift */; };
 		E5713BFE05FFAD70617FF4E4 /* quill-logo.svg in Resources */ = {isa = PBXBuildFile; fileRef = B2FFB3F5EA8F0BEF879590F3 /* quill-logo.svg */; };
@@ -83,6 +85,7 @@
 		F19F92B13040ECC3A002A334 /* HistorySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDD4B14A15BC6FD793F0F2EA /* HistorySettingsView.swift */; };
 		F29084625C8C05F891E5EEB2 /* AccessibilityStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04F23CEA951864D7F54E3389 /* AccessibilityStepView.swift */; };
 		F448B44D6F5677C6DEF9EB74 /* InDraftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FAFF7127423FF1C879D550 /* InDraftTests.swift */; };
+		F483C12B69F8747E2A3D3D37 /* DiffTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C581832214AC1DF3E7A7E10 /* DiffTextView.swift */; };
 		F935B94DF2799C535C1645B6 /* WabiSabiShieldIllustration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 381F37A385F25DA2EB677175 /* WabiSabiShieldIllustration.swift */; };
 		FD2CC01ADD7181C0621FCA71 /* DefaultActionsStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7D057D92872422838F91831 /* DefaultActionsStepView.swift */; };
 		FD8650E79B37DC40BE5F45A0 /* TestConnectionStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 716F042D3B76D619672F766E /* TestConnectionStepView.swift */; };
@@ -116,9 +119,11 @@
 		0F3FDA27A2D3B8CEB176F6DA /* WabiSabiCheckmarkIllustration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WabiSabiCheckmarkIllustration.swift; sourceTree = "<group>"; };
 		12BFAAD601AD417E0A49CFF8 /* WabiSabiPenIllustration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WabiSabiPenIllustration.swift; sourceTree = "<group>"; };
 		16AA0E7B98DECA14BDCA8C5A /* ToastManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastManagerTests.swift; sourceTree = "<group>"; };
+		17E8FDEEFF83339AC46FF4E3 /* DiffServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiffServiceTests.swift; sourceTree = "<group>"; };
 		1E5351C81277FA1006098BF7 /* TextCaptureService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextCaptureService.swift; sourceTree = "<group>"; };
 		226B395D6B2A291F685EC7F1 /* OnboardingContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingContainerView.swift; sourceTree = "<group>"; };
 		23D1BADE0D6750320AA56F5D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		2CA133CB45C182DE85F8EA64 /* DiffService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiffService.swift; sourceTree = "<group>"; };
 		30C9D9461394FF578159BCD0 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
 		381F37A385F25DA2EB677175 /* WabiSabiShieldIllustration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WabiSabiShieldIllustration.swift; sourceTree = "<group>"; };
 		39D4D11B65701A487BE0160C /* HistoryRecordDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryRecordDetailView.swift; sourceTree = "<group>"; };
@@ -130,6 +135,7 @@
 		4EA2B86DD94CD47A5D3D9183 /* PreviewPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewPanelView.swift; sourceTree = "<group>"; };
 		4EBBE36445C93120B2BFB533 /* MenuBarMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarMenuView.swift; sourceTree = "<group>"; };
 		554AEC16643576D2B0FCBF1A /* ProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderTests.swift; sourceTree = "<group>"; };
+		5C581832214AC1DF3E7A7E10 /* DiffTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiffTextView.swift; sourceTree = "<group>"; };
 		5DB68A34046C652551649168 /* HistoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryService.swift; sourceTree = "<group>"; };
 		5DD2070D2F5BBF86B9AD00D3 /* MenuBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarController.swift; sourceTree = "<group>"; };
 		6ACDB600DA7F30A86C2D05FE /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
@@ -251,6 +257,7 @@
 		39BCA7EC32EA15E5AFB7D006 /* InDraftTests */ = {
 			isa = PBXGroup;
 			children = (
+				17E8FDEEFF83339AC46FF4E3 /* DiffServiceTests.swift */,
 				F7FAFF7127423FF1C879D550 /* InDraftTests.swift */,
 				F787A71526ED8F27FE13F95C /* App */,
 				7125541D418C4A73426FFB71 /* Integration */,
@@ -311,6 +318,7 @@
 			isa = PBXGroup;
 			children = (
 				F803D0DC62861CB9DB98DA6A /* AccessibilityService.swift */,
+				2CA133CB45C182DE85F8EA64 /* DiffService.swift */,
 				5DB68A34046C652551649168 /* HistoryService.swift */,
 				9085633E8FD5CA24A85BBF55 /* HotkeyService.swift */,
 				91703125E5239838D9CAFF54 /* KeychainService.swift */,
@@ -416,6 +424,7 @@
 		D7EEC0BFF8762E01BE9D14FD /* History */ = {
 			isa = PBXGroup;
 			children = (
+				5C581832214AC1DF3E7A7E10 /* DiffTextView.swift */,
 				39D4D11B65701A487BE0160C /* HistoryRecordDetailView.swift */,
 				B6411420AFF476B0C9C33FC5 /* HistoryRecordRowView.swift */,
 				9413415DE970640999240332 /* HistoryWindowView.swift */,
@@ -569,6 +578,7 @@
 			files = (
 				A9BFC0921A3C478DCA304DC0 /* ActionTests.swift in Sources */,
 				BDE497D6BBF8A32F5AB2842A /* AppStateTests.swift in Sources */,
+				DBDBEB6BC7F3EB105EB4F466 /* DiffServiceTests.swift in Sources */,
 				E5293DD8F16E2D127FACCF29 /* HistoryRecordTests.swift in Sources */,
 				852AA4FDC82D2E915163074E /* HistoryServiceTests.swift in Sources */,
 				F13F177D8F214F10C3BAD7C9 /* HistoryWindowControllerTests.swift in Sources */,
@@ -612,6 +622,8 @@
 				422F27CB71F8DD7CC06ADCA4 /* CompleteStepView.swift in Sources */,
 				61810B480E3685B7936C9E1D /* Constants.swift in Sources */,
 				FD2CC01ADD7181C0621FCA71 /* DefaultActionsStepView.swift in Sources */,
+				33760DC424809C8FE75E70F1 /* DiffService.swift in Sources */,
+				F483C12B69F8747E2A3D3D37 /* DiffTextView.swift in Sources */,
 				1BBC56B42747373B0713F4F6 /* GeneralSettingsView.swift in Sources */,
 				DA356FB9548D19BBB5E87863 /* HistoryRecord.swift in Sources */,
 				7D25844E53AC5F427D63EE2E /* HistoryRecordDetailView.swift in Sources */,

@@ -47,11 +47,12 @@ final class SettingsWindowController {
             .environmentObject(appState)
             .environmentObject(appCoordinator)
             .modelContainer(modelContainer)
+            .modifier(AppearanceModifier())
 
         let hostingController = NSHostingController(rootView: settingsView)
 
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 760, height: 540),
+            contentRect: NSRect(x: 0, y: 0, width: 920, height: 600),
             styleMask: [.titled, .closable, .resizable, .fullSizeContentView],
             backing: .buffered,
             defer: false

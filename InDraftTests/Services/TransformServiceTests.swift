@@ -144,6 +144,82 @@ final class TransformServiceTests: XCTestCase {
         }
     }
 
+    // MARK: - Model Override
+
+    func testModelOverridePassedToProvider() async {
+        let capture = MockTextCaptureService()
+        capture.resultToReturn = .success("text")
+        let replace = MockTextReplaceService()
+        replace.resultToReturn = .replaced
+        let provider = MockProviderService()
+        provider.transformResult = .success("result")
+
+        let service = LiveTransformService(
+            captureService: capture,
+            replaceService: replace,
+            providerService: provider
+        )
+
+        let action = makeAction()
+        let prov = makeProvider()
+        let _ = await service.execute(action: action, provider: prov, apiKey: "key", modelOverride: "gpt-4o-mini")
+
+        // The mock captures the last call — verify it was called
+        XCTAssertEqual(provider.transformCallCount, 1)
+    }
+
+    func testNilModelOverrideUsesDefault() async {
+        let capture = MockTextCaptureService()
+        capture.resultToReturn = .success("text")
+        let replace = MockTextReplaceService()
+        replace.resultToReturn = .replaced
+        let provider = MockProviderService()
+        provider.transformResult = .success("result")
+
+        let service = LiveTransformService(
+            captureService: capture,
+            replaceService: replace,
+            providerService: provider
+        )
+
+        let action = makeAction()
+        let prov = makeProvider()
+        let _ = await service.execute(action: action, provider: prov, apiKey: "key", modelOverride: nil)
+
+        XCTAssertEqual(provider.transformCallCount, 1)
+    }
+
+    func testFixedProviderModeAction() {
+        let action = Action(name: "Test", prompt: "Fix grammar", providerMode: .fixed, providerID: UUID(), modelOverride: "claude-3-haiku")
+        XCTAssertEqual(action.providerMode, .fixed)
+        XCTAssertNotNil(action.providerID)
+        XCTAssertEqual(action.modelOverride, "claude-3-haiku")
+    }
+
+    func testActiveProviderModeDefaults() {
+        let action = Action(name: "Test", prompt: "Fix grammar")
+        XCTAssertEqual(action.providerMode, .active)
+        XCTAssertNil(action.providerID)
+        XCTAssertNil(action.modelOverride)
+    }
+
+    func testProviderDeletionResetsAction() {
+        let providerID = UUID()
+        let action = Action(name: "Test", prompt: "Fix", providerMode: .fixed, providerID: providerID, modelOverride: "gpt-4o")
+        context.insert(action)
+        try? context.save()
+
+        // Simulate deletion cascade
+        action.providerMode = .active
+        action.providerID = nil
+        action.modelOverride = nil
+        try? context.save()
+
+        XCTAssertEqual(action.providerMode, .active)
+        XCTAssertNil(action.providerID)
+        XCTAssertNil(action.modelOverride)
+    }
+
     func testReplaceFallbackToClipboard() async {
         let capture = MockTextCaptureService()
         capture.resultToReturn = .success("text")

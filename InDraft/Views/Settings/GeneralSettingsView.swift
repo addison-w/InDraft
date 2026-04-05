@@ -88,10 +88,15 @@ struct GeneralSettingsView: View {
                             Button {
                                 AccessibilityService.openAccessibilitySettings()
                             } label: {
-                                Text("Open Settings")
-                                    .font(Theme.Typography.label(11))
-                                    .foregroundColor(Theme.Colors.textSecondary)
-                                    .underline()
+                                HStack(spacing: Theme.Spacing.xs) {
+                                    AppIcon.settings.image()
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 11, height: 11)
+                                    Text("Open Settings")
+                                        .font(Theme.Typography.label(11))
+                                }
+                                .foregroundColor(Theme.Colors.textSecondary)
                             }
                             .buttonStyle(.plain)
                         }
@@ -108,33 +113,18 @@ struct GeneralSettingsView: View {
 
                     // Hotkeys
                     HStack {
-                        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+                        VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
                             Text("Hotkeys")
                                 .font(Theme.Typography.body(14))
                                 .foregroundColor(Theme.Colors.textPrimary)
-
-                            if !hotkeyActions.isEmpty {
-                                HStack(spacing: Theme.Spacing.sm) {
-                                    ForEach(hotkeyActions) { action in
-                                        Text(action.hotkeyDisplayString)
-                                            .font(Theme.Typography.mono(10))
-                                            .foregroundColor(Theme.Colors.textSecondary)
-                                            .padding(.horizontal, Theme.Spacing.sm)
-                                            .padding(.vertical, 3)
-                                            .background(Theme.Colors.surfaceContainerLow)
-                                            .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
-                                    }
-                                }
-                            } else {
-                                Text("No hotkeys configured")
-                                    .font(Theme.Typography.caption(11))
-                                    .foregroundColor(Theme.Colors.textTertiary)
-                            }
+                            Text("Trigger actions with keyboard shortcuts")
+                                .font(Theme.Typography.caption(11))
+                                .foregroundColor(Theme.Colors.textSecondary)
                         }
                         Spacer()
                         Text("\(hotkeyActions.count) registered")
                             .font(Theme.Typography.mono(10))
-                            .foregroundColor(Theme.Colors.textTertiary)
+                            .foregroundColor(hotkeyActions.isEmpty ? Theme.Colors.statusAmberText : Theme.Colors.textTertiary)
                     }
                     .padding(Theme.Spacing.xl)
 

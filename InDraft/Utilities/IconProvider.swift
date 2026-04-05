@@ -41,6 +41,9 @@ enum AppIcon {
     // Privacy
     case shieldKey
 
+    // Connection
+    case speedTest
+
     // History empty state
     case clockRewind
 
@@ -77,6 +80,7 @@ enum AppIcon {
         case .info:          return Hugeicons.minusSignCircle
         case .edit:          return Hugeicons.quillWrite01
         case .shieldKey:     return Hugeicons.shieldKey
+        case .speedTest:     return Hugeicons.dashboardSpeed02
         case .clockRewind:   return Hugeicons.timeHalfPass
         case .grammarCheck:  return Hugeicons.checkmarkCircle02
         case .shorten:       return Hugeicons.arrowShrink02

@@ -562,7 +562,7 @@ struct ProviderInlineEditor: View {
                                 Text("Set Active")
                                     .font(Theme.Typography.label(11))
                             }
-                            .foregroundColor(Theme.Colors.textPrimary)
+                            .foregroundColor(Theme.Colors.statusGreenText)
                         }
                         .buttonStyle(.plain)
                     }
@@ -574,6 +574,11 @@ struct ProviderInlineEditor: View {
                             if isTesting {
                                 ProgressView()
                                     .controlSize(.mini)
+                            } else {
+                                AppIcon.speedTest.image()
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 11, height: 11)
                             }
                             Text("Test Connection")
                                 .font(Theme.Typography.label(11))

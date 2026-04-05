@@ -20,6 +20,21 @@ struct CompleteStepView: View {
             keyCode: Constants.DefaultActions.shorten.keyCode,
             modifiers: Constants.DefaultActions.shorten.modifiers
         ),
+        (
+            name: Constants.DefaultActions.translateToEnglish.name,
+            keyCode: Constants.DefaultActions.translateToEnglish.keyCode,
+            modifiers: Constants.DefaultActions.translateToEnglish.modifiers
+        ),
+        (
+            name: Constants.DefaultActions.professionalTone.name,
+            keyCode: Constants.DefaultActions.professionalTone.keyCode,
+            modifiers: Constants.DefaultActions.professionalTone.modifiers
+        ),
+        (
+            name: Constants.DefaultActions.eli5.name,
+            keyCode: Constants.DefaultActions.eli5.keyCode,
+            modifiers: Constants.DefaultActions.eli5.modifiers
+        ),
     ]
 
     var body: some View {
@@ -69,7 +84,7 @@ struct CompleteStepView: View {
                         )
                     }
                     .padding(.horizontal, Theme.Spacing.lg)
-                    .padding(.vertical, Theme.Spacing.md)
+                    .padding(.vertical, Theme.Spacing.sm)
                 }
             }
             .cardStyle()

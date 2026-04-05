@@ -42,6 +42,7 @@ final class HistoryWindowController {
         let historyView = HistoryWindowView()
             .environmentObject(appState)
             .modelContainer(modelContainer)
+            .modifier(AppearanceModifier())
 
         let hostingController = NSHostingController(rootView: historyView)
 

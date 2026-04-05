@@ -43,6 +43,7 @@ final class MenuBarController: NSObject {
         let dropdownView = MenuBarDropdownView(coordinator: appCoordinator)
             .environmentObject(appState)
             .modelContainer(modelContainer)
+            .modifier(AppearanceModifier())
 
         popover.contentViewController = NSHostingController(rootView: dropdownView)
         self.popover = popover
@@ -151,7 +152,7 @@ final class MenuBarController: NSObject {
 
     /// Generates a single frame of the bouncing ball animation as an NSImage.
     /// The animation mirrors the SVG: drop (0.375s), squish (0.05s), bounce up (0.4s).
-    private static func bouncingBallFrame(index: Int) -> NSImage {
+    static func bouncingBallFrame(index: Int) -> NSImage {
         // Timeline: 8 frames drop (0.375s), 1 frame squish (0.05s), 8 frames up (0.4s)
         let t = CGFloat(index) / CGFloat(totalFrames)
 

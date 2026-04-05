@@ -203,7 +203,10 @@ struct OnboardingContainerView: View {
             let actions = [
                 Constants.DefaultActions.grammarFix,
                 Constants.DefaultActions.rewriteForClarity,
-                Constants.DefaultActions.shorten
+                Constants.DefaultActions.shorten,
+                Constants.DefaultActions.translateToEnglish,
+                Constants.DefaultActions.professionalTone,
+                Constants.DefaultActions.eli5,
             ]
             for (index, def) in actions.enumerated() {
                 let action = Action(

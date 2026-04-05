@@ -9,6 +9,7 @@ struct ActionsSettingsView: View {
     @State private var expandedActionID: UUID?
     @State private var confirmingRestore = false
     @State private var draggingActionID: UUID?
+    @State private var searchText = ""
 
     // Inline new action state
     @State private var isCreatingNew = false
@@ -17,6 +18,11 @@ struct ActionsSettingsView: View {
     @State private var newHotkeyKeyCode: UInt32?
     @State private var newHotkeyModifiers: UInt32?
     @State private var newOutputBehavior: OutputBehavior = .replace
+
+    private var filteredActions: [Action] {
+        if searchText.isEmpty { return actions }
+        return actions.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+    }
 
     var body: some View {
         ScrollView {
@@ -47,12 +53,34 @@ struct ActionsSettingsView: View {
     // MARK: - Header
 
     private var headerRow: some View {
-        HStack(alignment: .firstTextBaseline) {
+        HStack(alignment: .center, spacing: Theme.Spacing.md) {
             Text("Actions")
                 .font(Theme.Typography.pageTitle())
                 .foregroundColor(Theme.Colors.textPrimary)
 
             Spacer()
+
+            HStack(spacing: Theme.Spacing.sm) {
+                AppIcon.search.image()
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 12, height: 12)
+                    .foregroundColor(Theme.Colors.textTertiary)
+
+                TextField("Search actions...", text: $searchText)
+                    .textFieldStyle(.plain)
+                    .font(Theme.Typography.body(12))
+                    .foregroundColor(Theme.Colors.textPrimary)
+                    .frame(width: 120)
+            }
+            .padding(.horizontal, Theme.Spacing.sm + 2)
+            .padding(.vertical, Theme.Spacing.xs + 2)
+            .background(Theme.Colors.surfaceContainerLow)
+            .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.sm))
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.Radius.sm)
+                    .stroke(Theme.Colors.cardBorder, lineWidth: 1)
+            )
         }
     }
 
@@ -60,7 +88,7 @@ struct ActionsSettingsView: View {
 
     private var actionsList: some View {
         VStack(spacing: 0) {
-            ForEach(Array(actions.enumerated()), id: \.element.id) { index, action in
+            ForEach(Array(filteredActions.enumerated()), id: \.element.id) { index, action in
                 if index > 0 {
                     Rectangle()
                         .fill(Theme.Colors.divider)
@@ -104,7 +132,15 @@ struct ActionsSettingsView: View {
                     .onDrag {
                         NSCursor.closedHand.set()
                         draggingActionID = action.id
-                        return NSItemProvider(object: action.id.uuidString as NSString)
+                        let provider = NSItemProvider()
+                        provider.registerDataRepresentation(
+                            forTypeIdentifier: "public.plain-text",
+                            visibility: .ownProcess
+                        ) { completion in
+                            completion(action.id.uuidString.data(using: .utf8), nil)
+                            return nil
+                        }
+                        return provider
                     }
 
                 // Clickable row content
@@ -198,7 +234,7 @@ struct ActionsSettingsView: View {
     // MARK: - New Action Form
 
     private var newActionForm: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.lg) {
+        VStack(alignment: .leading, spacing: Theme.Spacing.xl) {
             HStack {
                 Text("New Action")
                     .font(Theme.Typography.body(14))
@@ -217,31 +253,42 @@ struct ActionsSettingsView: View {
                 .buttonStyle(.plain)
             }
 
+            // NAME — full width
             inlineFieldSection("NAME") {
                 TextField("Action name", text: $newName)
                     .inputFieldStyle()
             }
 
+            // PROMPT — full width
             inlineFieldSection("PROMPT") {
                 TextEditor(text: $newPrompt)
                     .font(Theme.Typography.body(13))
                     .foregroundColor(Theme.Colors.textPrimary)
                     .scrollContentBackground(.hidden)
-                    .frame(minHeight: 60, maxHeight: 100)
-                    .padding(Theme.Spacing.sm)
+                    .frame(minHeight: 88, maxHeight: 160)
+                    .padding(Theme.Spacing.md)
                     .background(Theme.Colors.surfaceContainerLow)
                     .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.md))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: Theme.Radius.md)
+                            .stroke(Theme.Colors.cardBorder, lineWidth: 1)
+                    )
             }
 
-            inlineFieldSection("HOTKEY") {
-                HotkeyRecorderView(keyCode: $newHotkeyKeyCode, modifiers: $newHotkeyModifiers)
-            }
+            // HOTKEY + OUTPUT — side by side
+            HStack(alignment: .top, spacing: Theme.Spacing.xxl) {
+                inlineFieldSection("HOTKEY") {
+                    HotkeyRecorderView(keyCode: $newHotkeyKeyCode, modifiers: $newHotkeyModifiers)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-            inlineFieldSection("OUTPUT") {
-                InkSegmentPicker(
-                    options: OutputBehavior.allCases.map { ($0.rawValue.capitalized, $0) },
-                    selection: $newOutputBehavior
-                )
+                inlineFieldSection("OUTPUT") {
+                    InkSegmentPicker(
+                        options: OutputBehavior.allCases.map { ($0.rawValue.capitalized, $0) },
+                        selection: $newOutputBehavior
+                    )
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
 
             HStack {
@@ -249,10 +296,15 @@ struct ActionsSettingsView: View {
                 Button {
                     createAction()
                 } label: {
-                    Text("Create Action")
-                        .font(Theme.Typography.label(12))
-                        .foregroundColor(Theme.Colors.textPrimary)
-                        .underline()
+                    HStack(spacing: Theme.Spacing.xs) {
+                        AppIcon.add.image()
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 11, height: 11)
+                        Text("Create Action")
+                            .font(Theme.Typography.label(11))
+                    }
+                    .foregroundColor(Theme.Colors.textPrimary)
                 }
                 .buttonStyle(.plain)
                 .disabled(newName.trimmingCharacters(in: .whitespaces).isEmpty)
@@ -391,6 +443,9 @@ struct ActionsSettingsView: View {
             Constants.DefaultActions.grammarFix,
             Constants.DefaultActions.rewriteForClarity,
             Constants.DefaultActions.shorten,
+            Constants.DefaultActions.translateToEnglish,
+            Constants.DefaultActions.professionalTone,
+            Constants.DefaultActions.eli5,
         ]
 
         for (index, def) in defaults.enumerated() {
@@ -413,6 +468,7 @@ struct ActionsSettingsView: View {
 struct ActionInlineEditor: View {
     @Bindable var action: Action
     @EnvironmentObject private var appCoordinator: AppCoordinator
+    @Query(sort: \Provider.displayName) private var providers: [Provider]
 
     let onDelete: () -> Void
     let onDuplicate: () -> Void
@@ -422,104 +478,228 @@ struct ActionInlineEditor: View {
     @State private var confirmingDelete = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.lg) {
+        VStack(alignment: .leading, spacing: 0) {
             Rectangle()
                 .fill(Theme.Colors.divider)
                 .frame(height: 1)
+                .padding(.horizontal, Theme.Spacing.xl)
 
-            // Name
-            fieldSection("NAME") {
-                TextField("Action name", text: $editingName)
-                    .inputFieldStyle()
-                    .onChange(of: editingName) { _, newValue in
-                        action.name = newValue
-                        action.updatedAt = Date()
-                    }
-            }
-
-            // Prompt
-            fieldSection("PROMPT") {
-                TextEditor(text: $editingPrompt)
-                    .font(Theme.Typography.body(13))
-                    .foregroundColor(Theme.Colors.textPrimary)
-                    .scrollContentBackground(.hidden)
-                    .frame(minHeight: 60, maxHeight: 100)
-                    .padding(Theme.Spacing.sm)
-                    .background(Theme.Colors.surfaceContainerLow)
-                    .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.md))
-                    .onChange(of: editingPrompt) { _, newValue in
-                        action.prompt = newValue
-                        action.updatedAt = Date()
-                    }
-            }
-
-            // Hotkey
-            fieldSection("HOTKEY") {
-                HotkeyRecorderView(
-                    keyCode: Binding(
-                        get: { action.hotkeyKeyCode },
-                        set: {
-                            action.hotkeyKeyCode = $0
+            VStack(alignment: .leading, spacing: Theme.Spacing.xl) {
+                // NAME — full width
+                fieldSection("NAME") {
+                    TextField("Action name", text: $editingName)
+                        .inputFieldStyle()
+                        .onChange(of: editingName) { _, newValue in
+                            action.name = newValue
                             action.updatedAt = Date()
                         }
-                    ),
-                    modifiers: Binding(
-                        get: { action.hotkeyModifiers },
-                        set: {
-                            action.hotkeyModifiers = $0
-                            action.updatedAt = Date()
-                            appCoordinator.refreshHotkeys()
-                        }
-                    )
-                )
-            }
-
-            // Output behavior
-            fieldSection("OUTPUT") {
-                InkSegmentPicker(
-                    options: OutputBehavior.allCases.map { ($0.rawValue.capitalized, $0) },
-                    selection: Binding(
-                        get: { action.outputBehavior },
-                        set: { action.outputBehavior = $0; action.updatedAt = Date() }
-                    )
-                )
-            }
-
-            // Actions row
-            HStack {
-                Button {
-                    onDuplicate()
-                } label: {
-                    Text("Duplicate")
-                        .font(Theme.Typography.label(11))
-                        .foregroundColor(Theme.Colors.textSecondary)
-                        .underline()
                 }
-                .buttonStyle(.plain)
 
-                Spacer()
+                // PROMPT — full width, generous height
+                fieldSection("PROMPT") {
+                    TextEditor(text: $editingPrompt)
+                        .font(Theme.Typography.body(13))
+                        .foregroundColor(Theme.Colors.textPrimary)
+                        .scrollContentBackground(.hidden)
+                        .frame(minHeight: 88, maxHeight: 160)
+                        .padding(Theme.Spacing.md)
+                        .background(Theme.Colors.surfaceContainerLow)
+                        .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.md))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: Theme.Radius.md)
+                                .stroke(Theme.Colors.cardBorder, lineWidth: 1)
+                        )
+                        .onChange(of: editingPrompt) { _, newValue in
+                            action.prompt = newValue
+                            action.updatedAt = Date()
+                        }
+                }
 
-                Button {
-                    if confirmingDelete {
-                        confirmingDelete = false
-                        onDelete()
+                // HOTKEY + OUTPUT — side by side
+                HStack(alignment: .top, spacing: Theme.Spacing.xxl) {
+                    fieldSection("HOTKEY") {
+                        HotkeyRecorderView(
+                            keyCode: Binding(
+                                get: { action.hotkeyKeyCode },
+                                set: {
+                                    action.hotkeyKeyCode = $0
+                                    action.updatedAt = Date()
+                                }
+                            ),
+                            modifiers: Binding(
+                                get: { action.hotkeyModifiers },
+                                set: {
+                                    action.hotkeyModifiers = $0
+                                    action.updatedAt = Date()
+                                    appCoordinator.refreshHotkeys()
+                                }
+                            )
+                        )
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                    fieldSection("OUTPUT") {
+                        InkSegmentPicker(
+                            options: OutputBehavior.allCases.map { ($0.rawValue.capitalized, $0) },
+                            selection: Binding(
+                                get: { action.outputBehavior },
+                                set: { action.outputBehavior = $0; action.updatedAt = Date() }
+                            )
+                        )
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
+                // PROVIDER
+                fieldSection("PROVIDER") {
+                    InkSegmentPicker(
+                        options: ProviderMode.allCases.map { ($0 == .active ? "Active" : "Fixed", $0) },
+                        selection: Binding(
+                            get: { action.providerMode },
+                            set: {
+                                action.providerMode = $0
+                                if $0 == .active {
+                                    action.providerID = nil
+                                    action.modelOverride = nil
+                                }
+                                action.updatedAt = Date()
+                            }
+                        )
+                    )
+                }
+
+                // CONFIGURATION — only when Fixed
+                if action.providerMode == .fixed {
+                    let enabledProviders = providers.filter { $0.enabled }
+
+                    if enabledProviders.isEmpty {
+                        fieldSection("CONFIGURATION") {
+                            Text("No providers available")
+                                .font(Theme.Typography.caption(11))
+                                .foregroundColor(Theme.Colors.error)
+                        }
                     } else {
-                        withAnimation(Theme.Motion.quick) { confirmingDelete = true }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                            withAnimation(Theme.Motion.quick) { confirmingDelete = false }
+                        HStack(alignment: .top, spacing: Theme.Spacing.xxl) {
+                            fieldSection("PROVIDER") {
+                                Menu {
+                                    Button {
+                                        action.providerID = nil
+                                        action.updatedAt = Date()
+                                    } label: {
+                                        if action.providerID == nil {
+                                            Label("None", systemImage: "checkmark")
+                                        } else {
+                                            Text("None")
+                                        }
+                                    }
+
+                                    Divider()
+
+                                    ForEach(enabledProviders, id: \.id) { provider in
+                                        Button {
+                                            action.providerID = provider.id
+                                            action.updatedAt = Date()
+                                        } label: {
+                                            if action.providerID == provider.id {
+                                                Label(provider.displayName, systemImage: "checkmark")
+                                            } else {
+                                                Text(provider.displayName)
+                                            }
+                                        }
+                                    }
+                                } label: {
+                                    HStack(spacing: Theme.Spacing.sm) {
+                                        Text(providerLabel(for: action, providers: enabledProviders))
+                                            .font(Theme.Typography.body(13))
+                                            .foregroundColor(action.providerID == nil
+                                                ? Theme.Colors.textTertiary
+                                                : Theme.Colors.textPrimary)
+
+                                        Spacer()
+
+                                        AppIcon.chevronRight.image()
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 9, height: 9)
+                                            .foregroundColor(Theme.Colors.textTertiary)
+                                            .rotationEffect(.degrees(90))
+                                    }
+                                    .padding(.horizontal, Theme.Spacing.md)
+                                    .padding(.vertical, Theme.Spacing.sm + 2)
+                                    .background(Theme.Colors.surfaceContainerLow)
+                                    .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.md))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: Theme.Radius.md)
+                                            .stroke(Theme.Colors.cardBorder, lineWidth: 1)
+                                    )
+                                }
+                                .menuStyle(.borderlessButton)
+                                .menuIndicator(.hidden)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+
+                            fieldSection("MODEL OVERRIDE") {
+                                TextField("Model override", text: Binding(
+                                    get: { action.modelOverride ?? "" },
+                                    set: {
+                                        action.modelOverride = $0.isEmpty ? nil : $0
+                                        action.updatedAt = Date()
+                                    }
+                                ))
+                                .inputFieldStyle()
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }
-                } label: {
-                    Text(confirmingDelete ? "Confirm delete?" : "Delete Action")
-                        .font(Theme.Typography.label(11))
-                        .foregroundColor(Theme.Colors.error)
-                        .underline()
                 }
-                .buttonStyle(.plain)
+
+                // Actions row
+                HStack {
+                    Button {
+                        onDuplicate()
+                    } label: {
+                        HStack(spacing: Theme.Spacing.xs) {
+                            AppIcon.copy.image()
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 11, height: 11)
+                            Text("Duplicate")
+                                .font(Theme.Typography.label(11))
+                        }
+                        .foregroundColor(Theme.Colors.textSecondary)
+                    }
+                    .buttonStyle(.plain)
+
+                    Spacer()
+
+                    Button {
+                        if confirmingDelete {
+                            confirmingDelete = false
+                            onDelete()
+                        } else {
+                            withAnimation(Theme.Motion.quick) { confirmingDelete = true }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                withAnimation(Theme.Motion.quick) { confirmingDelete = false }
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: Theme.Spacing.xs) {
+                            AppIcon.close.image()
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 11, height: 11)
+                            Text(confirmingDelete ? "Confirm delete?" : "Delete Action")
+                                .font(Theme.Typography.label(11))
+                        }
+                        .foregroundColor(Theme.Colors.error)
+                    }
+                    .buttonStyle(.plain)
+                }
             }
+            .padding(.horizontal, Theme.Spacing.xl)
+            .padding(.top, Theme.Spacing.xl)
+            .padding(.bottom, Theme.Spacing.lg)
         }
-        .padding(.horizontal, Theme.Spacing.xl)
-        .padding(.bottom, Theme.Spacing.lg)
         .onAppear {
             editingName = action.name
             editingPrompt = action.prompt
@@ -534,6 +714,14 @@ struct ActionInlineEditor: View {
                 .tracking(1)
             content()
         }
+    }
+
+    private func providerLabel(for action: Action, providers: [Provider]) -> String {
+        guard let id = action.providerID,
+              let provider = providers.first(where: { $0.id == id }) else {
+            return "Select provider\u{2026}"
+        }
+        return provider.displayName
     }
 }
 

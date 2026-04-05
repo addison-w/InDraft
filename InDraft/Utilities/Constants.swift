@@ -26,6 +26,7 @@ enum Constants {
         static let onboardingStep = "onboardingStep"
         static let historyRetentionDays = "historyRetentionDays"
         static let historyRecordingEnabled = "historyRecordingEnabled"
+        static let appearanceMode = "appearanceMode"
     }
 
     enum DefaultActions {
@@ -51,6 +52,27 @@ enum Constants {
             name: "Shorten",
             prompt: "Shorten the text while preserving all key information and the original tone. Remove filler, redundancy, and unnecessary qualifiers.",
             keyCode: UInt32(kVK_ANSI_3),
+            modifiers: controlOptionModifiers
+        )
+
+        static let translateToEnglish = (
+            name: "Translate to English",
+            prompt: "Translate the text to English. Preserve the original meaning, tone, and formatting. If the text is already in English, return it unchanged.",
+            keyCode: UInt32(kVK_ANSI_4),
+            modifiers: controlOptionModifiers
+        )
+
+        static let professionalTone = (
+            name: "Professional Tone",
+            prompt: "Rewrite the text in a professional, polished tone suitable for business communication. Maintain the original meaning and key points while elevating the language.",
+            keyCode: UInt32(kVK_ANSI_5),
+            modifiers: controlOptionModifiers
+        )
+
+        static let eli5 = (
+            name: "ELI5",
+            prompt: "Explain this like I'm five. Use simple words, short sentences, and relatable analogies. Make it easy to understand for anyone, regardless of background.",
+            keyCode: UInt32(kVK_ANSI_6),
             modifiers: controlOptionModifiers
         )
     }

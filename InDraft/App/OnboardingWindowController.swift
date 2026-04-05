@@ -33,6 +33,7 @@ final class OnboardingWindowController {
 
         let onboardingView = OnboardingContainerView()
             .modelContainer(modelContainer)
+            .modifier(AppearanceModifier())
 
         let hostingController = NSHostingController(rootView: onboardingView)
 
@@ -48,7 +49,7 @@ final class OnboardingWindowController {
         window.contentViewController = hostingController
         window.isReleasedWhenClosed = false
         window.hidesOnDeactivate = false
-        window.backgroundColor = NSColor(Color(hex: "FAF9F6"))
+        window.backgroundColor = NSColor(hex: "FAF9F6")
         window.level = .floating
 
         self.window = window

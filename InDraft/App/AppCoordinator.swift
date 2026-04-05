@@ -113,11 +113,28 @@ final class AppCoordinator: ObservableObject {
 
         guard action.enabled else { return }
 
-        // Find the active provider
-        let activePredicate = #Predicate<Provider> { $0.isActive == true }
-        let provider = try? context.fetch(FetchDescriptor<Provider>(predicate: activePredicate)).first
+        // Resolve provider based on action's provider mode
+        var resolvedProvider: Provider?
 
-        guard let provider = provider else {
+        if action.providerMode == .fixed, let fixedID = action.providerID {
+            let fixedPredicate = #Predicate<Provider> { $0.id == fixedID }
+            resolvedProvider = try? context.fetch(FetchDescriptor<Provider>(predicate: fixedPredicate)).first
+
+            if resolvedProvider == nil {
+                // Fixed provider was deleted — reset action to active mode
+                action.providerMode = .active
+                action.providerID = nil
+                action.modelOverride = nil
+                try? context.save()
+            }
+        }
+
+        if resolvedProvider == nil {
+            let activePredicate = #Predicate<Provider> { $0.isActive == true }
+            resolvedProvider = try? context.fetch(FetchDescriptor<Provider>(predicate: activePredicate)).first
+        }
+
+        guard let provider = resolvedProvider else {
             toastManager.show(.error("No provider configured — check Settings"))
             return
         }
@@ -131,7 +148,8 @@ final class AppCoordinator: ObservableObject {
         // Execute transformation
         Task {
             guard let transformService = self.transformService else { return }
-            let (result, error) = await transformService.execute(action: action, provider: provider, apiKey: apiKey)
+            let modelToUse = (action.providerMode == .fixed && action.modelOverride?.isEmpty == false) ? action.modelOverride : nil
+            let (result, error) = await transformService.execute(action: action, provider: provider, apiKey: apiKey, modelOverride: modelToUse)
 
             if let error = error {
                 switch error {

@@ -5,6 +5,7 @@ struct HistoryRecordRowView: View {
     let record: HistoryRecord
     let isExpanded: Bool
     let onToggle: () -> Void
+    var onDelete: (() -> Void)?
 
     private var formattedTimestamp: String {
         let calendar = Calendar.current
@@ -32,7 +33,13 @@ struct HistoryRecordRowView: View {
         }
     }
 
+    private var isDeleted: Bool {
+        record.modelContext == nil
+    }
+
+    @ViewBuilder
     var body: some View {
+        if !isDeleted {
         VStack(alignment: .leading, spacing: 0) {
             Button(action: onToggle) {
                 HStack(spacing: Theme.Spacing.sm) {
@@ -43,7 +50,7 @@ struct HistoryRecordRowView: View {
 
                     Text(record.sourceApp.uppercased())
                         .font(Theme.Typography.allCaps(9))
-                        .foregroundColor(.white)
+                        .foregroundColor(Theme.Colors.background)
                         .padding(.horizontal, Theme.Spacing.sm)
                         .padding(.vertical, 2)
                         .background(Theme.Colors.inverseSurface)
@@ -81,12 +88,13 @@ struct HistoryRecordRowView: View {
             .buttonStyle(.plain)
 
             if isExpanded {
-                HistoryRecordDetailView(record: record)
+                HistoryRecordDetailView(record: record, onDelete: onDelete)
                     .padding(.horizontal, Theme.Spacing.lg)
                     .padding(.bottom, Theme.Spacing.md)
                     .transition(.opacity.combined(with: .move(edge: .top)))
             }
 
         }
+        } // if !isDeleted
     }
 }

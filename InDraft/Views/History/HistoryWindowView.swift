@@ -63,6 +63,18 @@ struct HistoryWindowView: View {
                                     withAnimation(Theme.Motion.standard) {
                                         expandedRecordID = expandedRecordID == record.id ? nil : record.id
                                     }
+                                },
+                                onDelete: {
+                                    let idToDelete = record.id
+                                    // Collapse the row first to remove detail view from hierarchy
+                                    withAnimation(Theme.Motion.standard) {
+                                        expandedRecordID = nil
+                                    }
+                                    // Delete after the view hierarchy update
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                                        let service = LiveHistoryService(modelContext: modelContext)
+                                        service.deleteRecord(idToDelete)
+                                    }
                                 }
                             )
                         }

@@ -113,10 +113,15 @@ struct HistorySettingsView: View {
                                     }
                                 }
                             } label: {
-                                Text(confirmingClear ? "Confirm clear?" : "Clear All")
-                                    .font(Theme.Typography.label(11))
-                                    .foregroundColor(Theme.Colors.error)
-                                    .underline()
+                                HStack(spacing: Theme.Spacing.xs) {
+                                    AppIcon.close.image()
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 11, height: 11)
+                                    Text(confirmingClear ? "Confirm clear?" : "Clear All")
+                                        .font(Theme.Typography.label(11))
+                                }
+                                .foregroundColor(Theme.Colors.error)
                             }
                             .buttonStyle(.plain)
                         }

@@ -22,14 +22,17 @@ final class SeedDataTests: XCTestCase {
         super.tearDown()
     }
 
-    func testCreateDefaultActionsSeeds3Actions() throws {
+    func testCreateDefaultActionsSeeds6Actions() throws {
         SeedData.createDefaultActions(in: context)
 
         let actions = try context.fetch(FetchDescriptor<Action>(sortBy: [SortDescriptor(\.sortOrder)]))
-        XCTAssertEqual(actions.count, 3)
+        XCTAssertEqual(actions.count, 6)
         XCTAssertEqual(actions[0].name, "Grammar Fix")
         XCTAssertEqual(actions[1].name, "Rewrite for Clarity")
         XCTAssertEqual(actions[2].name, "Shorten")
+        XCTAssertEqual(actions[3].name, "Translate to English")
+        XCTAssertEqual(actions[4].name, "Professional Tone")
+        XCTAssertEqual(actions[5].name, "ELI5")
     }
 
     func testCreateDefaultActionsIdempotent() throws {
@@ -37,7 +40,7 @@ final class SeedDataTests: XCTestCase {
         SeedData.createDefaultActions(in: context)
 
         let actions = try context.fetch(FetchDescriptor<Action>())
-        XCTAssertEqual(actions.count, 3, "Should not duplicate actions on second call")
+        XCTAssertEqual(actions.count, 6, "Should not duplicate actions on second call")
     }
 
     func testDefaultActionsHaveCorrectOutputBehavior() throws {
@@ -75,6 +78,18 @@ final class SeedDataTests: XCTestCase {
         // Shorten → control+option+3 (kVK_ANSI_3 = 20)
         XCTAssertEqual(actions[2].hotkeyKeyCode, UInt32(kVK_ANSI_3))
         XCTAssertEqual(actions[2].hotkeyModifiers, expectedModifiers)
+
+        // Translate to English → control+option+4 (kVK_ANSI_4 = 21)
+        XCTAssertEqual(actions[3].hotkeyKeyCode, UInt32(kVK_ANSI_4))
+        XCTAssertEqual(actions[3].hotkeyModifiers, expectedModifiers)
+
+        // Professional Tone → control+option+5 (kVK_ANSI_5 = 23)
+        XCTAssertEqual(actions[4].hotkeyKeyCode, UInt32(kVK_ANSI_5))
+        XCTAssertEqual(actions[4].hotkeyModifiers, expectedModifiers)
+
+        // ELI5 → control+option+6 (kVK_ANSI_6 = 22)
+        XCTAssertEqual(actions[5].hotkeyKeyCode, UInt32(kVK_ANSI_6))
+        XCTAssertEqual(actions[5].hotkeyModifiers, expectedModifiers)
     }
 
     func testRestoreDefaultsResetsBuiltInActions() throws {

@@ -40,7 +40,7 @@ struct SettingsView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .ignoresSafeArea()
-        .frame(width: 760, height: 540)
+        .frame(width: 780, height: 600)
         .background(Theme.Colors.background)
     }
 
@@ -77,6 +77,14 @@ struct SettingsView: View {
             }
 
             Spacer()
+
+            if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+                Text("v\(version)")
+                    .font(Theme.Typography.mono(9))
+                    .foregroundColor(Theme.Colors.textTertiary)
+                    .padding(.horizontal, Theme.Spacing.xl)
+                    .padding(.bottom, Theme.Spacing.md)
+            }
         }
         .frame(width: 200)
         .background(Theme.Colors.background)

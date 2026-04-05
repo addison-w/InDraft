@@ -17,6 +17,21 @@ struct DefaultActionsStepView: View {
             keyCode: Constants.DefaultActions.shorten.keyCode,
             modifiers: Constants.DefaultActions.shorten.modifiers
         ),
+        (
+            name: Constants.DefaultActions.translateToEnglish.name,
+            keyCode: Constants.DefaultActions.translateToEnglish.keyCode,
+            modifiers: Constants.DefaultActions.translateToEnglish.modifiers
+        ),
+        (
+            name: Constants.DefaultActions.professionalTone.name,
+            keyCode: Constants.DefaultActions.professionalTone.keyCode,
+            modifiers: Constants.DefaultActions.professionalTone.modifiers
+        ),
+        (
+            name: Constants.DefaultActions.eli5.name,
+            keyCode: Constants.DefaultActions.eli5.keyCode,
+            modifiers: Constants.DefaultActions.eli5.modifiers
+        ),
     ]
 
     var body: some View {
@@ -30,7 +45,7 @@ struct DefaultActionsStepView: View {
                     .font(Theme.Typography.pageTitle(22))
                     .foregroundColor(Theme.Colors.textPrimary)
 
-                Text("InDraft comes with three built-in actions.\nYou can customize these later in Settings.")
+                Text("InDraft comes with six built-in actions.\nYou can customize these later in Settings.")
                     .font(Theme.Typography.body())
                     .foregroundColor(Theme.Colors.textSecondary)
                     .multilineTextAlignment(.center)
@@ -58,7 +73,7 @@ struct DefaultActionsStepView: View {
                         )
                     }
                     .padding(.horizontal, Theme.Spacing.lg)
-                    .padding(.vertical, Theme.Spacing.md)
+                    .padding(.vertical, Theme.Spacing.sm)
                 }
             }
             .cardStyle()

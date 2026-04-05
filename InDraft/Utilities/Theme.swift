@@ -1,79 +1,136 @@
 import SwiftUI
+import AppKit
+
+// MARK: - NSColor Hex Extension
+
+extension NSColor {
+    convenience init(hex: String) {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+        let r, g, b: UInt64
+        switch hex.count {
+        case 6:
+            (r, g, b) = ((int >> 16) & 0xFF, (int >> 8) & 0xFF, int & 0xFF)
+        default:
+            (r, g, b) = (0, 0, 0)
+        }
+        self.init(
+            srgbRed: CGFloat(r) / 255,
+            green: CGFloat(g) / 255,
+            blue: CGFloat(b) / 255,
+            alpha: 1
+        )
+    }
+}
+
+// MARK: - Appearance Mode
+
+enum AppearanceMode: String, CaseIterable {
+    case system
+    case light
+    case dark
+
+    var colorScheme: ColorScheme? {
+        switch self {
+        case .system: return nil
+        case .light: return .light
+        case .dark: return .dark
+        }
+    }
+
+    var label: String {
+        switch self {
+        case .system: return "System"
+        case .light: return "Light"
+        case .dark: return "Dark"
+        }
+    }
+}
 
 enum Theme {
+    // MARK: - Adaptive Color Helper
+
+    private static func adaptive(light: String, dark: String) -> Color {
+        Color(nsColor: NSColor(name: nil, dynamicProvider: { appearance in
+            let isDark = appearance.bestMatch(from: [.darkAqua, .vibrantDark]) != nil
+            return isDark ? NSColor(hex: dark) : NSColor(hex: light)
+        }))
+    }
+
+    private static func adaptive(light: String, lightAlpha: CGFloat = 1, dark: String, darkAlpha: CGFloat = 1) -> Color {
+        Color(nsColor: NSColor(name: nil, dynamicProvider: { appearance in
+            let isDark = appearance.bestMatch(from: [.darkAqua, .vibrantDark]) != nil
+            let color = isDark ? NSColor(hex: dark) : NSColor(hex: light)
+            let alpha = isDark ? darkAlpha : lightAlpha
+            return color.withAlphaComponent(alpha)
+        }))
+    }
+
     // MARK: - Colors (from DESIGN.md — "High-End Utilitarian Editorial")
 
     enum Colors {
-        /// Primary background — warm bone canvas
-        static let background = Color(hex: "FAF9F6")
-        /// Card/container background — lowest surface
-        static let cardBackground = Color(hex: "FFFFFF")
-        /// Card border — ghost border (outline-variant at 15% opacity)
-        static let cardBorder = Color(hex: "AFB3AE").opacity(0.15)
-        /// Primary text — charcoal
-        static let textPrimary = Color(hex: "2F3430")
-        /// Secondary text — on-surface-variant
-        static let textSecondary = Color(hex: "5C605C")
-        /// Tertiary text — outline
-        static let textTertiary = Color(hex: "777C77")
-        /// Accent — pale blue for active/selection states
-        static let accent = Color(hex: "51616B")
-        /// Accent container — pale blue background
-        static let accentContainer = Color(hex: "D3E5F0")
-        /// Error — warm red
-        static let error = Color(hex: "9F403D")
+        /// Primary background — warm bone / deep warm charcoal
+        static let background = adaptive(light: "FAF9F6", dark: "111311")
+        /// Card/container background — clear step above canvas
+        static let cardBackground = adaptive(light: "FFFFFF", dark: "1A1C1A")
+        /// Card border — visible editorial border
+        static let cardBorder = adaptive(light: "AFB3AE", lightAlpha: 0.15, dark: "4A4D4A", darkAlpha: 0.4)
+        /// Primary text
+        static let textPrimary = adaptive(light: "2F3430", dark: "E8E8E4")
+        /// Secondary text
+        static let textSecondary = adaptive(light: "5C605C", dark: "9EA29E")
+        /// Tertiary text — labels, metadata
+        static let textTertiary = adaptive(light: "777C77", dark: "6E726E")
+        /// Accent — pale blue
+        static let accent = adaptive(light: "51616B", dark: "8AACB8")
+        /// Accent container
+        static let accentContainer = adaptive(light: "D3E5F0", dark: "1A2A32")
+        /// Error
+        static let error = adaptive(light: "9F403D", dark: "D4645F")
         /// Error container
-        static let errorContainer = Color(hex: "FE8983")
-        /// Badge background — tertiary-container
-        static let badgeBackground = Color(hex: "F4F3F3")
-        /// Divider — ghost border
-        static let divider = Color(hex: "AFB3AE").opacity(0.15)
-        /// Surface container — for layered backgrounds
-        static let surfaceContainer = Color(hex: "EDEEEA")
-        /// Surface container high — slightly darker
-        static let surfaceContainerHigh = Color(hex: "E6E9E4")
-        /// Surface container low — lighter than container
-        static let surfaceContainerLow = Color(hex: "F4F4F0")
+        static let errorContainer = adaptive(light: "FE8983", dark: "2E1A1A")
+        /// Badge background
+        static let badgeBackground = adaptive(light: "F4F3F3", dark: "252725")
+        /// Divider — visible but refined
+        static let divider = adaptive(light: "AFB3AE", lightAlpha: 0.15, dark: "4A4D4A", darkAlpha: 0.25)
+        /// Surface container — sidebar background
+        static let surfaceContainer = adaptive(light: "EDEEEA", dark: "161816")
+        /// Surface container high — selected/hover states
+        static let surfaceContainerHigh = adaptive(light: "E6E9E4", dark: "2A2C2A")
+        /// Surface container low — input fields, recessed areas
+        static let surfaceContainerLow = adaptive(light: "F4F4F0", dark: "222422")
         /// Primary button background
-        static let primary = Color(hex: "5A5F62")
+        static let primary = adaptive(light: "5A5F62", dark: "6A7074")
         /// On primary — text on primary buttons
-        static let onPrimary = Color(hex: "F4F8FC")
-        /// Inverse surface — for dark elements
-        static let inverseSurface = Color(hex: "0D0F0D")
+        static let onPrimary = adaptive(light: "F4F8FC", dark: "F4F8FC")
+        /// Inverse surface
+        static let inverseSurface = adaptive(light: "0D0F0D", dark: "E8E8E4")
 
         // MARK: Semantic Status Colors
-        /// Status green — for active, success, connected, granted
-        static let statusGreen = Color(hex: "3A7D44")
-        /// Status green background
-        static let statusGreenBg = Color(hex: "EDF3EC")
-        /// Status green text — darker for readability
-        static let statusGreenText = Color(hex: "346538")
-        /// Status amber — for warnings, untested
-        static let statusAmber = Color(hex: "C4930A")
-        /// Status amber background
-        static let statusAmberBg = Color(hex: "FBF3DB")
-        /// Status amber text
-        static let statusAmberText = Color(hex: "956400")
-        /// Status red — for errors, failures
-        static let statusRed = Color(hex: "9F2F2D")
-        /// Status red background
-        static let statusRedBg = Color(hex: "FDEBEC")
-        /// Status blue — for info, connected
-        static let statusBlue = Color(hex: "4A7FB5")
-        /// Status blue background
-        static let statusBlueBg = Color(hex: "4A7FB5").opacity(0.1)
+        static let statusGreen = adaptive(light: "3A7D44", dark: "5AAF66")
+        static let statusGreenBg = adaptive(light: "EDF3EC", dark: "1A2E1A")
+        static let statusGreenText = adaptive(light: "346538", dark: "5AAF66")
+        static let statusAmber = adaptive(light: "C4930A", dark: "D4A82A")
+        static let statusAmberBg = adaptive(light: "FBF3DB", dark: "2E2A1A")
+        static let statusAmberText = adaptive(light: "956400", dark: "D4A82A")
+        static let statusRed = adaptive(light: "9F2F2D", dark: "D4645F")
+        static let statusRedBg = adaptive(light: "FDEBEC", dark: "2E1A1A")
+        static let statusBlue = adaptive(light: "4A7FB5", dark: "8AACB8")
+        static let statusBlueBg = adaptive(light: "4A7FB5", lightAlpha: 0.1, dark: "8AACB8", darkAlpha: 0.12)
 
-        // MARK: Window Controls — desaturated pastels matching warm editorial palette
-        /// Default (inactive) dot — warm gray
-        static let windowControlDefault = Color(hex: "C8C8C5")
-        /// Close button — muted warm red
-        static let windowControlClose = Color(hex: "E8706B")
-        /// Minimize button — muted warm amber
-        static let windowControlMinimize = Color(hex: "E5BF4B")
-        /// Zoom button — muted sage green
-        static let windowControlZoom = Color(hex: "6BBF6A")
-        /// Icon glyph on hover — dark charcoal for contrast
-        static let windowControlIcon = Color(hex: "3A3A38").opacity(0.85)
+        // MARK: Window Controls
+        static let windowControlDefault = adaptive(light: "C8C8C5", dark: "3A3D3A")
+        static let windowControlClose = adaptive(light: "E8706B", dark: "E8706B")
+        static let windowControlMinimize = adaptive(light: "E5BF4B", dark: "E5BF4B")
+        static let windowControlZoom = adaptive(light: "6BBF6A", dark: "6BBF6A")
+        static let windowControlIcon = adaptive(light: "3A3A38", lightAlpha: 0.85, dark: "1A1A18", darkAlpha: 0.85)
+
+        // MARK: Diff Highlighting
+        static let diffInsertedBg = adaptive(light: "D4EDDA", dark: "1A2E1A")
+        static let diffInsertedText = adaptive(light: "1B5E20", dark: "5AAF66")
+        static let diffRemovedBg = adaptive(light: "F8D7DA", dark: "2E1A1A")
+        static let diffRemovedText = adaptive(light: "9F2F2D", dark: "D4645F")
     }
 
     // MARK: - Typography (SF Rounded — Japanese modern minimalist)
@@ -178,7 +235,7 @@ enum Theme {
     }
 }
 
-// MARK: - Color Hex Extension
+// MARK: - Color Hex Extensions
 
 extension Color {
     init(hex: String) {
@@ -204,6 +261,50 @@ extension Color {
     }
 }
 
+// MARK: - Appearance Modifier
+
+struct AppearanceModifier: ViewModifier {
+    @AppStorage(Constants.UserDefaultsKeys.appearanceMode) private var appearanceMode: String = AppearanceMode.system.rawValue
+    @State private var resolvedScheme: ColorScheme = .light
+
+    private let systemAppearanceChanged = DistributedNotificationCenter.default()
+        .publisher(for: Notification.Name("AppleInterfaceThemeChangedNotification"))
+
+    func body(content: Content) -> some View {
+        content
+            .preferredColorScheme(resolvedScheme)
+            .onChange(of: appearanceMode) { _, newValue in
+                applyAppearance(newValue)
+            }
+            .onReceive(systemAppearanceChanged) { _ in
+                if AppearanceMode(rawValue: appearanceMode) == .system {
+                    resolvedScheme = detectSystemColorScheme()
+                }
+            }
+            .onAppear {
+                applyAppearance(appearanceMode)
+            }
+    }
+
+    private func applyAppearance(_ mode: String) {
+        switch AppearanceMode(rawValue: mode) {
+        case .light:
+            NSApp.appearance = NSAppearance(named: .aqua)
+            resolvedScheme = .light
+        case .dark:
+            NSApp.appearance = NSAppearance(named: .darkAqua)
+            resolvedScheme = .dark
+        case .system, .none:
+            NSApp.appearance = nil
+            resolvedScheme = detectSystemColorScheme()
+        }
+    }
+
+    private func detectSystemColorScheme() -> ColorScheme {
+        UserDefaults.standard.string(forKey: "AppleInterfaceStyle") == "Dark" ? .dark : .light
+    }
+}
+
 // MARK: - View Modifiers
 
 struct CardStyle: ViewModifier {
@@ -215,7 +316,7 @@ struct CardStyle: ViewModifier {
                 RoundedRectangle(cornerRadius: Theme.Radius.md)
                     .stroke(Theme.Colors.cardBorder, lineWidth: 1)
             )
-            .shadow(color: Color(hex: "2F3430").opacity(0.03), radius: 8, y: 2)
+            .shadow(color: Theme.Colors.textPrimary.opacity(0.03), radius: 8, y: 2)
     }
 }
 
@@ -227,6 +328,10 @@ struct InputFieldStyle: ViewModifier {
             .padding(Theme.Spacing.md)
             .background(Theme.Colors.surfaceContainerLow)
             .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.md))
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.Radius.md)
+                    .stroke(Theme.Colors.cardBorder, lineWidth: 1)
+            )
     }
 }
 

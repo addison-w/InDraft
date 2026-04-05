@@ -10,6 +10,9 @@ enum SeedData {
             Constants.DefaultActions.grammarFix,
             Constants.DefaultActions.rewriteForClarity,
             Constants.DefaultActions.shorten,
+            Constants.DefaultActions.translateToEnglish,
+            Constants.DefaultActions.professionalTone,
+            Constants.DefaultActions.eli5,
         ]
 
         for (index, def) in defaults.enumerated() {
@@ -32,6 +35,9 @@ enum SeedData {
             Constants.DefaultActions.grammarFix,
             Constants.DefaultActions.rewriteForClarity,
             Constants.DefaultActions.shorten,
+            Constants.DefaultActions.translateToEnglish,
+            Constants.DefaultActions.professionalTone,
+            Constants.DefaultActions.eli5,
         ]
 
         let allActions = (try? context.fetch(FetchDescriptor<Action>())) ?? []

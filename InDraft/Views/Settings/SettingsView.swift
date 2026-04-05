@@ -40,7 +40,7 @@ struct SettingsView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .ignoresSafeArea()
-        .frame(width: 920, height: 600)
+        .frame(width: 780, height: 600)
         .background(Theme.Colors.background)
     }
 

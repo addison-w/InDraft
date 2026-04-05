@@ -77,6 +77,14 @@ struct SettingsView: View {
             }
 
             Spacer()
+
+            if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+                Text("v\(version)")
+                    .font(Theme.Typography.mono(9))
+                    .foregroundColor(Theme.Colors.textTertiary)
+                    .padding(.horizontal, Theme.Spacing.xl)
+                    .padding(.bottom, Theme.Spacing.md)
+            }
         }
         .frame(width: 200)
         .background(Theme.Colors.background)

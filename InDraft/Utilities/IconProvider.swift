@@ -55,6 +55,23 @@ enum AppIcon {
     case translate
     case textDefault
 
+    // Expanded action icons
+    case professional
+    case simplify
+    case expand
+    case email
+    case chat
+    case code
+    case creative
+    case formal
+    case casual
+    case list
+    case heading
+    case bold
+    case hashtag
+    case tone
+    case magic
+
     var asset: HugeiconsAsset {
         switch self {
         case .settings:      return Hugeicons.settings01
@@ -88,6 +105,21 @@ enum AppIcon {
         case .summarize:     return Hugeicons.doc01
         case .translate:     return Hugeicons.translate
         case .textDefault:   return Hugeicons.textAlignLeft
+        case .professional:  return Hugeicons.briefcase01
+        case .simplify:      return Hugeicons.baby01
+        case .expand:        return Hugeicons.arrowExpand02
+        case .email:         return Hugeicons.mail01
+        case .chat:          return Hugeicons.bubbleChat
+        case .code:          return Hugeicons.sourceCode
+        case .creative:      return Hugeicons.paintBrush01
+        case .formal:        return Hugeicons.graduationScroll
+        case .casual:        return Hugeicons.coffee01
+        case .list:          return Hugeicons.taskDaily01
+        case .heading:       return Hugeicons.heading01
+        case .bold:          return Hugeicons.textBold
+        case .hashtag:       return Hugeicons.hashtag
+        case .tone:          return Hugeicons.voice
+        case .magic:         return Hugeicons.magicWand01
         }
     }
 

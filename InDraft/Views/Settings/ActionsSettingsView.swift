@@ -443,6 +443,9 @@ struct ActionsSettingsView: View {
             Constants.DefaultActions.grammarFix,
             Constants.DefaultActions.rewriteForClarity,
             Constants.DefaultActions.shorten,
+            Constants.DefaultActions.translateToEnglish,
+            Constants.DefaultActions.professionalTone,
+            Constants.DefaultActions.eli5,
         ]
 
         for (index, def) in defaults.enumerated() {

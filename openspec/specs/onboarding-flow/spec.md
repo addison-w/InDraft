@@ -79,11 +79,20 @@ Step 3 SHALL present a form for provider configuration: display name, base URL (
 - **AND** the provider SHALL be saved when Continue is tapped
 
 ### Requirement: Default actions overview step (skippable)
-Step 4 SHALL display the 3 default actions with their hotkeys. This step is skippable.
+Step 4 SHALL display all 6 predefined actions (Grammar Fix, Rewrite for Clarity, Shorten, Translate to English, Professional Tone, ELI5) with their assigned hotkeys during onboarding. This step is skippable.
 
-#### Scenario: Default actions shown
-- **WHEN** the user reaches the Default Actions step
-- **THEN** all 3 default actions SHALL be listed with their names and hotkey combinations
+#### Scenario: Onboarding shows six actions
+- **WHEN** the user reaches the Default Actions step during onboarding
+- **THEN** the view SHALL display 6 action rows showing each action name in uppercase with its corresponding keycap hotkey
+
+#### Scenario: Onboarding subtitle reflects six actions
+- **WHEN** the Default Actions step is displayed
+- **THEN** the subtitle text SHALL reference six built-in actions (not three)
+
+#### Scenario: All six actions fit within the onboarding card
+- **WHEN** the Default Actions step is displayed
+- **THEN** all 6 action rows SHALL be visible within the card without scrolling
+- **AND** the layout SHALL use compact vertical padding to accommodate the additional rows
 
 ### Requirement: Sample transformation step (skippable)
 Step 5 SHALL provide a text area with sample text and a "Try It" button that runs Rewrite for Clarity. This step is skippable.
@@ -94,7 +103,7 @@ Step 5 SHALL provide a text area with sample text and a "Try It" button that run
 - **AND** the result SHALL be displayed in the text area
 
 ### Requirement: Complete step
-Step 6 SHALL confirm setup is complete with "You're all set." message using Theme.Typography.pageTitle, show a wabi-sabi checkmark illustration, display the 3 default actions with hotkeys using Theme.Keycap styling, and show "STEP X OF X" using Theme.Typography.allCaps.
+Step 6 SHALL confirm setup is complete with "You're all set." message using Theme.Typography.pageTitle, show a wabi-sabi checkmark illustration, display the 6 default actions with hotkeys using Theme.Keycap styling, and show "STEP X OF X" using Theme.Typography.allCaps.
 
 #### Scenario: Setup complete with provider
 - **WHEN** the user reaches the Complete step after configuring a provider

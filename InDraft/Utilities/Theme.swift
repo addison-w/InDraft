@@ -265,11 +265,21 @@ extension Color {
 
 struct AppearanceModifier: ViewModifier {
     @AppStorage(Constants.UserDefaultsKeys.appearanceMode) private var appearanceMode: String = AppearanceMode.system.rawValue
+    @State private var resolvedScheme: ColorScheme = .light
+
+    private let systemAppearanceChanged = DistributedNotificationCenter.default()
+        .publisher(for: Notification.Name("AppleInterfaceThemeChangedNotification"))
 
     func body(content: Content) -> some View {
         content
+            .preferredColorScheme(resolvedScheme)
             .onChange(of: appearanceMode) { _, newValue in
                 applyAppearance(newValue)
+            }
+            .onReceive(systemAppearanceChanged) { _ in
+                if AppearanceMode(rawValue: appearanceMode) == .system {
+                    resolvedScheme = detectSystemColorScheme()
+                }
             }
             .onAppear {
                 applyAppearance(appearanceMode)
@@ -277,12 +287,21 @@ struct AppearanceModifier: ViewModifier {
     }
 
     private func applyAppearance(_ mode: String) {
-        let appearance: NSAppearance? = switch AppearanceMode(rawValue: mode) {
-        case .light: NSAppearance(named: .aqua)
-        case .dark: NSAppearance(named: .darkAqua)
-        case .system, .none: nil
+        switch AppearanceMode(rawValue: mode) {
+        case .light:
+            NSApp.appearance = NSAppearance(named: .aqua)
+            resolvedScheme = .light
+        case .dark:
+            NSApp.appearance = NSAppearance(named: .darkAqua)
+            resolvedScheme = .dark
+        case .system, .none:
+            NSApp.appearance = nil
+            resolvedScheme = detectSystemColorScheme()
         }
-        NSApp.appearance = appearance
+    }
+
+    private func detectSystemColorScheme() -> ColorScheme {
+        UserDefaults.standard.string(forKey: "AppleInterfaceStyle") == "Dark" ? .dark : .light
     }
 }
 

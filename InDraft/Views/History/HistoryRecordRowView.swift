@@ -50,7 +50,7 @@ struct HistoryRecordRowView: View {
 
                     Text(record.sourceApp.uppercased())
                         .font(Theme.Typography.allCaps(9))
-                        .foregroundColor(.white)
+                        .foregroundColor(Theme.Colors.background)
                         .padding(.horizontal, Theme.Spacing.sm)
                         .padding(.vertical, 2)
                         .background(Theme.Colors.inverseSurface)

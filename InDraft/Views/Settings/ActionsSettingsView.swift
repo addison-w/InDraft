@@ -132,7 +132,15 @@ struct ActionsSettingsView: View {
                     .onDrag {
                         NSCursor.closedHand.set()
                         draggingActionID = action.id
-                        return NSItemProvider(object: action.id.uuidString as NSString)
+                        let provider = NSItemProvider()
+                        provider.registerDataRepresentation(
+                            forTypeIdentifier: "public.plain-text",
+                            visibility: .ownProcess
+                        ) { completion in
+                            completion(action.id.uuidString.data(using: .utf8), nil)
+                            return nil
+                        }
+                        return provider
                     }
 
                 // Clickable row content
@@ -288,10 +296,15 @@ struct ActionsSettingsView: View {
                 Button {
                     createAction()
                 } label: {
-                    Text("Create Action")
-                        .font(Theme.Typography.label(12))
-                        .foregroundColor(Theme.Colors.textPrimary)
-                        .underline()
+                    HStack(spacing: Theme.Spacing.xs) {
+                        AppIcon.add.image()
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 11, height: 11)
+                        Text("Create Action")
+                            .font(Theme.Typography.label(11))
+                    }
+                    .foregroundColor(Theme.Colors.textPrimary)
                 }
                 .buttonStyle(.plain)
                 .disabled(newName.trimmingCharacters(in: .whitespaces).isEmpty)

@@ -164,7 +164,7 @@ struct ProvidersSettingsView: View {
     // MARK: - New Provider Form
 
     private var newProviderForm: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.lg) {
+        VStack(alignment: .leading, spacing: Theme.Spacing.xl) {
             HStack {
                 Text("New Provider")
                     .font(Theme.Typography.body(14))
@@ -183,16 +183,22 @@ struct ProvidersSettingsView: View {
                 .buttonStyle(.plain)
             }
 
-            fieldSection("DISPLAY NAME") {
-                TextField("e.g. OpenAI", text: $newDisplayName)
-                    .inputFieldStyle()
+            // DISPLAY NAME + BASE URL — side by side
+            HStack(alignment: .top, spacing: Theme.Spacing.xxl) {
+                fieldSection("DISPLAY NAME") {
+                    TextField("e.g. OpenAI", text: $newDisplayName)
+                        .inputFieldStyle()
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                fieldSection("BASE URL") {
+                    TextField("https://api.openai.com/v1", text: $newBaseURL)
+                        .inputFieldStyle()
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
 
-            fieldSection("BASE URL") {
-                TextField("https://api.openai.com/v1", text: $newBaseURL)
-                    .inputFieldStyle()
-            }
-
+            // API KEY — full width
             fieldSection("API KEY") {
                 HStack(spacing: Theme.Spacing.sm) {
                     Group {
@@ -207,6 +213,10 @@ struct ProvidersSettingsView: View {
                     .padding(Theme.Spacing.md)
                     .background(Theme.Colors.surfaceContainerLow)
                     .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.md))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: Theme.Radius.md)
+                            .stroke(Theme.Colors.cardBorder, lineWidth: 1)
+                    )
 
                     Button {
                         newShowAPIKey.toggle()
@@ -221,21 +231,27 @@ struct ProvidersSettingsView: View {
                 }
             }
 
-            fieldSection("MODEL") {
-                TextField("e.g. gpt-4o-mini", text: $newDefaultModel)
-                    .inputFieldStyle()
-            }
-
-            fieldSection("TIMEOUT") {
-                HStack(spacing: Theme.Spacing.md) {
-                    Slider(value: $newTimeoutSeconds, in: 10...180, step: 5)
-                        .tint(Theme.Colors.textTertiary)
-
-                    Text("\(Int(newTimeoutSeconds))s")
-                        .font(Theme.Typography.mono(12))
-                        .foregroundColor(Theme.Colors.textSecondary)
-                        .frame(width: 36, alignment: .trailing)
+            // MODEL + TIMEOUT — side by side
+            HStack(alignment: .top, spacing: Theme.Spacing.xxl) {
+                fieldSection("MODEL") {
+                    TextField("e.g. gpt-4o-mini", text: $newDefaultModel)
+                        .inputFieldStyle()
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                fieldSection("TIMEOUT") {
+                    HStack(spacing: Theme.Spacing.md) {
+                        Slider(value: $newTimeoutSeconds, in: 10...180, step: 5)
+                            .tint(Theme.Colors.textTertiary)
+
+                        Text("\(Int(newTimeoutSeconds))s")
+                            .font(Theme.Typography.mono(12))
+                            .foregroundColor(Theme.Colors.textSecondary)
+                            .frame(width: 36, alignment: .trailing)
+                    }
+                    .frame(height: 38)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
 
             HStack {
@@ -243,10 +259,15 @@ struct ProvidersSettingsView: View {
                 Button {
                     createProvider()
                 } label: {
-                    Text("Add Provider")
-                        .font(Theme.Typography.label(12))
-                        .foregroundColor(Theme.Colors.textPrimary)
-                        .underline()
+                    HStack(spacing: Theme.Spacing.xs) {
+                        AppIcon.add.image()
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 11, height: 11)
+                        Text("Add Provider")
+                            .font(Theme.Typography.label(11))
+                    }
+                    .foregroundColor(Theme.Colors.textPrimary)
                 }
                 .buttonStyle(.plain)
                 .disabled(newDisplayName.trimmingCharacters(in: .whitespaces).isEmpty || newBaseURL.isEmpty)
@@ -413,161 +434,186 @@ struct ProviderInlineEditor: View {
     @State private var confirmingDelete = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.lg) {
+        VStack(alignment: .leading, spacing: 0) {
             Rectangle()
                 .fill(Theme.Colors.divider)
                 .frame(height: 1)
+                .padding(.horizontal, Theme.Spacing.xl)
 
-            // Display name
-            fieldSection("DISPLAY NAME") {
-                TextField("Provider name", text: $provider.displayName)
-                    .inputFieldStyle()
-                    .onChange(of: provider.displayName) { _, _ in
-                        provider.updatedAt = Date()
-                    }
-            }
-
-            // Base URL
-            fieldSection("BASE URL") {
-                TextField("https://api.openai.com/v1", text: $provider.baseURL)
-                    .inputFieldStyle()
-                    .onChange(of: provider.baseURL) { _, _ in
-                        provider.updatedAt = Date()
-                    }
-            }
-
-            // API Key
-            fieldSection("API KEY") {
-                HStack(spacing: Theme.Spacing.sm) {
-                    Group {
-                        if showAPIKey {
-                            TextField("sk-...", text: $apiKey)
-                        } else {
-                            SecureField("sk-...", text: $apiKey)
-                        }
-                    }
-                    .textFieldStyle(.plain)
-                    .font(Theme.Typography.mono(13))
-                    .padding(Theme.Spacing.md)
-                    .background(Theme.Colors.surfaceContainerLow)
-                    .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.md))
-                    .onChange(of: apiKey) { _, newValue in
-                        saveAPIKey(newValue)
-                    }
-
-                    Button {
-                        showAPIKey.toggle()
-                    } label: {
-                        (showAPIKey ? AppIcon.eyeSlash : AppIcon.eye).image()
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 14, height: 14)
-                            .foregroundColor(Theme.Colors.textTertiary)
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-
-            // Default model
-            fieldSection("MODEL") {
-                TextField("e.g. gpt-4o-mini", text: $provider.defaultModel)
-                    .inputFieldStyle()
-                    .onChange(of: provider.defaultModel) { _, _ in
-                        provider.updatedAt = Date()
-                    }
-            }
-
-            // Timeout
-            fieldSection("TIMEOUT") {
-                HStack(spacing: Theme.Spacing.md) {
-                    Slider(
-                        value: Binding(
-                            get: { Double(provider.timeoutSeconds) },
-                            set: {
-                                provider.timeoutSeconds = Int($0)
+            VStack(alignment: .leading, spacing: Theme.Spacing.xl) {
+                // DISPLAY NAME + BASE URL — side by side
+                HStack(alignment: .top, spacing: Theme.Spacing.xxl) {
+                    fieldSection("DISPLAY NAME") {
+                        TextField("Provider name", text: $provider.displayName)
+                            .inputFieldStyle()
+                            .onChange(of: provider.displayName) { _, _ in
                                 provider.updatedAt = Date()
                             }
-                        ),
-                        in: 10...180,
-                        step: 5
-                    )
-                    .tint(Theme.Colors.textTertiary)
-
-                    Text("\(provider.timeoutSeconds)s")
-                        .font(Theme.Typography.mono(12))
-                        .foregroundColor(Theme.Colors.textSecondary)
-                        .frame(width: 36, alignment: .trailing)
-                }
-            }
-
-            // Action buttons
-            HStack {
-                if !isActiveProvider {
-                    Button {
-                        onSetActive()
-                    } label: {
-                        Text("Set Active")
-                            .font(Theme.Typography.label(11))
-                            .foregroundColor(Theme.Colors.textPrimary)
-                            .underline()
                     }
-                    .buttonStyle(.plain)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                    fieldSection("BASE URL") {
+                        TextField("https://api.openai.com/v1", text: $provider.baseURL)
+                            .inputFieldStyle()
+                            .onChange(of: provider.baseURL) { _, _ in
+                                provider.updatedAt = Date()
+                            }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
 
-                Button {
-                    runTest()
-                } label: {
-                    HStack(spacing: Theme.Spacing.xs) {
-                        if isTesting {
-                            ProgressView()
-                                .controlSize(.mini)
+                // API KEY — full width
+                fieldSection("API KEY") {
+                    HStack(spacing: Theme.Spacing.sm) {
+                        Group {
+                            if showAPIKey {
+                                TextField("sk-...", text: $apiKey)
+                            } else {
+                                SecureField("sk-...", text: $apiKey)
+                            }
                         }
-                        Text("Test Connection")
-                            .font(Theme.Typography.label(11))
-                            .foregroundColor(Theme.Colors.textSecondary)
-                            .underline()
+                        .textFieldStyle(.plain)
+                        .font(Theme.Typography.mono(13))
+                        .padding(Theme.Spacing.md)
+                        .background(Theme.Colors.surfaceContainerLow)
+                        .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.md))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: Theme.Radius.md)
+                                .stroke(Theme.Colors.cardBorder, lineWidth: 1)
+                        )
+                        .onChange(of: apiKey) { _, newValue in
+                            saveAPIKey(newValue)
+                        }
+
+                        Button {
+                            showAPIKey.toggle()
+                        } label: {
+                            (showAPIKey ? AppIcon.eyeSlash : AppIcon.eye).image()
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 14, height: 14)
+                                .foregroundColor(Theme.Colors.textTertiary)
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
-                .buttonStyle(.plain)
-                .disabled(isTesting || apiKey.isEmpty)
-                .opacity(isTesting || apiKey.isEmpty ? 0.4 : 1.0)
 
+                // MODEL + TIMEOUT — side by side
+                HStack(alignment: .top, spacing: Theme.Spacing.xxl) {
+                    fieldSection("MODEL") {
+                        TextField("e.g. gpt-4o-mini", text: $provider.defaultModel)
+                            .inputFieldStyle()
+                            .onChange(of: provider.defaultModel) { _, _ in
+                                provider.updatedAt = Date()
+                            }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                    fieldSection("TIMEOUT") {
+                        HStack(spacing: Theme.Spacing.md) {
+                            Slider(
+                                value: Binding(
+                                    get: { Double(provider.timeoutSeconds) },
+                                    set: {
+                                        provider.timeoutSeconds = Int($0)
+                                        provider.updatedAt = Date()
+                                    }
+                                ),
+                                in: 10...180,
+                                step: 5
+                            )
+                            .tint(Theme.Colors.textTertiary)
+
+                            Text("\(provider.timeoutSeconds)s")
+                                .font(Theme.Typography.mono(12))
+                                .foregroundColor(Theme.Colors.textSecondary)
+                                .frame(width: 36, alignment: .trailing)
+                        }
+                        .frame(height: 38)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
+                // Test result — inline feedback
                 if let succeeded = testSucceeded, let message = testResultMessage {
-                    HStack(spacing: Theme.Spacing.xs) {
+                    HStack(spacing: Theme.Spacing.sm) {
                         (succeeded ? AppIcon.successCircle : AppIcon.errorCircle).image()
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 13, height: 13)
+                            .frame(width: 12, height: 12)
                         Text(message)
-                            .font(Theme.Typography.caption(11))
+                            .font(Theme.Typography.mono(11))
                             .lineLimit(1)
                     }
                     .foregroundColor(succeeded ? Theme.Colors.statusGreen : Theme.Colors.error)
                 }
 
-                Spacer()
-
-                Button {
-                    if confirmingDelete {
-                        confirmingDelete = false
-                        onDelete()
-                    } else {
-                        withAnimation(Theme.Motion.quick) { confirmingDelete = true }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                            withAnimation(Theme.Motion.quick) { confirmingDelete = false }
+                // Action buttons — matching Actions editor style
+                HStack(spacing: Theme.Spacing.lg) {
+                    if !isActiveProvider {
+                        Button {
+                            onSetActive()
+                        } label: {
+                            HStack(spacing: Theme.Spacing.xs) {
+                                AppIcon.successCircle.image()
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 11, height: 11)
+                                Text("Set Active")
+                                    .font(Theme.Typography.label(11))
+                            }
+                            .foregroundColor(Theme.Colors.textPrimary)
                         }
+                        .buttonStyle(.plain)
                     }
-                } label: {
-                    Text(confirmingDelete ? "Confirm delete?" : "Delete")
-                        .font(Theme.Typography.label(11))
+
+                    Button {
+                        runTest()
+                    } label: {
+                        HStack(spacing: Theme.Spacing.xs) {
+                            if isTesting {
+                                ProgressView()
+                                    .controlSize(.mini)
+                            }
+                            Text("Test Connection")
+                                .font(Theme.Typography.label(11))
+                        }
+                        .foregroundColor(Theme.Colors.textSecondary)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(isTesting || apiKey.isEmpty)
+                    .opacity(isTesting || apiKey.isEmpty ? 0.4 : 1.0)
+
+                    Spacer()
+
+                    Button {
+                        if confirmingDelete {
+                            confirmingDelete = false
+                            onDelete()
+                        } else {
+                            withAnimation(Theme.Motion.quick) { confirmingDelete = true }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                withAnimation(Theme.Motion.quick) { confirmingDelete = false }
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: Theme.Spacing.xs) {
+                            AppIcon.close.image()
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 11, height: 11)
+                            Text(confirmingDelete ? "Confirm delete?" : "Delete Provider")
+                                .font(Theme.Typography.label(11))
+                        }
                         .foregroundColor(Theme.Colors.error)
-                        .underline()
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
             }
+            .padding(.horizontal, Theme.Spacing.xl)
+            .padding(.top, Theme.Spacing.xl)
+            .padding(.bottom, Theme.Spacing.lg)
         }
-        .padding(.horizontal, Theme.Spacing.xl)
-        .padding(.bottom, Theme.Spacing.lg)
         .onAppear {
             loadAPIKey()
         }
